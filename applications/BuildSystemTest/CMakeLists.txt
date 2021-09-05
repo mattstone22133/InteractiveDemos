@@ -8,6 +8,8 @@ file(GLOB_RECURSE sources CONFIGURE_DEPENDS src/*.cpp src/*.h)
 
 add_executable(${EXECUTABLE_NAME} ${sources})
 
+target_link_libraries(${EXECUTABLE_NAME} PUBLIC Engine)
+
 set_target_properties(${EXECUTABLE_NAME} PROPERTIES
     CXX_STANDARD 17
     CXX_STANDARD_REQUIRED YES
