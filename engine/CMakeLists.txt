@@ -6,7 +6,7 @@ project(${LIB_NAME} CXX)
 file(GLOB_RECURSE sources CONFIGURE_DEPENDS src/*.cpp src/test/*.h)
 
 add_library(
-    ${LIB_NAME} STATIC
+    ${LIB_NAME} STATIC 
     ${sources}
 )
 
