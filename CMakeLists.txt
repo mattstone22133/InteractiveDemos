@@ -25,6 +25,8 @@ add_subdirectory(engine)
 # --------------------------------------------------------------
 # Set up applications
 # --------------------------------------------------------------
+add_compile_definitions(GLFW_INCLUDE_NONE) #stop GLFW and GLAD conflicts on linux; include order does not fix it on linux. Must be defined before include glfw; must not be defined when compiling glfw.
+
 add_subdirectory("applications/BuildSystemTest")
 add_subdirectory("applications/HelloTriangle")
 
