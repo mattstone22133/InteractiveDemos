@@ -5,12 +5,12 @@
 // about using glfw library and emscripten
 // https://stackoverflow.com/questions/27668931/using-libraries-with-emscripten
 
-#include<GLFW/glfw3.h> //appears that this must come before glad, otherwise get macro redifintion issues; likely related to including windows.h; https://github.com/Dav1dde/glad/issues/283 glad2 apparently resolves this.
-#ifdef HTML_BUILD
-#include <emscripten/emscripten.h>
-#include <GLES2/gl2.h>
-#else
-#include<glad/glad.h>
+#include<GLFW/glfw3.h> //this must come before glad include, otherwise get macro redifintion issues; likely related to including windows.h; https://github.com/Dav1dde/glad/issues/283 glad2 apparently resolves this.
+#ifdef HTML_BUILD //ONLY HTML
+	#include <emscripten/emscripten.h>
+	#include <GLES2/gl2.h>
+#else //DESKTOP ONLY
+	#include<glad/glad.h>
 #endif
 
 namespace HelloTriangle {
@@ -48,16 +48,14 @@ void main()
 
 
 	int initialize() {
-		//#todo : figure out a way to set up a proper gles2 context that works on amd-gpu-windows; it isn't ideal to be using a spec "like" gles as it will be hard to know immediately of errors because of differences between gles and desktop gl.
-		//#todo #presubmit : do a pass on comments and make sure they're right, since I've learned much about opengl since creating this example in the past. 
-
 		//set up glfw window management
 		glfwInit();
-		//glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API); //windowsOS will fail to create a window with this hint; it may be related to AMD cards not supporting gles2 via extensions like intel and nvidia does. https://www.saschawillems.de/blog/2015/04/19/using-opengl-es-on-windows-desktops-via-egl/
+		glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API); //WindowsOS will fail to create a window with this hint; it may be related to AMD cards not supporting gles2 via extensions like intel and nvidia does. https://www.saschawillems.de/blog/2015/04/19/using-opengl-es-on-windows-desktops-via-egl/
+		glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_EGL_CONTEXT_API); //seems to be needed to get OpenGL ES context on WindowsOS.
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_ANY_PROFILE); //https://www.glfw.org/docs/3.3.2/window_guide.html#GLFW_OPENGL_PROFILE_attrib says gles must use anyprofile;  GLFW_OPENGL_ANY_PROFILE if the OpenGL profile is unknown ****or the context is an OpenGL ES*** context.
-		//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); //If OpenGL ES is requested, this hint is ignored. https://www.glfw.org/docs/3.3/window_guide.html#GLFW_OPENGL_FORWARD_COMPAT_hint
+		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); //If OpenGL ES is requested, this hint is ignored. https://www.glfw.org/docs/3.3/window_guide.html#GLFW_OPENGL_FORWARD_COMPAT_hint
 
 		//create window
 		window = glfwCreateWindow(width, height, "OpenGL Window", nullptr, nullptr);
@@ -68,11 +66,11 @@ void main()
 		}
 		glfwMakeContextCurrent(window);
 
-#ifndef HTML_BUILD //GLAD is not used for emscripten, instead use "#include <GLES2/gl2.h>" with emscripten; these headers are added via emcmake 
+#if !HTML_BUILD //GLAD is not used for emscripten, instead use "#include <GLES2/gl2.h>" with emscripten; these headers are added via emcmake 
 		//check GLAD is working
 		//if (!gladLoadGLLoader((GLADloadproc)&glfwGetProcAddress)) {
 		if (!gladLoadGLES2Loader((GLADloadproc)&glfwGetProcAddress)) {
-			std::cout << "failed to initialze glad" << std::endl;
+			std::cout << "failed to initialize glad" << std::endl;
 			return -1;
 		}
 #endif
@@ -147,24 +145,25 @@ void main()
 		//glBindVertexArray(VAO); 
 
 		//create VBO (vertex buffer object)
-		
 		glGenBuffers(1, &VBO);	//create 1 buffer, pass address of where id should be stored 
 
 		//bind (connect) the type GL_ARRAY_BUFFER to the generated buffer at ID "VBO"
-		glBindBuffer(GL_ARRAY_BUFFER, VBO); //operations on GL_ARRAY_BUFFER will now	 affect the VBO buffer object
+		glBindBuffer(GL_ARRAY_BUFFER, VBO); //operations on GL_ARRAY_BUFFER will now affect the VBO buffer object
 
 		//buffer (load) the data into the buffer we created (GL_ARRAY_BUFFER is bound to VBO, which is how VBO gets data)
 		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
+		// opengl es 2.0 doesn't have layout specifiers AFAIK, we need to query where it put the attribute so we can enable it later for rendering.
 		PositionAtributeLocation = glGetAttribLocation(shaderProgramID, "position");
 
 		//INSTRUCT OPENGL HOW TO INTERPRET PASSED DATA
 		glVertexAttribPointer(PositionAtributeLocation, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), static_cast<void*>(0)); // note: needs VBO already bound,
 		glEnableVertexAttribArray(PositionAtributeLocation); //activates vertex attribute (shader variable) labeled with location of the attribute in the shader (gles2 does not have layout locations)
+		
 		//unbind the vertex array so other configuration changes are not stored in this VAO
-		//glBindVertexArray(0); VAOs not supported in gles
+		//glBindVertexArray(0); VAOs not supported in gles 2.0
 
-		glUseProgram(shaderProgramID);//set the shader program to use (note: the tutorial places in this in render loop before draw calls, but since we only have 1 shader program I am putting here)
+		glUseProgram(shaderProgramID);//set the shader program to use 
 		// -----------------------------------------------------------------//
 
 		//render loop
@@ -198,7 +197,7 @@ void main()
 			glVertexAttribPointer(PositionAtributeLocation, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), static_cast<void*>(0));
 			glDrawArrays(GL_TRIANGLES, 0, 3);
 
-			//swap and draw
+			//swap and put on screen
 			glfwSwapBuffers(window);
 			glfwPollEvents(); //update keyboard input, mouse movement, etc.
 		}
