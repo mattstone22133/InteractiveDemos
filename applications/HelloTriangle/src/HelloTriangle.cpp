@@ -37,6 +37,7 @@ void main()
 {
 	gl_Position = vec4(position.x, position.y, position.z, 1.0);
 }
+
 	)";
 
 	const char* fragmentShader = R"(
@@ -44,6 +45,7 @@ void main()
 {
 	gl_FragColor = vec4(1.0, 0.5, 0.2, 1.0);
 }
+
 	)";
 
 
@@ -74,7 +76,6 @@ void main()
 			return -1;
 		}
 #endif
-
 		//set up the view port dimensions
 		glViewport(0, 0, width, height);
 

@@ -29,5 +29,6 @@ add_compile_definitions(GLFW_INCLUDE_NONE) #stop GLFW and GLAD conflicts on linu
 
 add_subdirectory("applications/BuildSystemTest")
 add_subdirectory("applications/HelloTriangle")
+add_subdirectory("applications/BarycentricCoordinates")
 
 message(STATUS " ------------------------------------------------------------------------------------")

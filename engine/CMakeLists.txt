@@ -4,15 +4,15 @@ set(LIB_NAME Engine)
 
 project(${LIB_NAME} CXX)
 
-file(GLOB_RECURSE sources CONFIGURE_DEPENDS src/*.cpp src/test/*.h)
+file(GLOB_RECURSE sources CONFIGURE_DEPENDS src/*.cpp src/*.h)
 
 add_library(
     ${LIB_NAME} STATIC 
     ${sources}
 )
 
-# todo should separate the includes from source files (and potentialy private/public) folders
-target_include_directories(${LIB_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
+# set up the include directories
+target_include_directories(${LIB_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src/public/include/")
 
 #this is how you can add preprocessor macros within the build
 target_compile_definitions(${LIB_NAME} PUBLIC ENGINE_VERSION=1)

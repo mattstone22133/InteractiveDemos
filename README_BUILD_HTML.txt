@@ -16,8 +16,9 @@ Emscripten header files (GLFW/glfw3.h, GLES2/gl2.h) can be included and compilew
 add it to environmental varibales path so cmake can find it when using `-G Ninja`
 https://github.com/ninja-build/ninja/releases/tag/v1.10.2 is the link I used
 
-
 You will need to have emscripten set up and be able to compile files using emcc. 
+
+`emsdk` version `2.0.34` was used locally to compile to HTML; I have not made this a requirement but if issues arise, falling back to that sdk may help.
 
 
 
