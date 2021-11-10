@@ -20,15 +20,16 @@ message(STATUS "HTML_BUILD Value: ${HTML_BUILD}")
 # Set up libraries
 # --------------------------------------------------------------
 # set up the engine library for all applications to link against
-add_subdirectory(engine)
+add_subdirectory("Libraries/Engine")
+add_subdirectory("Libraries/TutorialEngine")
 
 # --------------------------------------------------------------
 # Set up applications
 # --------------------------------------------------------------
 add_compile_definitions(GLFW_INCLUDE_NONE) #stop GLFW and GLAD conflicts on linux; include order does not fix it on linux. Must be defined before include glfw; must not be defined when compiling glfw.
 
-add_subdirectory("applications/BuildSystemTest")
-add_subdirectory("applications/HelloTriangle")
-add_subdirectory("applications/BarycentricCoordinates")
+add_subdirectory("Applications/BuildSystemTest")
+add_subdirectory("Applications/HelloTriangle")
+add_subdirectory("Applications/BarycentricCoordinates")
 
 message(STATUS " ------------------------------------------------------------------------------------")

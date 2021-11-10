@@ -23,7 +23,7 @@ set_target_properties(${LIB_NAME} PROPERTIES
     CXX_EXTENSIONS NO)
 
 # Dependencies ===========================================================================================
-set(CMAKE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../cmake) 
+set(CMAKE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../cmake) 
 #===========================================================================================
 # GLAD CONFIGURATION Refer to https://github.com/Dav1dde/glad for more information)
 # Configure GLAD loader generation variables (lines below pulled from the GLAD top-level

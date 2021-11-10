@@ -1,3 +1,5 @@
+#pragma once
+
 namespace InteractiveSandbox
 {
 
@@ -5,6 +7,7 @@ namespace InteractiveSandbox
 	{
 	public:
 		Engine();
+
 	private:
 
 	};
