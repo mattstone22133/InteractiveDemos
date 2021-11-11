@@ -4,7 +4,7 @@
 
 namespace TutorialUtils
 {
-	class TutorialEngine : public InteractiveSandbox::Engine
+	class TutorialEngine : public Engine::EngineBase
 	{
 	public:
 

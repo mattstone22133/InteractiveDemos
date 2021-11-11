@@ -1,14 +1,19 @@
 #pragma once
+#include "Event.h"
+#include "SceneNode.h"
 
-namespace InteractiveSandbox
+namespace Engine
 {
 
-	class Engine
+	class EngineBase
 	{
 	public:
-		Engine();
-
+		Event<> TestEvent;
 	private:
+		sp<SceneNode> WorldRoot = nullptr;
+	public:
+		EngineBase();
+
 
 	};
 

@@ -7,9 +7,9 @@ project(${LIB_NAME} CXX)
 file(GLOB_RECURSE sources CONFIGURE_DEPENDS src/*.cpp src/*.h)
 
 add_library(
-    ${LIB_NAME} STATIC 
-    ${sources}
-)
+    ${LIB_NAME} 
+	STATIC 
+    ${sources})
 
 # set up the include directories
 target_include_directories(${LIB_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src/public/include/")
@@ -55,5 +55,9 @@ else()
 	target_link_options(${LIB_NAME} PUBLIC -s USE_GLFW=3)	#link in emscripten glfw3; note that -lglfw is for the old glfw2
 	target_link_options(${LIB_NAME} PUBLIC -lopenal)		#link in emscripten OpenAL for audio.
 endif()
+
+	# add in glm math functions to all builds
+	include(${CMAKE_DIR}/LinkGLM.cmake)
+	LinkGLM(${LIB_NAME} PUBLIC)
 
 # End Dependencies ===========================================================================================

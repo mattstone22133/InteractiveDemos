@@ -2,10 +2,9 @@
 #include <iostream>
 #include <Engine.h>
 
-namespace InteractiveSandbox
+namespace Engine
 {
-
-	Engine::Engine()
+	EngineBase::EngineBase()
 	{
 		std::cout << "Engine Constructed" << std::endl;
 	}
