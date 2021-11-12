@@ -8,5 +8,7 @@ namespace TutorialUtils
 	{
 	public:
 
+	protected:
+
 	};
 }

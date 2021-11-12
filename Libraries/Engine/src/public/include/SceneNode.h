@@ -5,7 +5,7 @@
 
 #include "Transform.h"
 #include "Event.h"
-#include "EngineSmartPtr.h"
+#include "GameObjectBase.h"
 
 namespace Engine
 {
@@ -14,8 +14,7 @@ namespace Engine
 	//	_SymbolName means the symbol is private.
 	//  FunctionName_v means the function is a polymorphic (virtual) function.
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	class SceneNode : 
-		public std::enable_shared_from_this<SceneNode>,
+	class SceneNode : public GameObjectBase,
 		public IEventSubscriber
 	{
 	public:

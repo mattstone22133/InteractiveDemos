@@ -12,7 +12,12 @@
 #include <functional>
 #include <type_traits>
 
-#include "EngineSmartPtr.h"
+#include "GameObjectBase.h"
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// NOTE: this is a port of MultiDelegate. In that, the objects MUST be based off of a "GameEntity". 
+// Here, they just must implement the IEVentSubscriber interface. But when reading this code, keep that history in mind.
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 namespace Engine
@@ -22,7 +27,7 @@ namespace Engine
 	{
 	};
 
-#define event_this() std::static_pointer_cast< std::remove_reference<decltype(*this)>::type >(sp_this())
+//#define event_this() std::static_pointer_cast< std::remove_reference<decltype(*this)>::type >(sp_this())
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Dev Notes:
@@ -432,8 +437,8 @@ namespace Engine
 		// *smart pointer delegates 
 		// *a factory function for copying can be created to avoid accidental copies
 		///////////////////////////////////////////
-#ifdef MULTIDELEGATE_SUPPORT_COPY_CTORS
-		MultiDelegate(const MultiDelegate<Args...>& copy)
+#ifdef Event_SUPPORT_COPY_CTORS
+		Event(const Event<Args...>& copy)
 		{
 			//when copying, intentionally do not copy state of broadcasting or pending adds/removes
 			//this might not be a great design decision, and it can be changed. But edge cases need
@@ -444,11 +449,11 @@ namespace Engine
 #ifndef SUPPRESS_BROADCAST_COPY_WARNINGS
 			if (copy.broadcasting)
 			{
-				std::cerr << "Copied Delegate while broadcasting, this may cause hard to detect bugs! See special member functions of multidelegate to supress this warning" << std::endl;
+				std::cerr << "Copied Delegate while broadcasting, this may cause hard to detect bugs! See special member functions of Event to supress this warning" << std::endl;
 			}
 #endif //SUPPRESS_BROADCAST_COPY_WARNINGS
 		}
-		MultiDelegate<Args...>& operator=(const MultiDelegate<Args...>& copy)
+		Event<Args...>& operator=(const Event<Args...>& copy)
 		{
 			//copying while broadcasting does not account for queued actions (adds/removes/etc). See copy ctor 
 			this->strongSubscribers = copy.strongSubscribers;
@@ -457,7 +462,7 @@ namespace Engine
 #ifndef SUPPRESS_BROADCAST_COPY_WARNINGS
 			if (copy.broadcasting)
 			{
-				std::cerr << "Copied Delegate while broadcasting, this may cause hard to detect bugs! See special member functions of multidelegate to supress this warning" << std::endl;
+				std::cerr << "Copied Delegate while broadcasting, this may cause hard to detect bugs! See special member functions of Event to supress this warning" << std::endl;
 			}
 #endif //SUPPRESS_BROADCAST_COPY_WARNINGS
 			return *this;
@@ -466,7 +471,7 @@ namespace Engine
 /** Use smart pointer managed delegates to achieve pass-able delegates; or define the macro for copy ctors */
 		Event(const Event<Args...>& copy) = delete;
 		Event<Args...>& operator=(const Event<Args...>& copy) = delete;
-#endif //MULTIDELEGATE_SUPPORT_COPY_CTORS
+#endif //Event_SUPPORT_COPY_CTORS
 
 		//Move semantics are not supported unless testing is available for them
 		Event(Event<Args...>&& move) = delete;
