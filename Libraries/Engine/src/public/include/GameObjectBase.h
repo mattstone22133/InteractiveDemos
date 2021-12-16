@@ -4,6 +4,12 @@
 #include "EngineSmartPointers.h"
 
 
+#define GENERATE_CLASS_BOILERPLATE(ClassName, BaseName)\
+using Super = BaseName;\
+using ThisClass = ClassName;
+
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 //These forward declarations are carefully placed here to avoid circle includes.
 //new_sp is desired to be responsible for calling post construct, and therefore 
@@ -26,17 +32,18 @@ template<typename T>
 using up = std::unique_ptr<T>;
 
 
+template<typename T, typename... Args>
+sp<T> new_sp(Args&&... args);
+template<typename T, typename... Args>
+up<T> new_up(Args&&... args);
+
+
+struct GameObjectConstructorFriendHelper;
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace Engine
 {
-	// this must be in namespace engine. otherwise it will compile in engine library, but have linker issues on other libraries (something implicit is happening with the engine namespace).
-	// Ideally, I think the body of this function, and the forward declare, should be outside of the engine namespace -- for maximum convenience.
-	// But when doing that, the friend declaration of this, which allows post construct to be called, fails to correctly be friended.
-	template<typename T, typename... Args>
-	sp<T> new_sp(Args&&... args);
-	template<typename T, typename... Args>
-	up<T> new_up(Args&&... args);
 
 	// forward declare event so that it does not need to be included creating circular include.
 	template<typename... Args>
@@ -93,8 +100,7 @@ namespace Engine
 		bool bPendingDestroy = false;
 
 	private:
-		template<typename T, typename... Args>
-		friend sp<T> new_sp(Args&&... args);
+		friend struct ::GameObjectConstructorFriendHelper;
 
 		template<typename T>
 		friend class LifetimePointer; //TODO perhaps remove this if it isn't ported it over. Not sure I like the implementation of it.
@@ -104,34 +110,52 @@ namespace Engine
 		static void cleanupPendingDestroy(CleanKey);
 	};
 
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// Helper methods for constructing shared pointers and game object subclasses.
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		template<typename T, typename... Args>
-		sp<T> new_sp(Args&&... args)
-		{
-			if constexpr (std::is_base_of<Engine::GameObjectBase, T>::value)
-			{
-				sp<T> newObj = std::make_shared<T>(std::forward<Args>(args)...);
-
-				//safe cast because of type-trait
-				Engine::GameObjectBase* newEntity = static_cast<Engine::GameObjectBase*>(newObj.get());
-				newEntity->postConstruct();
-				return newObj;
-			}
-			else
-			{
-				return std::make_shared<T>(std::forward<Args>(args)...);
-			}
-
-			return std::make_shared<T>(std::forward<Args>(args)...);
-		}
-
-		template<typename T, typename... Args>
-		up<T> new_up(Args&&... args)
-		{
-			return std::make_unique<T>(std::forward<Args>(args)...);
-		}
 }
 
+struct GameObjectConstructorFriendHelper
+{
+	/** Since friending a template function (new_sp) with global namespacee, within a class in engine namespace (GameObjectBase) causes compilation issues, this class is a work around.
+		This class is not at template, and therefore can be friend'd in GameObjectBase.
+		Since this is in the same namespace (global) as new_sp, it can itself friend new_sp without compile errors.
+		This means that ONLY new_sp<>() can do postConstruct on the gameobjectbase. 
+		Which properly encapsulates postConstruct so that it can only be called when the new_sp factor function is used. (or subclass calls parent)
+		*/
+private:
+	//allow new_sp to call into this. this gets around issues with friending new_sp outside of engine namespace when gameobjectbase is in engine namespace
+	template<typename T, typename... Args>
+	friend sp<T> new_sp(Args&&... args);
 
+	static inline void doPostConstruct(Engine::GameObjectBase& Obj)
+	{
+		Obj.postConstruct();
+	}
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Helper methods for constructing shared pointers and game object subclasses.
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+template<typename T, typename... Args>
+sp<T> new_sp(Args&&... args)
+{
+	if constexpr (std::is_base_of<Engine::GameObjectBase, T>::value)
+	{
+		sp<T> newObj = std::make_shared<T>(std::forward<Args>(args)...);
+
+		//safe cast because of type-trait
+		Engine::GameObjectBase* newEntity = static_cast<Engine::GameObjectBase*>(newObj.get());
+		GameObjectConstructorFriendHelper::doPostConstruct(*newEntity); //work around since new_sp is out of engine namespace
+		return newObj;
+	}
+	else
+	{
+		return std::make_shared<T>(std::forward<Args>(args)...);
+	}
+
+	//return std::make_shared<T>(std::forward<Args>(args)...);
+}
+
+template<typename T, typename... Args>
+up<T> new_up(Args&&... args)
+{
+	return std::make_unique<T>(std::forward<Args>(args)...);
+}

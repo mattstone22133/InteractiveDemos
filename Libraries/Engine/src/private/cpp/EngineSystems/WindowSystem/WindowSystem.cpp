@@ -26,7 +26,7 @@ namespace Engine
 
 	}
 
-	void WindowSystem::tick(float deltaSec)
+	void WindowSystem::tick(float /*deltaSec*/)
 	{
 		glfwPollEvents();
 

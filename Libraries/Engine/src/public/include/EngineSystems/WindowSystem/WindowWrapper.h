@@ -59,6 +59,7 @@ namespace Engine
 		bool shouldClose();
 		float getAspect();
 		std::pair<int, int> getFramebufferSize();
+		bool isActiveContext() const;
 
 		void setViewportToWindowSize();
 

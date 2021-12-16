@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <functional>
 
 #include "Event.h"
 #include "SceneNode.h"
@@ -21,7 +22,7 @@ namespace Engine
 	class AutomatedTestSystem;
 	class DebugRenderSystem;
 	class RenderSystem;
-	class CurveSystem;
+	class CurveManager;
 	class AudioSystem;
 	class CheatSystemBase;
 
@@ -51,17 +52,17 @@ namespace Engine
 		this engine.
 	*/
 	class EngineBase : public GameObjectBase
-		, public RemoveCopies
-		, public RemoveMoves
+		, public IRemoveCopies
+		, public IRemoveMoves
 	{
-		//////////////////////////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////////////////////////////////
 		//  Construction
 		/////////////////////////////////////////////////////////////////////////////////////
 	public:
 		EngineBase();
 		~EngineBase();
 
-		//////////////////////////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////////////////////////////////
 		//  Base Class Singleton
 		/////////////////////////////////////////////////////////////////////////////////////
 	public:
@@ -72,12 +73,22 @@ namespace Engine
 			exists to avoid having systems know about concrete class types*/
 		static EngineBase* RegisteredSingleton;
 
-		//////////////////////////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////////////////////////////////
+		//  Root
+		/////////////////////////////////////////////////////////////////////////////////////
+	private:
+		sp<SceneNode> rootNode = new_sp<SceneNode>();
+	public:
+		inline const sp<SceneNode>& getRoot() const { return rootNode; }
+		void addToRoot(const sp<SceneNode>& child);
+
+
+		/////////////////////////////////////////////////////////////////////////////////////
 		//  START UP / SHUT DOWN
 		/////////////////////////////////////////////////////////////////////////////////////
 	public: //starting system
 		/** Starts up systems and begins game loop */
-		void start();
+		void start(const std::function<void()>& initializationFunc = []() {});
 	private:
 		void end(); //end will happy automatically
 	public:
@@ -112,10 +123,10 @@ namespace Engine
 		void tickGameloop_EngineBase();
 		static void htmlTickMain();
 	protected:
-		virtual void tickGameLoop(float deltaTimeSecs){};
-		virtual void cacheRenderDataForCurrentFrame(struct RenderData& frameRenderData){};
-		virtual void renderLoop_begin(float deltaTimeSecs){};
-		virtual void renderLoop_end(float deltaTimeSecs){};
+		virtual void tickGameLoop(float /*deltaTimeSecs*/){};
+		//virtual void cacheRenderDataForCurrentFrame(struct RenderData& frameRenderData){};
+		virtual void renderLoop_begin(float /*deltaTimeSecs*/){};
+		virtual void renderLoop_end(float /*deltaTimeSecs*/){};
 
 		//////////////////////////////////////////////////////////////////////////////////////
 		//  SYSTEMS 
@@ -126,14 +137,15 @@ namespace Engine
 		//////////////////////////////////////////////////////////////////////////////////////
 	public:
 		//System getters (to prevent circular dependencies, be sure to use forward declared references)
+		//todo perhaps remove these accessors in favor of system static getters (see window and render system headers)
 		inline WindowSystem& getWindowSystem() noexcept { return *windowSystem; }
+		inline RenderSystem& getRenderSystem() noexcept { return *renderSystem; }
 		//inline AssetSystem& getAssetSystem() noexcept { return *assetSystem; }
 		//inline LevelSystem& getLevelSystem() noexcept { return *levelSystem; }
 		//inline PlayerSystem& getPlayerSystem() noexcept { return *playerSystem; }
 		//inline ParticleSystem& getParticleSystem() noexcept { return *particleSystem; }
 		//inline RNGSystem& getRNGSystem() noexcept { return *systemRNG; }
 		//inline DebugRenderSystem& getDebugRenderSystem() noexcept { return *debugRenderSystem; }
-		//inline RenderSystem& getRenderSystem() noexcept { return *renderSystem; }
 		//inline AutomatedTestSystem& getAutomatedTestSystem() noexcept { return *automatedTestSystem; };
 		//inline CheatSystemBase& getCheatSystem() { return *cheatSystem; }
 		//inline CurveSystem& getCurveSystem() { return *curveSystem; }
@@ -141,6 +153,8 @@ namespace Engine
 	private:
 		void createEngineSystems();
 		/**polymorphic systems require virtual override to define class. If nullptr detected these systems should create a default instance.*/
+		virtual sp<RenderSystem> createRenderSystemSubclass();
+		void validateSystemSpawned(const sp<SystemBase>& system);
 		//virtual sp<CheatSystemBase> createCheatSystemSubclass() { return nullptr; }
 		//virtual sp<CurveSystem> createCurveSystemSubclass();
 		//virtual sp<AudioSystem> createAudioSystemSubclass();
@@ -154,17 +168,17 @@ namespace Engine
 
 	private: //systems
 		sp<WindowSystem> windowSystem;
-		sp<AssetSystem> assetSystem;
-		sp<LevelSystem> levelSystem;
-		sp<PlayerSystem> playerSystem;
-		sp<ParticleSystem> particleSystem;
-		sp<RNGSystem> systemRNG;
-		sp<AutomatedTestSystem> automatedTestSystem;
-		sp<DebugRenderSystem> debugRenderSystem;
 		sp<RenderSystem> renderSystem;
-		sp<CheatSystemBase> cheatSystem;
-		sp<CurveSystem> curveSystem;
-		sp<AudioSystem> audioSystem;
+		//sp<AudioSystem> audioSystem;
+		//sp<AssetSystem> assetSystem;
+		//sp<LevelSystem> levelSystem;
+		//sp<PlayerSystem> playerSystem;
+		//sp<ParticleSystem> particleSystem;
+		//sp<RNGSystem> systemRNG;
+		//sp<AutomatedTestSystem> automatedTestSystem;
+		//sp<DebugRenderSystem> debugRenderSystem;
+		//sp<CheatSystemBase> cheatSystem;
+		//sp<CurveSystem> curveSystem;
 
 		std::set< sp<SystemBase> > systems;
 		std::set< sp<SystemBase> > postRenderNotifys;
@@ -213,6 +227,7 @@ namespace Engine
 	public:
 		TimeSystem& getTimeSystem() { return timeSystem; }
 		TimeManager& getSystemTimeManager() { return *systemTimeManager; }
+		TimeManager& getGameTimeManager() { return *gameTimeManager; }
 		TickGroups& tickGroups() { return *tickGroupData; }
 		TickGroupManager& getTickGroupManager() { return *tickGroupManager; }
 	private:
@@ -222,6 +237,7 @@ namespace Engine
 		/** Time management needs to be separate from systems since their tick relies on its results. */
 		TimeSystem timeSystem;
 		sp<TimeManager> systemTimeManager;
+		sp<TimeManager> gameTimeManager;
 		sp<TickGroups> tickGroupData = nullptr;
 		sp<TickGroupManager> tickGroupManager = nullptr;
 		bool bTickGoupsInitialized = false;

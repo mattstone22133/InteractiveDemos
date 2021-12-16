@@ -293,6 +293,11 @@ namespace Engine
 		return std::make_pair(width, height);
 	}
 
+	bool Window::isActiveContext() const
+	{
+		return glfwGetCurrentContext() == window;
+	}
+
 	void Window::setViewportToWindowSize()
 	{
 		int width, height;

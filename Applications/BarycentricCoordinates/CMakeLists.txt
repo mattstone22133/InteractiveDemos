@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.15 FATAL_ERROR)
 
 set(EXECUTABLE_NAME BarycentricCoordinateDemo)
 
@@ -22,3 +22,4 @@ if(HTML_BUILD)
     set(CMAKE_EXECUTABLE_SUFFIX ".html")
 endif()
 
+ 

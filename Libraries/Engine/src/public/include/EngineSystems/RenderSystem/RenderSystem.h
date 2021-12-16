@@ -1,8 +1,12 @@
 #pragma once
 #include <vector>
+#include <cstddef> //size_t
 #include "EngineSystems/SystemBase.h"
+
 //#include "Tools/Algorithms/AmortizeLoopTool.h"
 #include "Transform.h"
+#include "Event.h"
+#include "GameObjectBase.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // NOTE: this class was ported but seemed largely unused and specific to opengl3.3. Perhaps it should just be deleted.
@@ -13,33 +17,41 @@ namespace Engine
 	struct RenderData;
 	class EngineBase;
 
-	//class DeferredRendererStateMachine;
-	//class ForwardRenderingStateMachine;
-	//class PointLight_Deferred;
-	//class Shader;
-
-	//deferred rendering refactor is not finished, this is used to disable todos that are preventing compilation; flip to 0 to get easily to read compilation errors on work left to be done
-#define IGNORE_INCOMPLETE_DEFERRED_RENDER_CODE 1
+	/** Represents a cached state of all rendering variables for the given frame. */
+	class FrameRenderData : public GameObjectBase
+	{
+	public:
+		sp<class Window> window = nullptr;
+		sp<struct ICamera> camera = nullptr;
+		glm::mat4 view{ 1.f };
+		glm::mat4 projection{ 1.f };
+		glm::mat4 projection_view{ 1.f };
+		int fbHeight = 1;
+		int fbWidth = 1;
+	};
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// The encapsulated render system
-	//
-	// #todo #nextengine perhaps render system should be more first class rather than have EngineBase controlling things
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	class RenderSystem : public SystemBase
 	{
+		IMPLEMENT_PUBLIC_STATIC_GET(RenderSystem, SystemBase);
 	public:
-		/** Subclasses of EngineBase can write to a frames data, whereas everyone else can only read from the data */
-		//const RenderData* getFrameRenderData_Read(uint64_t frameNumber) { return getFrameRenderData(frameNumber); }
-		//RenderData* getFrameRenderData_Write(uint64_t frameNumber, const struct EngineBaseIdentityKey& privateKey) { return getFrameRenderData(frameNumber); }
+		Event<float /*deltaSec*/> onRenderDispatch;
+	private:
+		sp<FrameRenderData> frameRenderData = nullptr;
+		std::vector<sp<ICamera>> renderCameras;
+	protected:
+		std::size_t MAX_NUM_RENDER_CAMERAS = 16;
+	public:
+		virtual void clearScreen();
+		virtual void prepareRenderDataForFrame(std::size_t renderCameraIndex = 0);
+		const sp<FrameRenderData>& getFrameRenderData() const { return frameRenderData; }
 
-		//void enableDeferredRenderer(bool bEnable);
-		//bool usingDeferredRenderer() { return deferredRenderer != nullptr; }
-		//DeferredRendererStateMachine* getDeferredRenderer() { return deferredRenderer.get(); };
-		//ForwardRenderingStateMachine* getForwardRenderer() { return forwardRenderer.get(); }
-		//const std::vector<sp<PointLight_Deferred>>& getFramePointLights() { return userPointLights; }
-		//const sp<PointLight_Deferred> createPointLight();
-		//bool isUsingHDR();
+		bool setRenderCamera(const sp<ICamera>& newCamera, const std::size_t cameraIndex=0);
+		const sp<ICamera>& getRenderCamera(const size_t index = 0) const;
+		Event<const sp<ICamera>& /*oldCamera*/, const sp<ICamera>& /*newCamera*/, const std::size_t& /*cameraIndex*/> onPrimaryViewCameraChanging;
+
 	protected:
 		virtual void tick(float dt_sec) override;;
 	private:
@@ -48,10 +60,8 @@ namespace Engine
 	private:
 		virtual void initSystem() override;
 	private:
-		//AmortizeLoopTool amort_PointLight_GC;
-		//std::vector<sp<RenderData>> renderFrameCircularBuffer;
-		//std::vector<sp<PointLight_Deferred>> userPointLights; //#todo if end up saving previous frame data (ie the circular buffer) then these need their state saved each frame (ie just copy struct into RenderData struct)
-		//sp<DeferredRendererStateMachine> deferredRenderer = nullptr;
-		//sp<ForwardRenderingStateMachine> forwardRenderer = nullptr;
+		virtual void createRenderData();
+		virtual sp<ICamera> createDefaultRenderCamera();
+
 	};
 }

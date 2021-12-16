@@ -13,6 +13,8 @@ namespace Engine
 {
 	class WindowSystem : public SystemBase
 	{
+		IMPLEMENT_PUBLIC_STATIC_GET(WindowSystem, SystemBase);
+
 	public: //events
 		/*This event should not be used to determine when OpenGL contexts change */
 		Event<const sp<Window>& /*old_window*/, const sp<Window>& /*new_window*/> onPrimaryWindowChangingEvent;

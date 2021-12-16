@@ -1,19 +1,21 @@
 #pragma once
 namespace Engine
 {
-	class RemoveCopies
+	class IRemoveCopies
 	{
 	public:
-		RemoveCopies() = default;
-		RemoveCopies(const RemoveCopies& copy) = delete;
-		RemoveCopies& operator=(const RemoveCopies& copy) = delete;
+		IRemoveCopies() = default;
+		IRemoveCopies(const IRemoveCopies& copy) = delete;
+		IRemoveCopies& operator=(const IRemoveCopies& copy) = delete;
 	};
+	using RemoveCopies = IRemoveCopies; //added for easy porting.
 
-	class RemoveMoves
+	class IRemoveMoves
 	{
 	public:
-		RemoveMoves() = default;
-		RemoveMoves(RemoveMoves&& move) = delete;
-		RemoveMoves& operator=(RemoveMoves&& move) = delete;
+		IRemoveMoves() = default;
+		IRemoveMoves(IRemoveMoves&& move) = delete;
+		IRemoveMoves& operator=(IRemoveMoves&& move) = delete;
 	};
+	using RemoveMoves = IRemoveMoves; //added for easy porting.
 }

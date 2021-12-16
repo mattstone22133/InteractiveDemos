@@ -22,6 +22,6 @@ namespace Engine
 	class Tickable
 	{
 		/** Parameter is the delta time in seconds; ie the time between the current and last frame */
-		virtual void tick(float dt_sec) {};
+		virtual void tick(float /*dt_sec*/) {};
 	};
 }

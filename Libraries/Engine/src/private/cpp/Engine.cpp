@@ -51,7 +51,15 @@ namespace Engine
 		return *RegisteredSingleton;
 	}
 
-	void EngineBase::start()
+	void EngineBase::addToRoot(const sp<SceneNode>& child)
+	{
+		if (bStarted && rootNode && child)
+		{
+			child->setParent(rootNode);
+		}
+	}
+
+	void EngineBase::start(const std::function<void()>& initializationFunc)
 	{
 		//WARNING: any local objects (eg smart pointers) in this function will have lifetime of game!
 		//DEV-NOTE: this method should be kept simple, as it provides a high level overview of the engine.
@@ -69,6 +77,8 @@ namespace Engine
 
 			//game loop processes
 			onGameloopBeginning.broadcast();
+
+			initializationFunc(); //do user initialize just before first game loop.
 #if HTML_BUILD
 			emscripten_set_main_loop(&EngineBase::htmlTickMain, 60, /*simulate_infinite_loop*/true);
 #else
@@ -87,13 +97,16 @@ namespace Engine
 		//begin shutdown process
 		onShutDown();
 
-		//shutdown systems after game client has been shutdown
-		for (const sp<SystemBase>& system : systems) { system->shutdown(); }
-
 		//tick a few more times for any frame deferred processes
 		for (size_t shutdownTick = 0; shutdownTick < 3; ++shutdownTick) { tickGameloop_EngineBase(); }
 
+		//shutdown systems after game client has been shutdown
+		for (const sp<SystemBase>& system : systems) { if (system) { system->shutdown(); } }
+
 		onShutdownGameloopTicksOver.broadcast();
+
+		//disassociate static getters after shutdowns are complete. Doing this after allows systems to cross-reference while shutting down
+		for (const sp<SystemBase>& system : systems) { if (system) { system->registerGetter(SingletonOperation::REMOVE); } }
 	}
 
 	bool EngineBase::isEngineShutdown()
@@ -130,18 +143,27 @@ namespace Engine
 			//#consider having system pass a reference to the system time manager, rather than a float; That way critical systems can ignore manipulation time effects or choose to use time affects. Passing raw time means systems will be forced to use time effects (such as dilation)
 			for (const sp<SystemBase>& system : systems) { system->tick(deltaTimeSecs); }
 
+			///////////////////////
+			//UPDATE GAME LOGIC
+			///////////////////////
 			//NOTE: there probably needs to be a priority based pre/post loop; but not needed yet so it is not implemented (priorities should probably be defined in a single file via template specliazations)
 			onPreGameloopTick.broadcast(deltaTimeSecs);
 			tickGameLoop(deltaTimeSecs);
 			onPostGameloopTick.broadcast(deltaTimeSecs);
 
+			///////////////////////
+			//RENDER
+			///////////////////////
 			//cacheRenderDataForCurrentFrame(*renderSystem->getFrameRenderData_Write(frameNumber, identityKey));
+			renderSystem->clearScreen();
+			renderSystem->prepareRenderDataForFrame();
 			renderLoop_begin(deltaTimeSecs);
-			onRenderDispatch.broadcast(deltaTimeSecs); //perhaps this needs to be a sorted structure with prioritizes; but that may get hard to maintain. Needs to be a systematic way for UI to come after other rendering.
+			onRenderDispatch.broadcast(deltaTimeSecs); //LEAVING this to make porting easy - perhaps this needs to be a sorted structure with prioritizes; but that may get hard to maintain. Needs to be a systematic way for UI to come after other rendering.
+			renderSystem->onRenderDispatch.broadcast(deltaTimeSecs); //todo - make a more roboust render set up 
 			renderLoop_end(deltaTimeSecs);
 			onRenderDispatchEnded.broadcast(deltaTimeSecs);
 
-			//perhaps this should be a subscription service since few systems care about post render //TODO this sytem should probably be removed and instead just subscribe to delegate
+			//perhaps this should be a subscription service since few systems care about post render //TODO this system should probably be removed and instead just subscribe to delegate
 			for (const sp<SystemBase>& system : postRenderNotifys) { system->handlePostRender(); }
 		}
 
@@ -171,11 +193,17 @@ namespace Engine
 
 		//initialize time management systems; this is done after tick groups are created so that timeManager can set up tick groups at construction
 		systemTimeManager = timeSystem.createManager();
+		gameTimeManager = timeSystem.createManager();
 		timeSystem.markManagerCritical(TimeSystem::PrivateKey{}, systemTimeManager);
 
 		//create and register systems
 		windowSystem = new_sp<WindowSystem>();
+		validateSystemSpawned(windowSystem);
 		systems.insert(windowSystem);
+
+		renderSystem = createRenderSystemSubclass();
+		validateSystemSpawned(renderSystem);
+		systems.insert(renderSystem);
 
 		//assetSystem = new_sp<AssetSystem>();
 		//systems.insert(assetSystem);
@@ -195,9 +223,6 @@ namespace Engine
 		//debugRenderSystem = new_sp<DebugRenderSystem>();
 		//systems.insert(debugRenderSystem);
 
-		//renderSystem = new_sp<RenderSystem>();
-		//systems.insert(renderSystem);
-
 		//automatedTestSystem = new_sp<AutomatedTestSystem>();
 		//systems.insert(automatedTestSystem);
 
@@ -214,10 +239,36 @@ namespace Engine
 		//systems.insert(audioSystem);
 
 		//initialize custom subclass systems; 
-		//ctor warning: this is not done in EngineBase ctor because it systems may call EngineBase virtuals
+		//ctor warning: this is not done in EngineBase ctor because systems may call EngineBase virtuals
 		bCustomSystemRegistrationAllowedTimeWindow = true;
 		onRegisterCustomSystem();
 		bCustomSystemRegistrationAllowedTimeWindow = false;
+
+		for (sp<SystemBase> system : systems)
+		{
+			if (system)
+			{
+				system->registerGetter(SingletonOperation::REGISTER);
+
+				if (!system->hasRegisteredStaticGet())
+				{
+					throw std::runtime_error("system failed to set up static getter; did you forget to define a corret parent in the implement get macro?");
+				}
+			}
+		}
+	}
+
+	sp<Engine::RenderSystem> EngineBase::createRenderSystemSubclass()
+	{
+		return new_sp<RenderSystem>();
+	}
+
+	void EngineBase::validateSystemSpawned(const sp<SystemBase>& system)
+	{
+		if (system == nullptr)
+		{
+			throw std::runtime_error("failed to spawn required system! did you override a method but return null?");
+		}
 	}
 
 	//sp<Engine::CurveSystem> EngineBase::createCurveSystemSubclass()

@@ -505,6 +505,11 @@ namespace Engine
 
 
 
-
+	/** 
+		TODO:
+			Event<const sp<ICamera>& , const sp<ICamera>& , const std::size_t& > onPrimaryViewCameraChanging; //compiles
+			Event<const sp<ICamera>& , const sp<ICamera>& , const std::size_t > onPrimaryViewCameraChanging; //does not compile
+			^^fix that. (see RenderSystem.h)
+	*/
 
 }

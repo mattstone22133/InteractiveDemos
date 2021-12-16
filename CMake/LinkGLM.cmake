@@ -13,5 +13,6 @@ macro(LinkGLM TARGET ACCESS)
         FetchContent_Populate(glm)
     endif()
 
+    target_compile_definitions(${TARGET} PUBLIC GLM_FORCE_SILENT_WARNINGS=1) #silence glm warnings about nameless structs
     target_include_directories(${TARGET} ${ACCESS} ${glm_SOURCE_DIR})
 endmacro()

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.15 FATAL_ERROR)
 
 set(LIB_NAME TutorialEngine)
 
@@ -22,3 +22,7 @@ set_target_properties(${LIB_NAME} PROPERTIES
     CXX_STANDARD_REQUIRED YES
     CXX_EXTENSIONS NO)
 
+#set warnings to be compile errors
+set(CMAKE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../CMake) 
+include(${CMAKE_DIR}/WarningsAsErrors.cmake)
+WarningsAsErrors(${LIB_NAME})

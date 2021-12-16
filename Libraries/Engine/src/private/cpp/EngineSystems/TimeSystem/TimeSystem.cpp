@@ -66,7 +66,7 @@ namespace Engine
 	// Time Manager
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	void TimeManager::update(PrivateKey key, TimeSystem& timeSystem)
+	void TimeManager::update(PrivateKey /*key*/, TimeSystem& timeSystem)
 	{
 		////////////////////////////////////////////////////////
 		// updating state
@@ -320,11 +320,11 @@ namespace Engine
 	// Time System
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	void TimeSystem::updateTime(PrivateKey key)
+	void TimeSystem::updateTime(PrivateKey /*key*/)
 	{
 		bUpdatingTime = true;
 
-		float currentTime = static_cast<float>(glfwGetTime());
+		currentTime = static_cast<float>(glfwGetTime()); //note: porting code and this was a local variable, don't have unit tests set up to test change. but it was shadowing class var.
 		rawDeltaTimeSecs = currentTime - lastFrameTime;
 		rawDeltaTimeSecs = rawDeltaTimeSecs > MAX_DELTA_TIME_SECS ? MAX_DELTA_TIME_SECS : rawDeltaTimeSecs;
 		deltaTimeSecs = rawDeltaTimeSecs;

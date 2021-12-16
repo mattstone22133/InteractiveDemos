@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.15 FATAL_ERROR)
 
 set(LIB_NAME Engine)
 
@@ -9,7 +9,7 @@ file(GLOB_RECURSE sources CONFIGURE_DEPENDS src/*.cpp src/*.h)
 add_library(
     ${LIB_NAME} 
 	STATIC 
-    ${sources})
+    ${sources} "src/private/cpp/Geometry/ConeMesh_GpuBuffer.cpp")
 
 # set up the include directories
 target_include_directories(${LIB_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src/public/include/")
@@ -61,3 +61,7 @@ endif()
 	LinkGLM(${LIB_NAME} PUBLIC)
 
 # End Dependencies ===========================================================================================
+
+#set warnings to be compile errors
+include(${CMAKE_DIR}/WarningsAsErrors.cmake)
+WarningsAsErrors(${LIB_NAME})

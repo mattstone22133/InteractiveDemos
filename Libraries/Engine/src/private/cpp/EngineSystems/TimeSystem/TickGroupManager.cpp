@@ -36,7 +36,7 @@ namespace Engine
 	}
 
 
-	bool TickGroupManager::registerTickGroup(const TickGroupDefinition& tickgroup, const TickGroupKey& privateKey)
+	bool TickGroupManager::registerTickGroup(const TickGroupDefinition& tickgroup, const TickGroupKey& /*privateKey*/)
 	{
 		if (bTickgroupRegistrationActive)
 		{
@@ -55,12 +55,12 @@ namespace Engine
 		return false;
 	}
 
-	void TickGroupManager::start_TickGroupRegistration(const EngineBaseKey& privateKey)
+	void TickGroupManager::start_TickGroupRegistration(const EngineBaseKey& /*privateKey*/)
 	{
 		bTickgroupRegistrationActive = true;
 	}
 
-	void TickGroupManager::stop_TickGroupRegistration(const EngineBaseKey& privateKey)
+	void TickGroupManager::stop_TickGroupRegistration(const EngineBaseKey& /*privateKey*/)
 	{
 		localGroupCopies.clear();
 
