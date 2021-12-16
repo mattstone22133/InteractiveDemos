@@ -287,7 +287,7 @@ namespace Engine
 
 	std::pair<int, int> Window::getFramebufferSize()
 	{
-		static bool bLoggedAspectError = false;
+		//static bool bLoggedAspectError = false;
 		int width, height;
 		glfwGetFramebufferSize(window, &width, &height);
 		return std::make_pair(width, height);

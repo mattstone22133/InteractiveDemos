@@ -93,6 +93,7 @@ namespace TutorialEngine
 	}
 
 	ClickableVisualVector::ClickableVisualVector(const ClickableVisualVector& copy)
+		: VisualVector(copy)
 	{
 		if (&copy != this)
 		{

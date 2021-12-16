@@ -218,8 +218,12 @@ namespace TutorialEngine
 						raycastQuery.fovY_deg = glm::degrees<float>(rd->camera->getFOVy_rad());
 						raycastQuery.window = glfwWindow;
 
-						static std::vector<const TriangleList_SNO*> typedObjects;
-						static int oneTimeInit = [](std::vector<const TriangleList_SNO*>& typedObjects) {typedObjects.reserve(20); return 0; }(typedObjects);
+						//TODO revisit having a static array... that is bad. but fixing up compile issues during port on linux and dont want to reevaluate this right now.
+						static std::vector<const TriangleList_SNO*> typedObjects = []() {
+							std::vector<const TriangleList_SNO*> typedObjects;
+							typedObjects.reserve(20);
+							return typedObjects; 
+						}();
 						typedObjects.clear();
 
 						//gather objects from subclass in type safe way then convert them into form raycast can work with. This means casting will be safe.

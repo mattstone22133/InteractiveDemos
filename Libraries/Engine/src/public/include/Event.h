@@ -332,9 +332,9 @@ namespace Engine
 			{
 				const sp<WeakAgnosticSubscriber<Args...>>& sub = iter->second;
 
-				IEventSubscriber* key = iter->first;
-
-				assert(key == obj.get());
+				// IEventSubscriber* key = iter->first;
+				// assert(key == obj.get());
+				assert(/*key*/iter->first == obj.get());
 
 				/** see addStrong for notes on dynamic cast vs static cast potential */
 				if (sp<WeakSubscriber<T, Args...>> castSub = std::dynamic_pointer_cast<WeakSubscriber<T, Args...>>(sub))

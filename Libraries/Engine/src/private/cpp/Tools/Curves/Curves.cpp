@@ -1,4 +1,5 @@
 
+#include<cmath>
 #include "Tools/Curves/Curves.h"
 
 namespace Engine
@@ -16,7 +17,8 @@ namespace Engine
 	{
 		// math: https://stats.stackexchange.com/questions/214877/is-there-a-formula-for-an-s-shaped-curve-with-domain-and-range-0-1
 
-		float sigmoidSample = 1.f / (1 + std::powf(a / (1.f - a), -tuning));
+		//float sigmoidSample = 1.f / (1 + std::powf(a / (1.f - a), -tuning)); no powf on gcc?
+		float sigmoidSample = 1.f / (1 + std::pow(a / (1.f - a), -tuning));
 		return sigmoidSample;
 	}
 

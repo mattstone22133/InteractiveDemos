@@ -97,8 +97,9 @@ namespace TutorialEngine
 
 		animCurTime = bResetAnimation ? 0 : animCurTime;
 
-		const vec3 vecA_n = glm::normalize(vecA);
-		const vec3 vecB_n = glm::normalize(vecB);
+		//don't think these were actually used and were causing warnings, so commenting them out. but leaving here in case there is a logic flaw and we should be using normalized vectors, but porting too much stuff right now to change behaviors that may break things.
+		// const vec3 vecA_n = glm::normalize(vecA);
+		// const vec3 vecB_n = glm::normalize(vecB);
 
 		const size_t numPnts = lerpPoints.size();
 		for (size_t pnt = 0; pnt < numPnts; pnt++)

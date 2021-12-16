@@ -65,9 +65,9 @@ namespace Engine
 
 	private:
 		/** lifetime pointers get a special event that fires before the destroyed event; this prevents race conditions that may be rely on lifetime pointer features; this must remain private. See notes at broadcast. */
-		const sp< Event<> > onLifetimeOverEvent;
+		const sp< Event<> > onLifetimeOverEvent = nullptr;
 	public:
-		const sp< Event<const sp<GameObjectBase>&> > onDestroyedEvent;//pointer because this will create circular include if we define type here; Events operator on game entities
+		const sp< Event<const sp<GameObjectBase>&> > onDestroyedEvent = nullptr;//pointer because this will create circular include if we define type here; Events operator on game entities
 		bool isPendingDestroy() const { return bPendingDestroy; }
 
 		/** WARNING: think twice before using this; if you're given a ref/rawptr then the API may be trying to prevent you from holding a reference

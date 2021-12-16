@@ -6,7 +6,10 @@ macro(WarningsAsErrors TARGET)
 if ( CMAKE_COMPILER_IS_GNUCC )
     target_compile_options("${TARGET}" PRIVATE -Wall -Wextra) #compiler warnings as errors
     # clang/gcc use -Wunused-parameter.
-    target_compile_options("${TARGET}" PRIVATE -Wl --fatal-warnings) #linker warnings as errors
+
+    #below do not seem to work with gcc
+    #target_compile_options("${TARGET}" PRIVATE --fatal-warnings) #linker warnings as errors (doesn't seem to work)
+    #target_compile_options("${TARGET}" PRIVATE -Wl) #linker warnings as errors (doesn't seem to work)
 endif()
 if ( MSVC )
     target_compile_options("${TARGET}" PRIVATE /W4) #treat compiler warnigns as errors

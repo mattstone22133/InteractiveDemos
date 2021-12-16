@@ -26,8 +26,8 @@ namespace Engine
 
 
 	GameObjectBase::GameObjectBase()
-		: onDestroyedEvent(new_sp<Event<const sp<GameObjectBase>&>>())
-		, onLifetimeOverEvent(new_sp<Event<>>())
+		: onLifetimeOverEvent(new_sp<Event<>>())
+		, onDestroyedEvent(new_sp<Event<const sp<GameObjectBase>&>>())
 	{
 	}
 
