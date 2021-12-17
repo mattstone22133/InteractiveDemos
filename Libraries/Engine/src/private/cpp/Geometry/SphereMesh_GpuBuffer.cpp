@@ -5,11 +5,11 @@ namespace Engine
 {
 	SphereMesh_GpuBuffer::SphereMesh_GpuBuffer()
 	{
-		SphereGenerator sphereRawData{};
+		//higher tolerance has less verts
+		SphereGenerator sphereRawData{0.02f};
 
 		setPositions(sphereRawData.getPositions());
 		setNormals(sphereRawData.getNormals());
-
+		setElementIndices(sphereRawData.getTriangleElementIndices());
 	}
 }
-

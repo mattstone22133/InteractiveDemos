@@ -215,6 +215,8 @@ namespace Engine
 				ec(glDeleteShader(fragmentShader));
 			}
 		}
+
+		initParams.uniformInitializerFunc(*this);
 	}
 
 	void Shader::onReleaseGPUResources()

@@ -13,6 +13,7 @@ namespace TutorialEngine
 	// statics
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/*static*/int TutorialEngine::VisualPoint::numInstances = 0;
+
 	/*static*/sp<Engine::SphereMesh_GpuBuffer> VisualPoint::pointMesh = nullptr;
 	/*static*/sp<Engine::Shader> VisualPoint::pointShader = nullptr;
 
@@ -42,15 +43,17 @@ namespace TutorialEngine
 					varying vec3 worldNormal;
 					varying vec2 fragUV;
 
-					uniform mat4 model = mat4(1.0f);
-					uniform mat4 projection_view = mat4(1.0f);
+					uniform highp mat4 model;// = mat4(1.0);
+					uniform highp mat4 normal_matrix;// = mat4(1.0);
+					uniform highp mat4 projection_view;// = mat4(1.0);
 
 					void main(){
-						worldPos = (model * vec4(position,1.f)).xyz;
-						worldNormal = normalize((inverse(transpose(model)) * vec4(normal, 0.f)).xyz);
+						worldPos = (model * vec4(position,1.0)).xyz;
+						//worldNormal = normalize( (inverse(transpose(model)) * vec4(normal, 0.0)).xyz);  //inverse not presentin gles2
+						worldNormal = normalize( normal_matrix * vec4(normal, 0.0)).xyz;
 						fragUV = uv;
 
-						gl_Position = projection_view * vec4(worldPos, 1.f);
+						gl_Position = projection_view * vec4(worldPos, 1.0);
 					}
 				)";
 			sphereShaderInit.fragment_src = R"(
@@ -58,47 +61,47 @@ namespace TutorialEngine
 					varying highp vec3 worldNormal;
 					varying highp vec2 fragUV;
 
-					uniform vec3 dirLight = normalize(vec3(-1,-1,-1));
-					uniform vec3 solidColor = vec3(1,0,0);
-					uniform bool bUseLight = false;
-					uniform bool bUseTexture = false;
-					uniform bool bUseCameraLight = false;
-					uniform vec3 cameraPos = vec3(0,0,0);
+					uniform highp vec3 dirLight;		// = normalize(vec3(-1,-1,-1));
+					uniform mediump vec3 solidColor;	// = vec3(1,0,0);
+					uniform lowp int bUseLight;			// = false;
+					uniform lowp int bUseCameraLight;	// = false;
+					uniform highp vec3 cameraPos;		// = vec3(0,0,0);
 
-					struct Material
-					{
-						sampler2D texture_diffuse0;
-					};
-					uniform Material material;					
-
+					//NOTE: I removed a lot of texture usage during porting, if that is needed, perhaps best to go back to source and re-port this shader.
 					void main()
 					{
-						vec4 diffuseTexture = texture(material.texture_diffuse0, fragUV); //wasteful as we may not use this, but since this is demo leaving as it
-
-						if(bUseLight)
+						if(bUseLight != 0)
 						{
-							vec3 toLight_n = bUseCameraLight ? normalize(cameraPos - worldPos) : normalize(dirLight);
-							float diffuseFactor = max(dot(toLight_n, worldNormal.xyz),0);
+							highp vec3 toLight_n = bUseCameraLight != 0 ? normalize(cameraPos - worldPos) : normalize(dirLight);
+							highp float diffuseFactor = max(dot(toLight_n, worldNormal.xyz), 0.0);
 
-							vec3 colorToUse = bUseTexture ? diffuseTexture.xyz : solidColor.xyz;
-							vec3 diffuse = colorToUse * diffuseFactor;
-							vec3 ambient = colorToUse * 0.05;
-							gl_FragColor = vec4(ambient+diffuse, 1.0f);
+							highp vec3 colorToUse = solidColor.xyz;
+							highp vec3 diffuse = colorToUse * diffuseFactor;
+							highp vec3 ambient = colorToUse * 0.05;
+							gl_FragColor = vec4(ambient+diffuse, 1.0);
 						}
 						else
 						{
-							if(bUseTexture)
-							{
-								gl_FragColor = vec4(diffuseTexture.rgb, 1.0f);
-							}
-							else
-							{
-								gl_FragColor = vec4(solidColor.rgb, 1.0f);
-							}
+							gl_FragColor = vec4(solidColor.rgb, 1.0);
 						}
 					}
 				)";
-			pointShader = new_up<Engine::Shader>(sphereShaderInit);
+			sphereShaderInit.uniformInitializerFunc = [](class Engine::Shader& shader) 
+			{
+				//VERTEX
+				shader.setMat4("model", glm::mat4(1.0f));
+				shader.setMat4("normal_matrix", glm::mat4(1.0f));
+				shader.setMat4("projection_view", glm::mat4(1.0f));
+
+				//FRAGMENT
+				shader.setUniform3f("dirLight", glm::normalize(glm::vec3(-1, -1, -1)));
+				shader.setUniform3f("solidColor", glm::vec3(1, 0, 0));
+				shader.setUniform1i("bUseLight", 0);
+				//shader.setUniform1i("bUseTexture", 0);
+				shader.setUniform1i("bUseCameraLight", 0);
+				shader.setUniform3f("cameraPos", glm::vec3(0, 0, 0));
+			};
+			pointShader = new_sp<Engine::Shader>(sphereShaderInit);
 			//pointMesh = new_sp<StaticMesh::Model>("./assets/models/sphere/ico_sphere.obj");
 			pointMesh = new_sp<Engine::SphereMesh_GpuBuffer>(); //#todo #static_mesh_refactor need to specify radius to keep parity 
 		}
@@ -141,6 +144,16 @@ namespace TutorialEngine
 		return *this;
 	}
 
+	void VisualPoint::onAcquireGPUResources()
+	{
+		//todo initialize shader variables on NEXT TICK
+		//Engine::EngineBase::get().getGameTimeManager().createTimer()
+	}
+
+	void VisualPoint::onReleaseGPUResources()
+	{
+	}
+
 	void VisualPoint::render(const glm::mat4& projection_view, std::optional<glm::vec3> cameraPos) const
 	{
 		if (pointShader 
@@ -149,6 +162,7 @@ namespace TutorialEngine
 		{
 			pointShader->use();
 			pointShader->setMat4("model", pod.cachedXform);
+			pointShader->setMat4("normal_matrix", pod.cachedNormalMatrix);
 			pointShader->setMat4("projection_view", projection_view);
 			pointShader->setUniform3f("solidColor", color);
 
@@ -186,6 +200,7 @@ namespace TutorialEngine
 		pod.cachedXform = glm::translate(glm::mat4(1.f), pod.position);
 		pod.cachedXform = glm::scale(pod.cachedXform, glm::vec3(0.025f)); //always scale down to give intuitive feel for scale 1.0f
 		pod.cachedXform = glm::scale(pod.cachedXform, pod.scale);
+		pod.cachedNormalMatrix = glm::inverse(glm::transpose(pod.cachedXform));
 		onValuesUpdated(pod);
 		eventValuesUpdated.broadcast(*this);
 	}

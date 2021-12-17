@@ -4,6 +4,7 @@
 #include "Transform.h"
 #include "GameObjectBase.h"
 #include "Event.h"
+#include "EngineSystems/RenderSystem/Rendering/GPUResource.h"
 
 namespace Engine{ class Shader;}
 namespace Engine { class SphereMesh_GpuBuffer; }
@@ -12,7 +13,7 @@ namespace TutorialEngine{struct LineRenderer;}
 namespace TutorialEngine
 {
 	/** This is a quick copy-paste modification of visual vector, if anything appears strange look at that class for reference. */
-	class VisualPoint : public Engine::GameObjectBase
+	class VisualPoint : public Engine::GPUResource
 	{
 	public:
 		VisualPoint();
@@ -41,10 +42,14 @@ namespace TutorialEngine
 			glm::vec3 position{ 0.f };
 			glm::vec3 scale{ 1.f };
 			glm::mat4 cachedXform{ 1.f };
+			glm::mat4 cachedNormalMatrix{ 1.f };
 		};
 	private:
 		POD pod;
 		virtual void onValuesUpdated(const struct POD& /*values*/) {};
+	protected:
+		virtual void onAcquireGPUResources() override;
+		virtual void onReleaseGPUResources() override;
 	private:
 		static int numInstances;
 		static sp<Engine::SphereMesh_GpuBuffer> pointMesh;

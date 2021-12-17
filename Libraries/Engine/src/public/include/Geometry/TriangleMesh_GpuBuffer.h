@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <cstdint>
 
 #include <Utils/MathUtils.h>
 #include <Event.h>
@@ -21,20 +22,23 @@ namespace Engine
 		bool bBufferedOnGpu = false;
 		std::vector<glm::vec3> positions;
 		std::vector<glm::vec3> normals;
+		std::vector<uint32_t> elementIndices;
 		uint32_t vboPositions = 0;
 		uint32_t vboNormals = 0;
+		uint32_t ebo = 0;
 		uint32_t attributeLoc_vboPositions = 0;
 		uint32_t attributeLoc_vboNormals = 0;
 	public: 
-		const char* attributeShaderName_Positions = "positions";
-		const char* attributeShaderName_Normals = "normals";
-
+		const char* attributeShaderName_Positions = "position";
+		const char* attributeShaderName_Normals = "normal";
+		bool bRenderWireframe = false;
 	public:
 		TriangleMesh_GpuBuffer();
 		virtual ~TriangleMesh_GpuBuffer();
 
 		void setPositions(const std::vector<glm::vec3>& positions);
 		void setNormals(const std::vector<glm::vec3>& normals);
+		void setElementIndices(const std::vector<uint32_t>& elementIndices);
 
 		void cacheAttribLocations(Shader& shader);
 		void render(Shader& shader, const bool callUseShader = true);	//reads shader to find attribute locations

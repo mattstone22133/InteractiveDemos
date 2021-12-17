@@ -43,6 +43,7 @@ namespace TutorialEngine
 			glm::vec3 dir_n{ 1.f,0.f,0.f };
 			glm::vec3 dir{ 1.f,0.f,0.f };
 			glm::mat4 cachedTipXform{ 1.f };
+			glm::mat4 cachedNormalMatrix{ 1.f };
 		};
 	private:
 		POD pod;

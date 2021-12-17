@@ -53,6 +53,24 @@ namespace Engine
 		}
 	}
 
+	void TriangleMesh_GpuBuffer::setElementIndices(const std::vector<uint32_t>& inElementIndices)
+	{
+		const bool bGpuHasOldData = hasAcquiredResources();
+		if (bGpuHasOldData)
+		{
+			//ideally this doesn't happen, but handle it gracefully; albeit expensively
+			onReleaseGPUResources();
+		}
+
+		elementIndices = inElementIndices;
+
+		if (bGpuHasOldData)
+		{
+			// since gpu already had resoures, context must be available already; so go ahead and reallocate
+			onAcquireGPUResources();
+		}
+	}
+
 	void TriangleMesh_GpuBuffer::cacheAttribLocations(class Shader& shader)
 	{
 		if (positions.size() > 0)
@@ -105,6 +123,13 @@ namespace Engine
 			ec(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(vec3), reinterpret_cast<void*>(0)));
 			ec(glEnableVertexAttribArray(1));
 		}
+
+		if (elementIndices.size() > 0)
+		{
+			ec(glGenBuffers(1, &ebo));
+			ec(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo));
+			ec(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * elementIndices.size(), elementIndices.data(), GL_STATIC_DRAW));
+		}
 	}
 
 	void TriangleMesh_GpuBuffer::onReleaseGPUResources()
@@ -119,6 +144,10 @@ namespace Engine
 			if (glIsBuffer(vboNormals))
 			{
 				ec(glDeleteBuffers(1, &vboNormals));
+			}
+			if (glIsBuffer(ebo))
+			{
+				glDeleteBuffers(1, &ebo);
 			}
 		}
 	}
@@ -142,7 +171,23 @@ namespace Engine
 			ec(glEnableVertexAttribArray(attributeLoc_vboNormals));
 		}
 
-		ec(glDrawArrays(GL_TRIANGLES, 0, GLsizei(positions.size())));
+		uint32_t TriangleRenderMode = bRenderWireframe ? GL_LINE_LOOP : GL_TRIANGLES;
+		if (elementIndices.size() > 0)
+		{
+			// todo -- debug overfow check for very large models converting from size_t to GLsizei
+
+			//draw with elements if we have element indices.
+			ec(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo));
+			ec(glDrawElements(TriangleRenderMode, GLsizei(elementIndices.size()), GL_UNSIGNED_INT, reinterpret_cast<void*>(0)));
+		}
+		else
+		{
+			// todo -- debug overfow check for very large models converting from size_t to GLsizei
+
+			//draw triangles if not using elements
+			ec(glDrawArrays(TriangleRenderMode, 0, GLsizei(positions.size())));
+		}
+
 	}
 
 }

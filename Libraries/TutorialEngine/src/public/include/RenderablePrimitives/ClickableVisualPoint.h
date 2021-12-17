@@ -47,9 +47,8 @@ namespace TutorialEngine
 	// Visual vector that allows user interaction with its ends
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	struct ClickableVisualPoint :
-		public TutorialEngine::VisualPoint,
+		public TutorialEngine::VisualPoint
 		//public std::enable_shared_from_this<ClickableVisualPoint>,
-		public Engine::IEventSubscriber
 	{
 		ClickableVisualPoint();
 		//ClickableVisualPoint(const ClickableVisualPoint& copy);

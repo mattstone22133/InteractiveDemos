@@ -9,7 +9,7 @@ file(GLOB_RECURSE sources CONFIGURE_DEPENDS src/*.cpp src/*.h)
 add_library(
     ${LIB_NAME} 
 	STATIC 
-    ${sources} "src/private/cpp/Geometry/ConeMesh_GpuBuffer.cpp")
+    ${sources})
 
 # set up the include directories
 target_include_directories(${LIB_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src/public/include/")

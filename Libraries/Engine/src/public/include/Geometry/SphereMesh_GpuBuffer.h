@@ -8,4 +8,5 @@ namespace Engine
 	public:
 		SphereMesh_GpuBuffer();
 	};
+	
 }

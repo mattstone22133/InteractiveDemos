@@ -220,9 +220,9 @@ namespace TutorialEngine
 
 						//TODO revisit having a static array... that is bad. but fixing up compile issues during port on linux and dont want to reevaluate this right now.
 						static std::vector<const TriangleList_SNO*> typedObjects = []() {
-							std::vector<const TriangleList_SNO*> typedObjects;
-							typedObjects.reserve(20);
-							return typedObjects; 
+							std::vector<const TriangleList_SNO*> tempTypedObjects;
+							tempTypedObjects.reserve(20);
+							return tempTypedObjects; 
 						}();
 						typedObjects.clear();
 

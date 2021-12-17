@@ -32,6 +32,8 @@ namespace Engine
 			std::optional<std::string> compute_src;
 #endif //ENABLE_MODERN_OPENGL_SHADERS
 			std::optional<std::string> fragment_src;
+
+			std::function<void(class Engine::Shader& shader)> uniformInitializerFunc = [](class Engine::Shader& /*shader*/) {};
 		};
 
 	public:

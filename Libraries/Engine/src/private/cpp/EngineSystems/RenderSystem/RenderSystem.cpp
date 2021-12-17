@@ -41,9 +41,15 @@ namespace Engine
 
 	void RenderSystem::clearScreen()
 	{
-		//TODO: would like to avoid opengl code here, and maybe create an abstraction for hardware resources.
-		ec(glClearColor(0.f, 0.f, 0.f, 0.f));
+		ec(glEnable(GL_DEPTH_TEST));
+		ec(glEnable(GL_STENCIL_TEST)); //enabling to ensure that we clear stencil every frame (may not be necessary)
+		ec(glStencilMask(0xff)); //enable complete stencil writing so that clear will clear stencil buffer (also, not tested if necessary)
+
+		ec(glClearColor(0.f, 0.f, 0.f, 1.f));
 		ec(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
+
+		ec(glStencilMask(0x0)); //we cleared stencil buffer, stop writing to stencil buffer.
+		ec(glDisable(GL_STENCIL_TEST)); //only enable stencil test on demand
 	}
 
 	void RenderSystem::prepareRenderDataForFrame(std::size_t renderCameraIndex/*= 0*/)
