@@ -16,8 +16,7 @@ file(COPY ${TUTORIAL_ENGINE_PRELOAD_SOURCE} DESTINATION ${CMAKE_CURRENT_BINARY_D
 
 # if html build, instruct files to be preloaded, so that they can be loaded (eg textures)
 include(${SHARED_CMAKE_UTILITES_DIR}/UtilitiesHTML.cmake) #variable should be defined at toplevel cmakelists.txt
-HTMLPreloadDirectory(${EXECUTABLE_NAME} "./Applications/BarycentricCoordinates/PreloadAssets/@PreloadAssets") #@ symbol renames path on left of @ to path on right of @; ie old/path@newpath
-
+HTMLPreloadDirectory(${EXECUTABLE_NAME} "${CMAKE_CURRENT_BINARY_DIR}/PreloadAssets/@PreloadAssets") #@ symbol renames path on left of @ to path on right of @; ie old/path@newpath
 
 set_target_properties(${EXECUTABLE_NAME} PROPERTIES
     CXX_STANDARD 17
