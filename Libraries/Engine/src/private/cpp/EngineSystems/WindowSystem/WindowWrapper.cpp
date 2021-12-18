@@ -212,6 +212,7 @@ namespace Engine
 		//must be done everytime something is rendered to this window
 		glfwMakeContextCurrent(window);
 		post_context_init_setup();
+		//glfwSwapInterval(0);
 
 		//I believe GLAD proc address only needs to happen once
 		if (!gladLoaded)

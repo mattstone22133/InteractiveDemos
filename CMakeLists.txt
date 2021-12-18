@@ -16,6 +16,8 @@ else()
 endif()
 message(STATUS "HTML_BUILD Value: ${HTML_BUILD}")
 
+set(SHARED_CMAKE_UTILITES_DIR "${CMAKE_CURRENT_LIST_DIR}/CMake" CACHE STRING "global location to include helpers from" FORCE) 
+
 # --------------------------------------------------------------
 # Set up libraries
 # --------------------------------------------------------------

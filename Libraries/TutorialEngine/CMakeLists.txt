@@ -6,6 +6,12 @@ project(${LIB_NAME} CXX)
 
 file(GLOB_RECURSE sources CONFIGURE_DEPENDS src/*.cpp src/*.h)
 
+#prepare copy assets to build directory
+set(TUTORIAL_ENGINE_PRELOAD_SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/PreloadAssets/ CACHE BOOL "directory with tutorial engine preload assets" FORCE) 
+set(TUTORIAL_ENGINE_PRELOAD_DESTINATION /PreloadAssets/${LIB_NAME} CACHE BOOL "the subdirectory for the current building executable" FORCE) 
+#file(COPY ${TUTORIAL_ENGINE_PRELOAD_SOURCE} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/${TUTORIAL_ENGINE_PRELOAD_DESTINATION})
+
+
 add_library(
     ${LIB_NAME} STATIC 
     ${sources}
@@ -26,3 +32,4 @@ set_target_properties(${LIB_NAME} PROPERTIES
 set(CMAKE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../CMake) 
 include(${CMAKE_DIR}/WarningsAsErrors.cmake)
 WarningsAsErrors(${LIB_NAME})
+

@@ -83,6 +83,7 @@ namespace TutorialEngine
 	protected:
 		/** override this to provide the list of objects you want to be tested when ray casting*/
 		virtual void gatherInteractableCubeObjects(std::vector<const TriangleList_SNO*>& objectList) = 0;
+		virtual void handleCursorPositionUpdated(double x, double y);
 	public:
 		uint32_t selectMouseButton = /*GLFW_MOUSE_BUTTON_RIGHT*/ 1;
 	protected://state

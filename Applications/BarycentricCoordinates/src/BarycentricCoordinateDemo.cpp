@@ -196,8 +196,9 @@ void BarycentricsDemo::init()
 	RenderSystem::get().setRenderCamera(quatCam);
 
 	triRender = new_sp<TutorialEngine::ImmediateTriangle>();
-	font = new_sp<Engine::Montserrat_BMF>("./assets/textures/font/Montserrat_ss_alpha_1024x1024_wb.png");
-
+	font = new_sp<Engine::Montserrat_BMF>("./PreloadAssets/TutorialEngine/font/Montserrat_ss_alpha_1024x1024_wb.png");
+	//font = new_sp<Engine::Montserrat_BMF>("./TutorialEngine/font/Montserrat_ss_alpha_1024x1024_wb.png");
+	
 	pntA = new_sp<TutorialEngine::ClickableVisualPoint>();
 	pntB = new_sp<TutorialEngine::ClickableVisualPoint>();
 	pntC = new_sp<TutorialEngine::ClickableVisualPoint>();
@@ -209,7 +210,7 @@ void BarycentricsDemo::init()
 	pntA->setPosition(triPoint_A);
 	pntB->setPosition(triPoint_B);
 	pntC->setPosition(triPoint_C);
-
+	
 	//testPoint->setPosition(0.33f*triPoint_A + 0.33f*triPoint_B + 0.33f*triPoint_C);
 
 	//doing some tests to see if calculations match positions
@@ -825,8 +826,8 @@ int main()
 	std::cout << "Barycentric Coordinate Started" << std::endl;
 
 	sp<TutorialUtils::TutorialEngine> engine = new_sp<TutorialUtils::TutorialEngine>();
-	engine->start([&](){
+	engine->start([&]() {
 		static sp<SceneNode> applicationLifetimeObject = new_sp<BarycentricsDemo>();
 		engine->addToRoot(applicationLifetimeObject);
-	});
+		});
 }

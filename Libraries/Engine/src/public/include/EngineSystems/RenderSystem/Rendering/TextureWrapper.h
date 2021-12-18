@@ -22,7 +22,9 @@ namespace Engine
 		{
 			const char* exe_relative_filepath = "";
 			int texture_unit = -1;
+#ifdef MODERN_OPENGL
 			bool useGammaCorrection = false;
+#endif //MODERN_OPENGL
 			bool bGenerateMips = true;
 		};
 

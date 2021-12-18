@@ -12,6 +12,7 @@
 #include "SceneNode.h"
 #include "EngineSystems/RenderSystem/RenderSystem.h"
 #include "EngineSystems/TimeSystem/TickGroupManager.h"
+#include "EngineSystems/WindowSystem/WindowSystem.h"
 #include "EngineSystems/WindowSystem/WindowWrapper.h"
 #include "Engine.h"
 
@@ -150,7 +151,7 @@ namespace TutorialEngine
 				vec3 camFront = rd->camera->getFront();
 				vec3 planePnt = camPos + camFront * lineCreationDistFromCamera;
 
-				vec3 scale{ lineCreationDistFromCamera * 4 }; //this is a rather abritray value that is somewhat related to the camera
+				vec3 scale{ lineCreationDistFromCamera * 4 }; //this is a rather arbitrary value that is somewhat related to the camera
 
 				planeRenderer->renderPlane(planePnt, -camFront, scale, vec4(vec3(0.1f), 1), rd->projection_view);
 			}
@@ -191,6 +192,12 @@ namespace TutorialEngine
 		instanceCount++;
 
 		RenderSystem::get().onRenderDispatch.addWeakObj(sp_this(), &InteractableDemoBase::render_game);
+
+		//TEST INPUT DELAY
+		if (const sp<Window>& primaryWindow = WindowSystem::get().getPrimaryWindow())
+		{
+			primaryWindow->cursorPosEvent.addWeakObj(sp_this(), &InteractableDemoBase::handleCursorPositionUpdated);
+		}
 	}
 
 	void InteractableDemoBase::inputPoll(float dt_sec)
@@ -383,8 +390,6 @@ namespace TutorialEngine
 			//	}
 			//}
 		}
-
-
 	}
 
 	std::optional<glm::vec3> InteractableDemoBase::getDrawLineStart()
@@ -420,6 +425,14 @@ namespace TutorialEngine
 	{
 		//default do nothing so base classes can call super
 	}
+
+	void InteractableDemoBase::handleCursorPositionUpdated(double /*x*/, double /*y*/)
+	{
+		//TODO properly hook up mouse updates; but this doesn't seem to have an effect on percieved mouse lag for barycentric demo, so not properly hooking up at the moment.
+		//float dt_sec = Engine::EngineBase::get().getGameTimeManager().getDeltaTimeSecs();
+		//inputPoll(dt_sec);
+	}
+
 
 	/*static*/ sp<TutorialEngine::TriangleListDebugger> InteractableDemoBase::debugCubeRenderer = nullptr;
 	/*static*/ sp<TutorialEngine::LineRenderer> InteractableDemoBase::lineRenderer = nullptr;

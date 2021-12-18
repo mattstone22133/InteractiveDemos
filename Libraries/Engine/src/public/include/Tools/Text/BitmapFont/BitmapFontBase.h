@@ -60,6 +60,7 @@ namespace Engine
     void main(){
         gl_FragColor = texture2D(texture0, uvCoord);
         gl_FragColor = gl_FragColor * vec4(color, 1.0);
+
         if(gl_FragColor.a == 0.0) {
             discard;
         }

@@ -80,7 +80,7 @@ namespace Engine
 
 			initializationFunc(); //do user initialize just before first game loop.
 #if HTML_BUILD
-			emscripten_set_main_loop(&EngineBase::htmlTickMain, 60, /*simulate_infinite_loop*/true);
+			emscripten_set_main_loop(&EngineBase::htmlTickMain, 0, /*simulate_infinite_loop*/true);
 #else
 			while (!bExitGame)
 			{

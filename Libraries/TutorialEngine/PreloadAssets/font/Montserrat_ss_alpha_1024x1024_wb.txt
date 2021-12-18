@@ -1,0 +1,9 @@
+This bitmap font was built from 
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
+    which appears to be related to This
+        https://fonts.google.com/specimen/Montserrat#standard-styles
+    
+    from what I gather, it is from
+        https://github.com/JulietaUla/Montserrat
+
+    please refer to that github for information regarding usage. 
