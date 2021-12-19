@@ -61,7 +61,7 @@ namespace Engine
         gl_FragColor = texture2D(texture0, uvCoord);
         gl_FragColor = gl_FragColor * vec4(color, 1.0);
 
-        if(gl_FragColor.a == 0.0) {
+        if(gl_FragColor.a <= 0.1) {
             discard;
         }
     }
@@ -189,7 +189,7 @@ namespace Engine
 
 			TextureWrapper::TextureInitParams texInit;
 			texInit.exe_relative_filepath = exe_relative_texture_file_path;
-			texInit.bGenerateMips = false;
+			texInit.bGenerateMips = true;
 
 			fontTexture = new_sp<TextureWrapper>(texInit);
 			defaultGlyph = new_sp<GlyphRenderer>(shader, fontTexture, glm::vec2(0.f, 0.8f), 0.1f, 0.1f); //perhaps should not show anything? Will probably be more useful when debugging to see something
