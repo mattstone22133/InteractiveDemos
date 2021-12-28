@@ -12,6 +12,7 @@
 #include "Utils/Platform/OpenGLES2/PlatformOpenGLESInclude.h"
 #include "Utils/Platform/OpenGLES2/OpenGLES2Utils.h"
 #include "EngineSystems/TimeSystem/TickGroupManager.h"
+#include "EngineSystems/EditorUISystem/EditorUISystem.h"
 
 namespace Engine
 {
@@ -204,6 +205,10 @@ namespace Engine
 		renderSystem = createRenderSystemSubclass();
 		validateSystemSpawned(renderSystem);
 		systems.insert(renderSystem);
+
+		sp<SystemBase> editorUISystem = new_sp<UISystem_Editor>();
+		validateSystemSpawned(editorUISystem);
+		systems.insert(editorUISystem);
 
 		//assetSystem = new_sp<AssetSystem>();
 		//systems.insert(assetSystem);

@@ -73,7 +73,7 @@ namespace TutorialEngine
 	public: //api
 		virtual void init();
 		virtual void render_game(float dt_sec);
-		virtual void render_UI(float dt_sec);
+		virtual void render_UI();
 		virtual void inputPoll(float dt_sec);
 		virtual void tick(float dt_sec);
 	public:
@@ -93,8 +93,10 @@ namespace TutorialEngine
 		bool bDrawDebugCubes = false;
 		bool bDebugLastRay = false;
 		bool bDrawInteractionPlane = false;
+		bool bEnableDebugUI = false;
 	protected:
 		bool bInitOnPostConstruct = true;
+		bool bRegisterEditorUiOnPostConstruct = true;
 		bool bRenderLineGeneration = true;
 		float lineCreationDistFromCamera = 5.0f;
 		float lineCreationDistAdjustSpeedSec = 5.0f;

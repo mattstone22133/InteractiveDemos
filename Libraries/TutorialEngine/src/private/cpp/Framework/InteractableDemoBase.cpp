@@ -4,9 +4,13 @@
 #include "GeometryData/TriangleCube.h"
 
 //#todo #port #imgui
-//#include <imgui.1.69.gl/imgui.h>
-//#include <imgui.1.69.gl/imgui_impl_glfw.h>
-//#include <imgui.1.69.gl/imgui_impl_opengl3.h>
+//#define  WITH_IMGUI 1
+#if WITH_IMGUI
+#include <imgui.h>
+#include <backends/imgui_impl_glfw.h>
+#include <backends/imgui_impl_opengl3.h>
+#include "EngineSystems/EditorUISystem/EditorUISystem.h"
+#endif // WITH_IMGUI
 
 #include <cstdint>
 #include "SceneNode.h"
@@ -111,6 +115,12 @@ namespace TutorialEngine
 		{
 			init();
 		}
+		if (bRegisterEditorUiOnPostConstruct)
+		{
+#if WITH_IMGUI
+			UISystem_Editor::get().onUIFrameStarted.addWeakObj(sp_this(), &InteractableDemoBase::render_UI);
+#endif //WITH_IMGUI
+		}
 
 		Engine::EngineBase::get().getGameTimeManager().getEvent(TickGroups::get().GAME).addWeakObj(sp_this(), &InteractableDemoBase::tick);
 	}
@@ -158,22 +168,22 @@ namespace TutorialEngine
 		}
 	}
 
-	void InteractableDemoBase::render_UI(float /*dt_sec*/)
+	void InteractableDemoBase::render_UI()
 	{
+#if WITH_IMGUI
 		//#todo #port #imgui
-#define TEMP_DISABLE_IMGUI 1
-#if !TEMP_DISABLE_IMGUI
+		//#todo not sure tehse should exist in the base intractable demo
 		ImGui::SetNextWindowPos({ 0, 0 });
 		ImGuiWindowFlags flags = 0;
 		ImGui::Begin("Interactable Demo Debug Window", nullptr, flags);
-		if (WindowManager::bEnableDebugUI)
+		if (bEnableDebugUI)
 		{
 			ImGui::Checkbox("draw debug cubes", &bDrawDebugCubes);
 			ImGui::Checkbox("debug ray cast", &bDebugLastRay);
 			ImGui::Checkbox("draw interaction plane", &bDrawInteractionPlane);
 		}
 		ImGui::End();
-#endif //#if !TEMP_DISABLE_IMGUI
+#endif // WITH_IMGUI
 	}
 
 	void InteractableDemoBase::init()

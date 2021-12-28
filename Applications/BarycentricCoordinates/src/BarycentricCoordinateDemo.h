@@ -44,7 +44,7 @@ protected:
 	void renderGame_Barycentric_OptimizedProjectionMethod(float dt_sec);
 	void renderGame_Barycentric_AreaMethod(float dt_sec);
 	void renderGame_Barycentric_SolvingLinearSystem(float dt_sec);
-	virtual void render_UI(float dt_sec) override;
+	virtual void render_UI() override;
 	virtual void tick(float dt_sec) override;
 	virtual void gatherInteractableCubeObjects(std::vector<const TriangleList_SNO*>& objectList) override;
 	void handleTestPointUpdated(const TutorialEngine::VisualPoint& pnt);

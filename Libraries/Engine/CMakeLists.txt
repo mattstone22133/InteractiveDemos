@@ -9,7 +9,7 @@ file(GLOB_RECURSE sources CONFIGURE_DEPENDS src/*.cpp src/*.h)
 add_library(
     ${LIB_NAME} 
 	STATIC 
-    ${sources})
+    ${sources} "src/public/include/ThirdParty/Imgui/DesktopGLES2LoaderWorkaround.h")
 
 # set up the include directories
 target_include_directories(${LIB_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src/public/include/")
@@ -56,12 +56,16 @@ else()
 	target_link_options(${LIB_NAME} PUBLIC -lopenal)		#link in emscripten OpenAL for audio.
 endif()
 
-	# add in glm math functions to all builds
-	include(${CMAKE_DIR}/LinkGLM.cmake)
-	LinkGLM(${LIB_NAME} PUBLIC)
+# add in glm math functions to all builds
+include(${CMAKE_DIR}/LinkGLM.cmake)
+LinkGLM(${LIB_NAME} PUBLIC)
 
-	include(${CMAKE_DIR}/LinkSTB.cmake)
-	LinkSTB(${LIB_NAME} PUBLIC)
+include(${CMAKE_DIR}/LinkSTB.cmake)
+LinkSTB(${LIB_NAME} PUBLIC)
+
+# imgui is specific to engine project because of work arounds and is in a director relative to engine library.
+include(${CMAKE_CURRENT_LIST_DIR}/CMake/EngineLinkImgui.cmake)
+#EngineLinkIMGUI(${LIB_NAME} PUBLIC)
 	
 
 # End Dependencies ===========================================================================================

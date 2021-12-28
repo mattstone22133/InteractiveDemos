@@ -11,6 +11,12 @@
 #include "Tools/Text/BitmapFont/Montserrat_BMF.h"
 #include "Utils/MathUtils.h"
 
+#if WITH_IMGUI
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+#endif //WITH_IMGUI
+
 using namespace Engine;
 using namespace TutorialEngine;
 using namespace MathUtils;
@@ -558,101 +564,103 @@ void BarycentricsDemo::renderGame_Barycentric_SolvingLinearSystem(float dt_sec)
 
 }
 
-void BarycentricsDemo::render_UI(float dt_sec)
+void BarycentricsDemo::render_UI()
 {
-	//SlideBase::render_UI(dt_sec);
+	InteractableDemoBase::render_UI();
+#if WITH_IMGUI
 
-	//static bool bFirstDraw = true;
-	//if (bFirstDraw)
-	//{
-	//	bFirstDraw = false;
-	//	ImGui::SetNextWindowPos({ 1000, 0 });
-	//}
+	static bool bFirstDraw = true;
+	if (bFirstDraw)
+	{
+		bFirstDraw = false;
+		ImGui::SetNextWindowPos({ 1000, 0 });
+	}
 
-	//ImGuiWindowFlags flags = 0;
-	//ImGui::Begin("Barycentrics review", nullptr, flags);
-	//{
-	//	//static int baryModeProxy = 0;
-	//	if (ImGui::RadioButton("MyMethod", barymode == EBarycentricMode::MY_METHOD))
-	//	{
-	//		barymode = EBarycentricMode::MY_METHOD;
-	//	}
-	//	ImGui::SameLine();
-	//	if (ImGui::RadioButton("Optimized Projection", barymode == EBarycentricMode::OPTIMIZED_PROJECTION))
-	//	{
-	//		barymode = EBarycentricMode::OPTIMIZED_PROJECTION;
-	//	}
-	//	ImGui::SameLine();
-	//	if (ImGui::RadioButton("Area Method", barymode == EBarycentricMode::AREA_METHOD))
-	//	{
-	//		barymode = EBarycentricMode::AREA_METHOD;
-	//	}
-	//	ImGui::SameLine();
-	//	if (ImGui::RadioButton("Linear Eq Method", barymode == EBarycentricMode::LINEAR_SYSTEMS_METHOD))
-	//	{
-	//		barymode = EBarycentricMode::LINEAR_SYSTEMS_METHOD;
-	//	}
+	ImGuiWindowFlags flags = 0;
+	ImGui::Begin("Barycentrics review", nullptr, flags);
+	{
+		//static int baryModeProxy = 0;
+		if (ImGui::RadioButton("MyMethod", barymode == EBarycentricMode::MY_METHOD))
+		{
+			barymode = EBarycentricMode::MY_METHOD;
+		}
+		ImGui::SameLine();
+		if (ImGui::RadioButton("Optimized Projection", barymode == EBarycentricMode::OPTIMIZED_PROJECTION))
+		{
+			barymode = EBarycentricMode::OPTIMIZED_PROJECTION;
+		}
+		ImGui::SameLine();
+		if (ImGui::RadioButton("Area Method", barymode == EBarycentricMode::AREA_METHOD))
+		{
+			barymode = EBarycentricMode::AREA_METHOD;
+		}
+		ImGui::SameLine();
+		if (ImGui::RadioButton("Linear Eq Method", barymode == EBarycentricMode::LINEAR_SYSTEMS_METHOD))
+		{
+			barymode = EBarycentricMode::LINEAR_SYSTEMS_METHOD;
+		}
 
-	//	if (ImGui::Checkbox("bRenderBarycentricA", &bRenderBarycentricA)) { bTestPointUpdated = true; } //update test point so we refresh projection anims
-	//	if (ImGui::Checkbox("bRenderBarycentricB", &bRenderBarycentricB)) { bTestPointUpdated = true; }
-	//	if (ImGui::Checkbox("bRenderBarycentricC", &bRenderBarycentricC)) { bTestPointUpdated = true; }
+		if (ImGui::Checkbox("bRenderBarycentricA", &bRenderBarycentricA)) { bTestPointUpdated = true; } //update test point so we refresh projection anims
+		if (ImGui::Checkbox("bRenderBarycentricB", &bRenderBarycentricB)) { bTestPointUpdated = true; }
+		if (ImGui::Checkbox("bRenderBarycentricC", &bRenderBarycentricC)) { bTestPointUpdated = true; }
 
-	//	ImGui::Separator();
+		ImGui::Separator();
 
-	//	ImGui::Checkbox("wireframe", &bWireframe);
+		ImGui::Checkbox("wireframe", &bWireframe);
 
-	//	ImGui::Separator();
-	//	if (barymode == EBarycentricMode::MY_METHOD)
-	//	{
-	//		if (ImGui::Checkbox("bRenderBToA", &bRenderBToA)) { timestamp_RenderBToA = tickedTime; }
-	//		if (ImGui::Checkbox("bRenderBToC", &bRenderBToC)) { timestamp_RenderBToC = tickedTime; }
-	//		if (ImGui::Checkbox("bRenderBCProj", &bRenderBCProj)) { timestamp_RenderBCProj = tickedTime; }
-	//		if (ImGui::Checkbox("bRender_PerpendicularToEdge", &bRender_PerpendicularToEdge)) { timestamp_Render_PerpendicularToEdge = tickedTime; }
-	//		if (ImGui::Checkbox("bRender_EdgeProjectPointToTestPoint", &bRender_EdgeProjectPointToTestPoint)) { timestamp_Render_EdgeProjectPointToTestPoint = tickedTime; }
-	//		if (ImGui::Checkbox("bRenderTestPointProjectionOntoPerpendicular", &bRenderTestPointProjectionOntoPerpendicular)) { timestamp_RenderTestPointProjectionOntoPerpendicular = tickedTime; }
-	//	}
-	//	else if (barymode == EBarycentricMode::OPTIMIZED_PROJECTION)
-	//	{
-	//		if (ImGui::Checkbox("bRenderAB", &bRenderAB)) { timestamp_renderbRenderAB = tickedTime; }
-	//		if (ImGui::Checkbox("bRenderCB", &bRenderCB)) { timestamp_renderbRenderCB = tickedTime; }
-	//		if (ImGui::Checkbox("bRender_AtoTestPnt", &bRender_AtoTestPnt)) { timestamp_renderbRender_AtoTestPnt = tickedTime; }
-	//		if (ImGui::Checkbox("bRender_ProjToCB", &bRender_ProjToCB)) { timestamp_renderbRender_Perpendicular = tickedTime; }
-	//		if (ImGui::Checkbox("bRender_VectorFromFirstProjection (hint: move A to origin)", &bRender_VectorFromFirstProjection)) { timestamp_renderbRender_VectorFromFirstProjection = tickedTime; }
-	//		if (ImGui::Checkbox("bRender_projTestPointOntoPerpendicular", &bRender_projTestPointOntoPerpendicular)) { timestamp_renderbRender_projTestPointOntoPerpendicular = tickedTime; }
-	//		if (ImGui::Checkbox("bRender_projABontoPerpendicular", &bRender_projABontoPerpendicular)) { timestamp_renderbRender_projABontoPerpendicular = tickedTime; }
-	//	}
-	//	else if (barymode == EBarycentricMode::AREA_METHOD)
-	//	{
-	//		ImGui::Checkbox("normalize normals", &bAreaMethod_normalizeNormals);
-	//		if (ImGui::Checkbox("bRenderCrossVec_first", &bRenderCrossVec_first)) { timestamp_crossvecfirst = tickedTime; }
-	//		if (ImGui::Checkbox("bRenderCrossVec_second ", &bRenderCrossVec_second)) { timestamp_crossvecsecond = tickedTime; }
-	//		ImGui::Separator();
+		ImGui::Separator();
+		if (barymode == EBarycentricMode::MY_METHOD)
+		{
+			if (ImGui::Checkbox("bRenderBToA", &bRenderBToA)) { timestamp_RenderBToA = tickedTime; }
+			if (ImGui::Checkbox("bRenderBToC", &bRenderBToC)) { timestamp_RenderBToC = tickedTime; }
+			if (ImGui::Checkbox("bRenderBCProj", &bRenderBCProj)) { timestamp_RenderBCProj = tickedTime; }
+			if (ImGui::Checkbox("bRender_PerpendicularToEdge", &bRender_PerpendicularToEdge)) { timestamp_Render_PerpendicularToEdge = tickedTime; }
+			if (ImGui::Checkbox("bRender_EdgeProjectPointToTestPoint", &bRender_EdgeProjectPointToTestPoint)) { timestamp_Render_EdgeProjectPointToTestPoint = tickedTime; }
+			if (ImGui::Checkbox("bRenderTestPointProjectionOntoPerpendicular", &bRenderTestPointProjectionOntoPerpendicular)) { timestamp_RenderTestPointProjectionOntoPerpendicular = tickedTime; }
+		}
+		else if (barymode == EBarycentricMode::OPTIMIZED_PROJECTION)
+		{
+			if (ImGui::Checkbox("bRenderAB", &bRenderAB)) { timestamp_renderbRenderAB = tickedTime; }
+			if (ImGui::Checkbox("bRenderCB", &bRenderCB)) { timestamp_renderbRenderCB = tickedTime; }
+			if (ImGui::Checkbox("bRender_AtoTestPnt", &bRender_AtoTestPnt)) { timestamp_renderbRender_AtoTestPnt = tickedTime; }
+			if (ImGui::Checkbox("bRender_ProjToCB", &bRender_ProjToCB)) { timestamp_renderbRender_Perpendicular = tickedTime; }
+			if (ImGui::Checkbox("bRender_VectorFromFirstProjection (hint: move A to origin)", &bRender_VectorFromFirstProjection)) { timestamp_renderbRender_VectorFromFirstProjection = tickedTime; }
+			if (ImGui::Checkbox("bRender_projTestPointOntoPerpendicular", &bRender_projTestPointOntoPerpendicular)) { timestamp_renderbRender_projTestPointOntoPerpendicular = tickedTime; }
+			if (ImGui::Checkbox("bRender_projABontoPerpendicular", &bRender_projABontoPerpendicular)) { timestamp_renderbRender_projABontoPerpendicular = tickedTime; }
+		}
+		else if (barymode == EBarycentricMode::AREA_METHOD)
+		{
+			ImGui::Checkbox("normalize normals", &bAreaMethod_normalizeNormals);
+			if (ImGui::Checkbox("bRenderCrossVec_first", &bRenderCrossVec_first)) { timestamp_crossvecfirst = tickedTime; }
+			if (ImGui::Checkbox("bRenderCrossVec_second ", &bRenderCrossVec_second)) { timestamp_crossvecsecond = tickedTime; }
+			ImGui::Separator();
 
-	//		if (ImGui::Checkbox("bAreaMethod_renderFullArea", &bAreaMethod_renderFullArea)) { timestamp_area_fullarea = tickedTime; }
-	//		if (ImGui::Checkbox("bAreaMethod_renderPBC_Area", &bAreaMethod_renderPBC_Area)) { timestamp_area_PBC_area = tickedTime; }
-	//		if (ImGui::Checkbox("bAreaMethod_renderPCA_Area", &bAreaMethod_renderPCA_Area)) { timestamp_area_PCA_area = tickedTime; }
-	//		if (ImGui::Checkbox("bAreaMethod_renderPAB_Area", &bAreaMethod_renderPAB_Area)) { timestamp_area_PAB_area = tickedTime; }
-	//		if (ImGui::Checkbox("bAreaMethod_RenderTriNormals", &bAreaMethod_RenderTriNormals)) { timestamp_area_normals = tickedTime; }
-	//		if (ImGui::Checkbox("bAreaMethod_RenderCrossProductVectors", &bRenderCrossProductVectors)) { timestamp_crossproductVecs = tickedTime; }
-
-
-	//		ImGui::Checkbox("Render half xproduct area", &bRenderHalfAreas);
-
-	//	}
-
-	//	else if (barymode == EBarycentricMode::LINEAR_SYSTEMS_METHOD)
-	//	{
-
-	//	}
+			if (ImGui::Checkbox("bAreaMethod_renderFullArea", &bAreaMethod_renderFullArea)) { timestamp_area_fullarea = tickedTime; }
+			if (ImGui::Checkbox("bAreaMethod_renderPBC_Area", &bAreaMethod_renderPBC_Area)) { timestamp_area_PBC_area = tickedTime; }
+			if (ImGui::Checkbox("bAreaMethod_renderPCA_Area", &bAreaMethod_renderPCA_Area)) { timestamp_area_PCA_area = tickedTime; }
+			if (ImGui::Checkbox("bAreaMethod_renderPAB_Area", &bAreaMethod_renderPAB_Area)) { timestamp_area_PAB_area = tickedTime; }
+			if (ImGui::Checkbox("bAreaMethod_RenderTriNormals", &bAreaMethod_RenderTriNormals)) { timestamp_area_normals = tickedTime; }
+			if (ImGui::Checkbox("bAreaMethod_RenderCrossProductVectors", &bRenderCrossProductVectors)) { timestamp_crossproductVecs = tickedTime; }
 
 
-	//	ImGui::Separator();
-	//	ImGui::Checkbox("Shriley book ground truth", &bRenderShirleyVersion);
-	//	ImGui::Checkbox("Real time collision book ground truth", &bRenderRealTimeCollisionBook);
-	//}
+			ImGui::Checkbox("Render half xproduct area", &bRenderHalfAreas);
+
+		}
+
+		else if (barymode == EBarycentricMode::LINEAR_SYSTEMS_METHOD)
+		{
+
+		}
 
 
-	//ImGui::End();
+		ImGui::Separator();
+		ImGui::Checkbox("Shriley book ground truth", &bRenderShirleyVersion);
+		ImGui::Checkbox("Real time collision book ground truth", &bRenderRealTimeCollisionBook);
+	}
+
+
+	ImGui::End();
+#endif //WITH_IMGUI
 }
 
 #define COMPILETIME_SQUARE(val) val * val
