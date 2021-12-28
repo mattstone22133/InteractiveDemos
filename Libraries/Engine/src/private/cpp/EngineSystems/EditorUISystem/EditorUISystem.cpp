@@ -1,15 +1,17 @@
 #include "EngineSystems/EditorUISystem/EditorUISystem.h"
 
-#include "Utils/Platform/OpenGLES2/PlatformOpenGLESInclude.h"
-#include "Engine.h"
-#include "EngineSystems/WindowSystem/WindowSystem.h"
-#include "EngineSystems/WindowSystem/WindowWrapper.h"
-
 #if WITH_IMGUI
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 #endif //WITH_IMGUI
+
+#include "Utils/Platform/OpenGLES2/PlatformOpenGLESInclude.h"
+#include "Utils/Platform/OpenGLES2/OpenGLES2Utils.h"
+#include "Engine.h"
+#include "EngineSystems/WindowSystem/WindowSystem.h"
+#include "EngineSystems/WindowSystem/WindowWrapper.h"
+
 
 namespace Engine
 {
@@ -148,6 +150,18 @@ namespace Engine
 				//UI will have set up widgets between frame
 				ImGui::Render();
 				ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+				// issues with draw indexed on window gles2, attempting to cleanup after imgui to avoid error 502 invalid op during glDrawElements
+				// below appears to fix all issues, which seems to suggest that IMGUI is leaving attributes configured. 
+				// renderdoc on windows with gles2 does not work for frame capturing. intelGPA does not either. hard to know for sure. but very suspect.
+				// perhaps this code should exist in the render system, but it does seem to be related to imgui, so putting it here.
+				// I do not think this is related to improper usage of EBOs in my code, as I am rendering 3 different EBOs already, and all appear to be cleaning up correctly.
+				int32_t  numAttribs = 0;
+				ec(glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &numAttribs));
+				for (int32_t attrib = 0; attrib < numAttribs; ++attrib)
+				{
+					ec(glDisableVertexAttribArray(attrib));
+				}
 			}
 		}
 	}

@@ -188,6 +188,10 @@ namespace Engine
 			ec(glDrawArrays(TriangleRenderMode, 0, GLsizei(positions.size())));
 		}
 
+		// CLEAN UP VERTEX ATTRIBS -- glDrawElements will cause issues if attributes are still bound but not used, on some platforms (windows)
+		if (positions.size() > 0) { ec(glDisableVertexAttribArray(attributeLoc_vboPositions)); }
+		if (normals.size() > 0) { ec(glDisableVertexAttribArray(attributeLoc_vboNormals)); }
+
 	}
 
 }

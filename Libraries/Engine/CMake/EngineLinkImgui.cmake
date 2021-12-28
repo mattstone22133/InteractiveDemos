@@ -7,6 +7,13 @@ macro(EngineLinkIMGUI TARGET ACCESS)
         GIT_TAG v1.80
     )
 
+    # test later version of imgui, but later versions changed things which break loaders for me with GLES2, so leaving this disabled for now.
+    #FetchContent_Declare(
+    #    imgui
+    #    GIT_REPOSITORY https://github.com/ocornut/imgui.git
+    #    GIT_TAG v1.86
+    #)
+
     FetchContent_GetProperties(imgui)
 
     if (NOT imgui_POPULATED)
@@ -14,10 +21,7 @@ macro(EngineLinkIMGUI TARGET ACCESS)
         #add_subdirectory("${imgui_SOURCE_DIR}" ${imgui_BINARY_DIR} EXCLUDE_FROM_ALL) #does not contain a CMakeLists.txt file.
     endif()
     # ------TODO -------- 
-    # todo - make sure the imgui library is excluded from all, so that it isn't in the project. But where to do that. 
     # todo - how to handle the glad loader on emscripten
-    # todo - RENAME SO THIS ISNT LINK -- SHOULD BE SPECIFIC TO ENGINE! this is just a helper for engine, since it needs engine relative paths to work around things. 
-    # todo - perhaps move this file, after renaming, to a folder within the engine project.
 
     #--------------------------------------------------------------------
     # Set up IMGUI as a cmake library, since it lacks cmakelists.txt
