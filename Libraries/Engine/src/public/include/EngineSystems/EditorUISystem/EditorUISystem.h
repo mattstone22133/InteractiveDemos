@@ -22,7 +22,6 @@ namespace Engine
 		inline bool getEditorUIEnabled() { return bUIEnabled; }
 
 	private:
-		virtual void tick(float /*deltaSec*/) {}
 		virtual void initSystem() override;
 		virtual void shutdown() override;
 
