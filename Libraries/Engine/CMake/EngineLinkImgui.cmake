@@ -51,7 +51,7 @@ macro(EngineLinkIMGUI TARGET ACCESS)
 	    LinkGLFW(imgui PUBLIC)
 
 	    #only build this on desktop; emscripten will use the headers included with emscripten expose opengl functions
-        Message(STATUS "imgui will use glad.")
+        Message(STATUS "imgui will use glad opengl function loader.")
 	    include(${SHARED_CMAKE_UTILITES_DIR}/LinkGLAD.cmake) 
 	    LinkGLAD(imgui PUBLIC)
         #target_compile_options( imgui PRIVATE -DIMGUI_IMPL_OPENGL_LOADER_GLAD) #using custom loader to enable glad and gles2

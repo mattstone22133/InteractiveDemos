@@ -65,7 +65,7 @@ LinkSTB(${LIB_NAME} PUBLIC)
 
 # imgui is specific to engine project because of work arounds and is in a director relative to engine library.
 include(${CMAKE_CURRENT_LIST_DIR}/CMake/EngineLinkImgui.cmake)
-#EngineLinkIMGUI(${LIB_NAME} PUBLIC)
+EngineLinkIMGUI(${LIB_NAME} PUBLIC)
 	
 
 # End Dependencies ===========================================================================================
