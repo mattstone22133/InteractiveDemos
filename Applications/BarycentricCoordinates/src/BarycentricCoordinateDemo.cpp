@@ -274,7 +274,11 @@ void BarycentricsDemo::render_game(float dt_sec)
 	{
 		//if (bWireframe) { ec(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)); } //not available gles2
 		triRender->bWireFrame = bWireframe;
-		triRender->renderTriangle(pntA->getPosition(), pntB->getPosition(), pntC->getPosition(), glm::vec3(0.0f, 0.5f, 0.0f), rd->projection_view);
+		vec3 triOffset = vec3(0.f, 0.f, -0.01f); //make sure green triangle renders behind vectors.
+		triRender->renderTriangle(
+			  pntA->getPosition() + triOffset
+			, pntB->getPosition() + triOffset
+			, pntC->getPosition() + triOffset, glm::vec3(0.0f, 0.5f, 0.0f), rd->projection_view);
 		triRender->bWireFrame = false;
 		//if (bWireframe) { ec(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)); }
 
@@ -492,7 +496,7 @@ void BarycentricsDemo::renderGame_Barycentric_OptimizedProjectionMethod(float dt
 		helper_renderVector(bRender_AtoTestPnt, aPos, a_to_testPoint, vec3(1, 1, 0), timestamp_renderbRender_AtoTestPnt, true);
 
 		const vec3 projectionToBuildPerpendicular = ((glm::dot(ab, cb) / glm::dot(cb, cb)) * cb);
-		helper_renderProjection(bRender_ProjToCB, *projAnim_ab_onto_cb, ab, cb, vec3(0.f), vec3(0.f), dt_sec);
+		helper_renderProjection(bRender_ProjToCB, *projAnim_ab_onto_cb, ab, cb, vec3(0.f), vec3(0.f), dt_sec, glm::vec3(1.f, 0.f, 0.f));
 
 		glm::vec3 perpendicular = ab - projectionToBuildPerpendicular;
 		helper_renderVector(bRender_VectorFromFirstProjection, projectionToBuildPerpendicular, ab - projectionToBuildPerpendicular, vec3(0.5f), timestamp_renderbRender_VectorFromFirstProjection, true);
