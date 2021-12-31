@@ -114,9 +114,13 @@ namespace TutorialEngine
 			lineRenderer = new_sp<TutorialEngine::LineRenderer>();
 			//tipMesh = new_sp<StaticMesh::Model>("./assets/models/cone_tip/cone_tip_centered.obj"); 
 			//tipMeshOffset = new_sp<StaticMesh::Model>("./assets/models/cone_tip/cone_tip.obj");
-			tipMesh = new_sp<ConeMesh_GpuBuffer>(/*numFaces*/5, /*height*/1.0f, /*radius*/ 1.0f,ConeGenerator::ConeOriginGeneration::BASE);
-			tipMeshOffset = new_sp<ConeMesh_GpuBuffer>(/*numFaces*/5, /*height*/1.0f, /*radius*/ 1.0f, ConeGenerator::ConeOriginGeneration::TIP);
-			//#todo #static_mesh_refactor verify above looks correct, refactoring away from using stati cmeshes but cannot compile code atm to verify. likely requires iterator.
+			const int32_t coneNumFaces = 25;
+			const float coneHeight = 2.0f;
+			const float coneRadius = 1.0f;
+			const bool bSealCone = true;
+			tipMesh = new_sp<ConeMesh_GpuBuffer>(coneNumFaces, coneHeight, coneRadius, ConeGenerator::ConeOriginGeneration::BASE, bSealCone);
+			tipMeshOffset = new_sp<ConeMesh_GpuBuffer>(coneNumFaces, coneHeight, coneRadius, ConeGenerator::ConeOriginGeneration::TIP, bSealCone);
+			//#todo #static_mesh_refactor verify above looks correct, refactoring away from using static meshes but cannot compile code atm to verify. likely requires iterator.
 		}
 	}
 

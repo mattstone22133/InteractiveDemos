@@ -15,4 +15,10 @@ macro(LinkGLM TARGET ACCESS)
 
     target_compile_definitions(${TARGET} PUBLIC GLM_FORCE_SILENT_WARNINGS=1) #silence glm warnings about nameless structs
     target_include_directories(${TARGET} ${ACCESS} ${glm_SOURCE_DIR})
+
+    if(MSVC)
+        set(GLM_NATVIS_LOC ${glm_SOURCE_DIR}/util/glm.natvis)
+        message(STATUS "GLM with MSVC - recommened adding natvis. See this file for instructions: ${GLM_NATVIS_LOC}")#debug natvis
+        #target_sources(${TARGET} INTERFACE  "${glm_SOURCE_DIR}/util/glm.natvis") manual adding does not seem to work. perhaps because not interface?
+    endif()
 endmacro()
