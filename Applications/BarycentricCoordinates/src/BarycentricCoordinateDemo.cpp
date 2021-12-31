@@ -255,6 +255,13 @@ void BarycentricsDemo::init()
 	projAnim_testPointOnPerpendicular = new_sp<VectorProjectionAnimation>();
 	projAnim_aBOnPerpendicular = new_sp<VectorProjectionAnimation>();
 
+
+	const float ProjectionAnimationDuration = 3.0f;
+	projAnim_BC->animDurSec							= ProjectionAnimationDuration;
+	projAnim_PointOnPerpendicular->animDurSec		= ProjectionAnimationDuration;
+	projAnim_ab_onto_cb->animDurSec					= ProjectionAnimationDuration;
+	projAnim_testPointOnPerpendicular->animDurSec	= ProjectionAnimationDuration;
+	projAnim_aBOnPerpendicular->animDurSec			= ProjectionAnimationDuration;
 }
 
 void BarycentricsDemo::render_game(float dt_sec)
@@ -692,11 +699,13 @@ void BarycentricsDemo::tick(float dt_sec)
 		}
 	}
 
-	projAnim_BC->tick(dt_sec);
-	projAnim_PointOnPerpendicular->tick(dt_sec);
-	projAnim_ab_onto_cb->tick(dt_sec);
-	projAnim_testPointOnPerpendicular->tick(dt_sec);
-	projAnim_aBOnPerpendicular->tick(dt_sec);
+	//since some of these are shared between multiple triangle points, the tick happens in render since it will get updated data.
+	//this means that copies of each point will animate at the same time, but that seems less-bad than making hacks.
+	//projAnim_BC->tick(dt_sec);
+	//projAnim_PointOnPerpendicular->tick(dt_sec);
+	//projAnim_ab_onto_cb->tick(dt_sec);
+	//projAnim_testPointOnPerpendicular->tick(dt_sec);
+	//projAnim_aBOnPerpendicular->tick(dt_sec);
 
 	tickedTime += dt_sec;
 }
@@ -770,21 +779,19 @@ void BarycentricsDemo::helper_renderProjection(bool bShouldRender, TutorialEngin
 	{
 		if (bShouldRender)
 		{
-			if (!projAnim.isAnimating() || bTestPointUpdated)
-			{
-				projAnim.setColor(vec3(1.f, 1.f, 0.f));
-				projAnim.projectFromAtoB(aVec, bVec, aStart, bStart, !bTestPointUpdated);//only reset anim if test point wasn't updated
-				projAnim.tick(dt_sec * 0.001f);
-
-				if (color.has_value())
-				{
-					projAnim.setColor(*color);
-				}
-			}
+			//since projAnim is shared between all 3 triangle points, we need to update this projection everytime we render.
+			//but we will keep the animation progress so that they always appear in the correct location.
+			projAnim.projectFromAtoB(aVec, bVec, aStart, bStart, /*reset*/false);	//only reset anim if test point wasn't updated
+			projAnim.setColor(color.has_value() ? *color : vec3(1.f, 1.f, 0.f));	//set the animation to the color associated with the vector, since it is shared.
+			projAnim.tick(dt_sec);													//since this is shared, we need to tick here so positions end up in the correct place.
+			projAnim.setShouldRender(true); //the bool to this function will control whether or not the projection gets rendered.
 			projAnim.render(rd->projection_view, rd->camera ? rd->camera->getPosition() : glm::vec3(0.f)); //prevent flickering as it hasn't been ticked yet
 		}
 		else
 		{
+			//reset animation since rendering stopped.
+			//note: since this is shared for each point in the triangle, this means all projections of a given bool will animate at same time.
+			projAnim.projectFromAtoB(aVec, bVec, aStart, bStart, /*reset*/true);
 			projAnim.setShouldRender(false);
 		}
 	}

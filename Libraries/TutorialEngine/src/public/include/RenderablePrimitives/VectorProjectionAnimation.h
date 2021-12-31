@@ -33,12 +33,12 @@ namespace TutorialEngine
 		void pauseAnimation();
 		void resumeAnimation();
 		bool isAnimationDone() const;
-		bool isAnimating() const { return bRender; }
+		bool shouldRender() const { return bRender; }//for porting: this used to be called isAnimating()
 	protected:
 		virtual void postConstruct() override;
 	public: //controls for ui tweaking
 		float animDurSec = 1.f;
-		float animSpeedupFactor = 0.65f; //factor controlling async behavior in anim
+		float animSpeedupFactor = 1.0f; //factor controlling async behavior in anim
 		EAnimMode animMode = EAnimMode::SWEEP_BY_HEIGHT;
 		bool bLoop = false;
 		bool bRenderLineFromTip = false;
@@ -47,7 +47,7 @@ namespace TutorialEngine
 		bool bPaused = false;
 		size_t numPointsInAnimation = 40;
 		float animCurTime = 0.f;
-		Engine::Curve<200> animCurve = Engine::CurveManager::get().generateSigmoid_medp(100.f);
+		Engine::Curve<200> animCurve = Engine::CurveManager::get().generateSigmoid_medp();
 		float pointScale = 1.f;
 	private:
 		std::vector<sp<VisualPoint>> lerpPoints;
