@@ -92,7 +92,6 @@ namespace TutorialEngine
 	InteractableDemoBase::InteractableDemoBase()
 	{
 		++instanceCount;
-		selectMouseButton = GLFW_MOUSE_BUTTON_RIGHT;
 	}
 
 	InteractableDemoBase::~InteractableDemoBase()
@@ -171,18 +170,16 @@ namespace TutorialEngine
 	void InteractableDemoBase::render_UI()
 	{
 #if WITH_IMGUI
-		//#todo #port #imgui
-		//#todo not sure tehse should exist in the base intractable demo
-		ImGui::SetNextWindowPos({ 0, 0 });
-		ImGuiWindowFlags flags = 0;
-		ImGui::Begin("Interactable Demo Debug Window", nullptr, flags);
 		if (bEnableDebugUI)
 		{
+			ImGui::SetNextWindowPos({ 0, 0 });
+			ImGuiWindowFlags flags = 0;
+			ImGui::Begin("Interactable Demo Debug Window", nullptr, flags);
 			ImGui::Checkbox("draw debug cubes", &bDrawDebugCubes);
 			ImGui::Checkbox("debug ray cast", &bDebugLastRay);
 			ImGui::Checkbox("draw interaction plane", &bDrawInteractionPlane);
+			ImGui::End();
 		}
-		ImGui::End();
 #endif // WITH_IMGUI
 	}
 
@@ -220,7 +217,8 @@ namespace TutorialEngine
 			bool bALT = glfwGetKey(glfwWindow, GLFW_KEY_RIGHT_ALT) == GLFW_PRESS || glfwGetKey(glfwWindow, GLFW_KEY_LEFT_ALT) == GLFW_PRESS;
 			bool bSHIFT = glfwGetKey(glfwWindow, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS || glfwGetKey(glfwWindow, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS;
 
-			if (glfwGetMouseButton(glfwWindow, selectMouseButton) == GLFW_PRESS)
+			if (glfwGetMouseButton(glfwWindow, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS 
+				|| glfwGetMouseButton(glfwWindow, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 			{
 				if (!bSelectButtonPressed) //must be in a separate branch from above to prevent releasing hold
 				{

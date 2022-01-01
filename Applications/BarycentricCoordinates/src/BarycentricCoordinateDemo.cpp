@@ -317,13 +317,13 @@ void BarycentricsDemo::render_game(float dt_sec)
 					text->wrappedText->text = textStr;
 					text->setLocalScale(vec3(5.f));
 				};
-				renderPointText(pntA, pntB, pntC, "(1,0,0)");
+				renderPointText(pntA, pntB, pntC, "A (1,0,0)");
 				text->render(rd->projection, rd->view);
 
-				renderPointText(pntB, pntC, pntA, "(0,1,0)");
+				renderPointText(pntB, pntC, pntA, "B (0,1,0)");
 				text->render(rd->projection, rd->view);
 
-				renderPointText(pntC, pntA, pntB, "(0,0,1)");
+				renderPointText(pntC, pntA, pntB, "C (0,0,1)");
 				text->render(rd->projection, rd->view);
 
 				{
@@ -611,10 +611,10 @@ void BarycentricsDemo::render_UI()
 			barymode = EBarycentricMode::LINEAR_SYSTEMS_METHOD;
 		}
 
-		if (ImGui::Checkbox("bRenderBarycentricA", &bRenderBarycentricA)) { bTestPointUpdated = true; } //update test point so we refresh projection anims
-		if (ImGui::Checkbox("bRenderBarycentricB", &bRenderBarycentricB)) { bTestPointUpdated = true; }
-		if (ImGui::Checkbox("bRenderBarycentricC", &bRenderBarycentricC)) { bTestPointUpdated = true; }
-
+		//move to end so people don't check all these first.
+		//if (ImGui::Checkbox("bRenderBarycentricA", &bRenderBarycentricA)) { bTestPointUpdated = true; } //update test point so we refresh projection anims
+		//if (ImGui::Checkbox("bRenderBarycentricB", &bRenderBarycentricB)) { bTestPointUpdated = true; }
+		//if (ImGui::Checkbox("bRenderBarycentricC", &bRenderBarycentricC)) { bTestPointUpdated = true; }
 		ImGui::Separator();
 
 		ImGui::Checkbox("wireframe", &bWireframe);
@@ -667,6 +667,12 @@ void BarycentricsDemo::render_UI()
 		ImGui::Separator();
 		ImGui::Checkbox("Shriley book ground truth", &bRenderShirleyVersion);
 		ImGui::Checkbox("Real time collision book ground truth", &bRenderRealTimeCollisionBook);
+
+		ImGui::Separator();
+
+		if (ImGui::Checkbox("bRenderBarycentricA", &bRenderBarycentricA)) { bTestPointUpdated = true; } //update test point so we refresh projection anims
+		if (ImGui::Checkbox("bRenderBarycentricB", &bRenderBarycentricB)) { bTestPointUpdated = true; }
+		if (ImGui::Checkbox("bRenderBarycentricC", &bRenderBarycentricC)) { bTestPointUpdated = true; }
 	}
 
 
