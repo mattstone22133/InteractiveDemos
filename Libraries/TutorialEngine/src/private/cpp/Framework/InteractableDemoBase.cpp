@@ -233,7 +233,7 @@ namespace TutorialEngine
 						raycastQuery.fovY_deg = glm::degrees<float>(rd->camera->getFOVy_rad());
 						raycastQuery.window = glfwWindow;
 
-						//TODO revisit having a static array... that is bad. but fixing up compile issues during port on linux and dont want to reevaluate this right now.
+						//TODO revisit having a static array... that is bad (memory wise). but fixing up compile issues during port on linux and dont want to reevaluate this right now.
 						static std::vector<const TriangleList_SNO*> typedObjects = []() {
 							std::vector<const TriangleList_SNO*> tempTypedObjects;
 							tempTypedObjects.reserve(20);

@@ -22,7 +22,7 @@ using namespace TutorialEngine;
 namespace EBarycentricMode
 {
 	enum Type {
-		MY_METHOD = 0,
+		INTUITIVE_METHOD = 0,
 		OPTIMIZED_PROJECTION,
 		AREA_METHOD,
 		LINEAR_SYSTEMS_METHOD
@@ -62,9 +62,9 @@ private:
 	sp<Engine::TextBlockSceneNode> text = nullptr;
 	sp<Engine::Montserrat_BMF> font = nullptr;
 private:
-	bool bTestPointUpdated = false;
+	bool bDraggableTestPointUpdated = false;
 private:
-	EBarycentricMode::Type barymode = EBarycentricMode::MY_METHOD;
+	EBarycentricMode::Type barymode = EBarycentricMode::INTUITIVE_METHOD;
 
 
 	//ground truths

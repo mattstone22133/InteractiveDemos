@@ -196,6 +196,8 @@ void BarycentricsDemo::init()
 {
 	InteractableDemoBase::init();
 
+	bRenderLineGeneration = false; //stop rendering rend line when clicking on nothing
+
 	// set up camera for viewing
 	sp<Engine::QuaternionCamera> quatCam = new_sp<Engine::QuaternionCamera>();
 	quatCam->pos = glm::vec3(0, 0, 5.f);
@@ -203,7 +205,6 @@ void BarycentricsDemo::init()
 
 	triRender = new_sp<TutorialEngine::ImmediateTriangle>();
 	font = new_sp<Engine::Montserrat_BMF>("./PreloadAssets/TutorialEngine/font/Montserrat_ss_alpha_1024x1024_wb.png");
-	//font = new_sp<Engine::Montserrat_BMF>("./TutorialEngine/font/Montserrat_ss_alpha_1024x1024_wb.png");
 	
 	pntA = new_sp<TutorialEngine::ClickableVisualPoint>();
 	pntB = new_sp<TutorialEngine::ClickableVisualPoint>();
@@ -272,16 +273,16 @@ void BarycentricsDemo::render_game(float dt_sec)
 	const sp<FrameRenderData>& rd = RenderSystem::get().getFrameRenderData();
 	if (rd)
 	{
-		//if (bWireframe) { ec(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)); } //not available gles2
+		// RENDER THE TRIANGLE
 		triRender->bWireFrame = bWireframe;
-		vec3 triOffset = vec3(0.f, 0.f, -0.01f); //make sure green triangle renders behind vectors.
+		vec3 triOffset = vec3(0.f, 0.f, -0.01f); //make sure green triangle renders behind vectors, be sliding it backwards just a bit.
 		triRender->renderTriangle(
 			  pntA->getPosition() + triOffset
 			, pntB->getPosition() + triOffset
 			, pntC->getPosition() + triOffset, glm::vec3(0.0f, 0.5f, 0.0f), rd->projection_view);
 		triRender->bWireFrame = false;
-		//if (bWireframe) { ec(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)); }
 
+		// CALCULATE BARYCENTRICS AND RENDER THE POINTS AND VECTORS
 		if (rd->camera)
 		{
 			glm::vec3 camPos = rd->camera->getPosition();
@@ -292,10 +293,6 @@ void BarycentricsDemo::render_game(float dt_sec)
 			testPoint->color = vec3(1.f, 1.f, 0);
 			testPoint->render(rd->projection_view, camPos);
 
-			//genericVector->setStart(rayStart);
-			//genericVector->setEnd(rayEnd);
-			//genericVector->render(rd->projection_view, rd->camera->getPosition());
-
 			if (QuaternionCamera* camera = dynamic_cast<QuaternionCamera*>(rd->camera.get()))
 			{
 				auto renderPointText = [&](
@@ -303,7 +300,6 @@ void BarycentricsDemo::render_game(float dt_sec)
 					, const sp<TutorialEngine::ClickableVisualPoint>& b
 					, const sp<TutorialEngine::ClickableVisualPoint>& c
 					, const char* const textStr
-					//const sp<Engine::TextBlockSceneNode>& text
 					)
 				{
 					vec3 c_to_a = a->getPosition() - c->getPosition();
@@ -329,7 +325,7 @@ void BarycentricsDemo::render_game(float dt_sec)
 				{
 					glm::vec3 barycentrics = vec3(0.f);
 
-					if (barymode == EBarycentricMode::MY_METHOD)
+					if (barymode == EBarycentricMode::INTUITIVE_METHOD)
 					{
 						barycentrics = calcBarycentrics_myMethod(testPoint->getPosition(), pntA->getPosition(), pntB->getPosition(), pntC->getPosition());
 					}
@@ -347,19 +343,18 @@ void BarycentricsDemo::render_game(float dt_sec)
 					}
 					else
 					{
-						//default ot mymethod if something went wrong
+						//default to my method if something went wrong
 						barycentrics = calcBarycentrics_myMethod(testPoint->getPosition(), pntA->getPosition(), pntB->getPosition(), pntC->getPosition());
 					}
 
+					//set the barycentric coordinate text on the test point the user can drag
 					char textBuffer[128];
-					/*snprintf(textBuffer, sizeof(textBuffer), "(%3.2f, %3.2f, %3.2f)", barycentrics.x, barycentrics.y, barycentrics.z);*/
 					snprintf(textBuffer, sizeof(textBuffer), "(%3.3f, %3.3f, %3.3f)", barycentrics.x, barycentrics.y, barycentrics.z);
 					text->wrappedText->text = std::string(textBuffer);
 
 					const float pointOffsetDis = 0.15f;
 					text->setLocalPosition(
 						testPoint->getPosition()
-						//+ camera->getRight()*pointOffsetDis
 						+ camera->getUp() * pointOffsetDis
 						+ -camera->getFront() * pointOffsetDis);
 					text->wrappedText->bitMapFont->setFontColor(vec3(1.f, 1.f, 0.5f));
@@ -367,6 +362,7 @@ void BarycentricsDemo::render_game(float dt_sec)
 					text->render(rd->projection, rd->view);
 					text->wrappedText->bitMapFont->setFontColor(vec3(1.0f));
 
+					//use ground truths from established barycentric formulas to test logic. Render these for visual comparison if something is wrong.
 					float movingGroundTruthTextOffset = 0.f; //let multiple truths be displayed by updated this
 					if (bRenderShirleyVersion)
 					{
@@ -391,8 +387,8 @@ void BarycentricsDemo::render_game(float dt_sec)
 						text->render(rd->projection, rd->view);
 					}
 
-
-					if (barymode == EBarycentricMode::MY_METHOD)
+					// RENDER ANIMATIONS
+					if (barymode == EBarycentricMode::INTUITIVE_METHOD)
 					{
 						renderGame_Barycentric_myMethod(dt_sec);
 					}
@@ -417,7 +413,8 @@ void BarycentricsDemo::render_game(float dt_sec)
 
 			}
 		}
-		bTestPointUpdated = false;
+
+		bDraggableTestPointUpdated = false; //always reset state of moving a test point, now that we have used this flag in rendering animations (used to update projections).
 	}
 }
 
@@ -588,19 +585,19 @@ void BarycentricsDemo::render_UI()
 	}
 
 	ImGuiWindowFlags flags = 0;
-	ImGui::Begin("Barycentrics review", nullptr, flags);
+	ImGui::Begin("Barycentric Coordinates Calculation Methods", nullptr, flags);
 	{
 		//static int baryModeProxy = 0;
-		if (ImGui::RadioButton("MyMethod", barymode == EBarycentricMode::MY_METHOD))
+		if (ImGui::RadioButton("Intuitive Method", barymode == EBarycentricMode::INTUITIVE_METHOD))
 		{
-			barymode = EBarycentricMode::MY_METHOD;
+			barymode = EBarycentricMode::INTUITIVE_METHOD;
 		}
 		ImGui::SameLine();
-		if (ImGui::RadioButton("Optimized Projection", barymode == EBarycentricMode::OPTIMIZED_PROJECTION))
+		if (ImGui::RadioButton("Optimized Projection Method", barymode == EBarycentricMode::OPTIMIZED_PROJECTION))
 		{
 			barymode = EBarycentricMode::OPTIMIZED_PROJECTION;
 		}
-		ImGui::SameLine();
+		//ImGui::SameLine();
 		if (ImGui::RadioButton("Area Method", barymode == EBarycentricMode::AREA_METHOD))
 		{
 			barymode = EBarycentricMode::AREA_METHOD;
@@ -620,7 +617,7 @@ void BarycentricsDemo::render_UI()
 		ImGui::Checkbox("wireframe", &bWireframe);
 
 		ImGui::Separator();
-		if (barymode == EBarycentricMode::MY_METHOD)
+		if (barymode == EBarycentricMode::INTUITIVE_METHOD)
 		{
 			if (ImGui::Checkbox("bRenderBToA", &bRenderBToA)) { timestamp_RenderBToA = tickedTime; }
 			if (ImGui::Checkbox("bRenderBToC", &bRenderBToC)) { timestamp_RenderBToC = tickedTime; }
@@ -670,9 +667,9 @@ void BarycentricsDemo::render_UI()
 
 		ImGui::Separator();
 
-		if (ImGui::Checkbox("bRenderBarycentricA", &bRenderBarycentricA)) { bTestPointUpdated = true; } //update test point so we refresh projection anims
-		if (ImGui::Checkbox("bRenderBarycentricB", &bRenderBarycentricB)) { bTestPointUpdated = true; }
-		if (ImGui::Checkbox("bRenderBarycentricC", &bRenderBarycentricC)) { bTestPointUpdated = true; }
+		if (ImGui::Checkbox("bRenderBarycentricA", &bRenderBarycentricA)) { bDraggableTestPointUpdated = true; } //update test point so we refresh projection anims
+		if (ImGui::Checkbox("bRenderBarycentricB", &bRenderBarycentricB)) { bDraggableTestPointUpdated = true; }
+		if (ImGui::Checkbox("bRenderBarycentricC", &bRenderBarycentricC)) { bDraggableTestPointUpdated = true; }
 	}
 
 
@@ -734,7 +731,7 @@ void BarycentricsDemo::gatherInteractableCubeObjects(std::vector<const TriangleL
 
 void BarycentricsDemo::handleTestPointUpdated(const TutorialEngine::VisualPoint& pnt)
 {
-	bTestPointUpdated = true;
+	bDraggableTestPointUpdated = true;
 }
 
 
