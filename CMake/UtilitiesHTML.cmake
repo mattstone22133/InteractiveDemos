@@ -24,3 +24,15 @@ macro(HTMLPreloadDirectory TARGET FOLDER_PATH)
 	endif()
 
 endmacro()
+
+
+macro(HTMLUseTemplateHtmlFile TARGET HTML_TEMPLATE_PATH)
+	if(${CMAKE_SYSTEM_NAME} MATCHES "Emscripten")
+		#perhaps target_link_options can work here instead, but it did have issues with removing all but one --preload-file argument
+		get_target_property(PreviousLinkFlags ${TARGET} LINK_FLAGS)
+		if(${PreviousLinkFlags} MATCHES "PreviousLinkFlags-NOTFOUND")			
+			set(PreviousLinkFlags "") 
+		endif()
+		set_target_properties(${TARGET} PROPERTIES LINK_FLAGS "${PreviousLinkFlags} --shell-file \"${HTML_TEMPLATE_PATH}\"") # must use quotes for spaces in file paths to work
+	endif()
+endmacro()

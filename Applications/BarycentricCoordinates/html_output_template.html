@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en-us">
+<head>
+    <!-- based on emscriptens shell_minimal.html file -->
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Barycentric Coordinates Explained</title>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
+    <style>
+        * {
+            background-color: #232323ff;
+            font-family: 'Montserrat', sans-serif;
+            color: #f8f8f8f8;
+            letter-spacing: 0.05em;
+            line-height: 150%;
+        }
+
+        .link{
+            color: #FF0000FF;
+        }
+        .dark_bg
+        {
+            background-color: #1a1a1aff;
+        }
+        .collapse_button{
+            font-size: larger;
+        }
+        .emscripten {
+            padding-right: 0;
+            margin-left: auto;
+            margin-right: auto;
+            display: block;
+        }
+
+        .explanation_region {
+            margin: 0.25em 25% 2em 25%;
+            padding: 1em;
+            min-height: 10em;
+        }
+
+        textarea.emscripten {
+            font-family: monospace;
+            width: 80%;
+        }
+
+        div.emscripten {
+            text-align: center;
+        }
+        /*
+        div.emscripten_border {
+            border: 1px solid black;
+        }*/
+        /* the canvas *must not* have any border or padding, or mouse coords will be wrong */
+        canvas.emscripten {
+            border: 0px none;
+            background-color: black;
+        }
+
+        .spinner {
+            height: 50px;
+            width: 50px;
+            margin: 0px auto;
+            -webkit-animation: rotation .8s linear infinite;
+            -moz-animation: rotation .8s linear infinite;
+            -o-animation: rotation .8s linear infinite;
+            animation: rotation 0.8s linear infinite;
+            border-left: 10px solid rgb(0,150,240);
+            border-right: 10px solid rgb(0,150,240);
+            border-bottom: 10px solid rgb(0,150,240);
+            border-top: 10px solid rgb(100,0,200);
+            border-radius: 100%;
+            background-color: rgb(200,100,250);
+        }
+
+        @-webkit-keyframes rotation {
+            from {
+                -webkit-transform: rotate(0deg);
+            }
+
+            to {
+                -webkit-transform: rotate(360deg);
+            }
+        }
+
+        @-moz-keyframes rotation {
+            from {
+                -moz-transform: rotate(0deg);
+            }
+
+            to {
+                -moz-transform: rotate(360deg);
+            }
+        }
+
+        @-o-keyframes rotation {
+            from {
+                -o-transform: rotate(0deg);
+            }
+
+            to {
+                -o-transform: rotate(360deg);
+            }
+        }
+
+        @keyframes rotation {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body class="dark_bg">
+    <!--<hr />-->
+    <figure style="overflow:visible;" id="spinner"><div class="spinner dark_bg"></div><center style="margin-top:0.5em"><strong>emscripten</strong></center></figure>
+    <div class="emscripten dark_bg" id="status">Downloading...</div>
+    <div class="emscripten dark_bg">
+        <progress value="0" max="100" id="progress" hidden=1></progress>
+    </div>
+    <div class="emscripten_border dark_bg">
+        <canvas class="emscripten" id="canvas" class="dark_bg" oncontextmenu="event.preventDefault()" tabindex=-1></canvas>
+        <input type="button" value="Fullscreen" class="emscripten" onclick=" Module.requestFullscreen(false, false)"> <br>
+    </div>
+    <script>
+        function myHideElementById(id_string) {
+            let collapsible = document.getElementById(id_string);
+            if(collapsible != null)
+            {
+                let value = collapsible.style.display;
+                collapsible.style.display = value == 'none' ? 'block' : 'none';
+            }
+        }
+    </script>
+    <div class="explanation_region">
+        <button class="collapse_button dark_bg" onclick="myHideElementById('controls_div');"> 
+            <b>Controls (show/hide)</b> 
+        </button><br>
+        <hr>
+        <div id="controls_div">
+            -Click and drag points to see barycentric coordinates update in real time. <br>
+            -Use the check boxes to view steps in the various methods for calculating barycentric coordinates. <br> 
+            <br>
+        </div>
+
+        <button class="collapse_button dark_bg" onclick="myHideElementById('bary_explain_div');"> 
+            <b>Barycentric Coordinates Explanation:</b> 
+        </button>
+        <hr>
+        <div id="bary_explain_div">
+            I'll avoid boring you with describing Barycentrics with words, Wikipedia can do that for you! <br>
+            Rather -- above you can play with barycentric coordinates. <br>
+            Click and hold on the floating point, and move it around. <br>
+            The numbers you see changing are the barycentric coordinates! <br>
+            Play around with the floating point for a moment -- notice anything? <br>
+            <br>
+    
+            There's some... well... "rules" associated with proper barycentric coordinates. <br>
+            What do you notice about barycentric coordinates when the point is inside triangle? <br>
+            What do you notice when the point is outside the triangle? <br>
+            If all the coordinates are positive, then the point is within the triangle! <br>
+            <br>
+    
+            This can be used as a test in code, to determine if a point is within the triangle. <br>
+            Which is useful when shooting rays at triangles. <br>
+            Lets us know if a ray's intersection point is within the triangle, it does. <br>
+            <br>
+    
+            Did you notice anything else about the coordinates? <br>
+            If you add up all 3 barycentric coordinates, they sum to 1! <br>
+            Neat, I guess. <br>
+            <br>
+            Oh yeah, if you put the point on a corner -- it has barycentric coordinate of nearly 1 for one of the three barycentric coordinates. <br>
+            And nearly zero for the other corners. <br>
+    
+            My code for this demo reference is available 
+                <a class="link" href="https://github.com/mattstone22133/InteractiveDemos/blob/main/Applications/BarycentricCoordinates/src/BarycentricCoordinateDemo.cpp" target="_blank">
+                    here on github.
+                </a> <br>
+            <br>
+        </div>
+        <button class="collapse_button dark_bg" onclick="myHideElementById('intuit_method_div');"> 
+            <b>Intuitive Method:</b>
+        </button>
+        <hr>
+        <div id="intuit_method_div">
+            There's a couple ways you can calculate barycentric coordinates. <br>
+            I prefer intuitive understandings, otherwise I end up forgetting. <br>
+            The intuitive methods shows you a way to think about each barycentric coordinate. <br>
+            Imagine a line, going from a corner of the triangle to the side...<br>
+            Actually -- nevermind -- don't imagine a thing; check all the boxes (slowly) in the section under "wireframe". <br>
+            <br>
+            Perhaps, only check a single box in the last section, so we only focus on a single triangle corner. <br>
+            <br>
+            Anyways, notice the gray line that makes a right angle with a side of the triangle. <br>
+            The barycentric coordinate for that corner, is determined by the yellow vector's shadow (its projection). <br>
+            When the projection is halfway across the gray line, then barycentric for that coordinate is 0.5. <br>
+            That's half of 1. <br>
+            So... when the shadow/projection is halfway, the barycentric coordinate is half of its maximum. <br>
+            Make sense? <br>
+    
+            <br>
+            Well, -- to me -- this means we can just think of <b> barycentric coordinates as projections/shadows</b> of the point onto (gray) lines for each side of the triangle!<br>
+            <br>
+            For code, check out <b><em>BarycentricsDemo::calcBarycentrics_myMethod</em></b> <br>
+            <br>
+        </div>
+
+        <button class="collapse_button dark_bg" onclick="myHideElementById('optimize_method_div');"> 
+            <b>Optimized Method:</b>
+        </button>
+        <hr>
+        <div id="optimize_method_div">
+            So, while the intuitive method makes a lot of sense, it isn't the most efficient.  <br>
+            It does some superfluous operations to make the big picture nice, such as adding vectors to points, etc. <br>
+            But that can be skipped, at the cost of intuitiveness. <br>
+            I like the fact that this method still uses vector math to arrive at proper barycentric coordinates. <br>
+            <br>
+            As for understanding this method...
+            The animations show you how the vector is calculated, before I moving the vector visualization to the origin (the origin is place all vectors really emanate from). <br>
+            If you stare at the animations for long enough, it may seem to start and make sense. <br> 
+            That -- or your brain is tricking you -- so you can just move on with your life. :) <br>
+            <br>
+            code at <em><b>BarycentricsDemo::calcBarycentrics_optimizedProjection</b></em> <br>
+            <br>
+        </div>
+
+        <button class="collapse_button dark_bg" onclick="myHideElementById('area_method_div');"> 
+            <b>Area Method:</b>
+        </button>
+        <hr>
+        <div id="area_method_div">
+            Did you know that taking the cross product of two vectors gives you the area of the parallelogram between those two vectors? <br>
+            Well, technically the cross product gives you a vector, but the length of that vector is equal to the area. <br>
+            <br>
+            The Area Method does some vector math trickery to compare ratios of areas, which end up corresponding to barycentric coordinates. <br>
+            This method essentially generates two areas for each barycentric coordinate.
+            The first area is the area of the entire triangle (well, really the parallelogram, but just think of it as being the triangle for simplicity and intuition) <br>
+            The second area is the area of a triangle made with the test point! (again, actually parallelogram) <br>
+            Well, it turns out, if you divide the <em>test-point-triangle-area</em> by the <em>total-triangle-area</em>, you get a Barycentric! <br>
+            Barymagic. The ratio of the area is the barycentric coordinate. <br>
+            Perhaps, the proportion/ratio of areas is similar to the intuitive method, where the projection was some portion of gray vector. <br>
+            <br>
+            code at <em><b>BarycentricsDemo::calcBarycentrics_AreaMethod</b></em> <br>
+            <br>
+        </div>
+
+        <button class="collapse_button dark_bg" onclick="myHideElementById('linear_method_div');"> 
+            <b>Linear Equation Method:</b>
+        </button>
+        <hr>
+        <div id="linear_method_div">
+            The last method is the least intuitive to me. <br>
+            To me, it doesn't seem to have geometric explanation. <br>
+            I found this from the book "Realtime Collision." <br>
+            You can create an equation for a point, which is <br>
+            <em class="dark_bg">point = A + barycentric_v*(B-C) + barycentric_w*(C-A)</em> <br> <br>
+            You can rearrange this to be  <br>
+            <em class="dark_bg"> point = (1 -barycentric_v -barycentric_w)*A + barycentric_v*B + barycentric_w*C</em>. <br> <br>
+            The book creates 2 equations from these, using the dot product, and then set up a system of equations to solve the barycentric coordinates. <br>
+    
+            The system of equations to be solved by Cramer's rule. <br>
+            <br>
+            Code at <em><b>BarycentricsDemo::calcBarycentrics_LinearSystemMethod</b></em> <br>
+            <br>
+        </div>
+
+        <button class="collapse_button dark_bg" onclick="myHideElementById('final_remarks_div');"> 
+            <b>Final Remarks:</b>
+        </button>
+        <hr>
+        <div id="final_remarks_div">
+            This has been a very informal introduction to barycentric coordinates. <br>
+            Now that you have been able to play with them, I encourage you to read a little bit about them from a more formal source. <br>
+            That will give you exposure to how they are talked about in literature, and what the various forms of representation look like. <br>
+            But I hope that you can fall back onto the intuition gained here, to help solidify them in your mind. <br>
+        </div>
+
+    </div>
+    <!--<hr />-->
+    <!--<div class="emscripten">
+        <input type="checkbox" id="resize">Resize canvas
+        <input type="checkbox" id="pointerLock" checked>Lock/hide mouse pointer
+        &nbsp;&nbsp;&nbsp;
+        <input type="button" value="Fullscreen" onclick="Module.requestFullscreen(document.getElementById('pointerLock').checked,
+                                                                                document.getElementById('resize').checked)">
+    </div>-->
+
+    <!--<hr />
+    <textarea class="emscripten" id="output" rows="8"></textarea>
+    <hr>-->
+    <script type='text/javascript'>
+        var statusElement = document.getElementById('status');
+        var progressElement = document.getElementById('progress');
+        var spinnerElement = document.getElementById('spinner');
+
+        var Module = {
+            preRun: [],
+            postRun: [],
+            print: (function () {
+                var element = document.getElementById('output');
+                if (element) element.value = ''; // clear browser cache
+                return function (text) {
+                    if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
+                    // These replacements are necessary if you render to raw HTML
+                    //text = text.replace(/&/g, "&amp;");
+                    //text = text.replace(/</g, "&lt;");
+                    //text = text.replace(/>/g, "&gt;");
+                    //text = text.replace('\n', '<br>', 'g');
+                    console.log(text);
+                    if (element) {
+                        element.value += text + "\n";
+                        element.scrollTop = element.scrollHeight; // focus on bottom
+                    }
+                };
+            })(),
+            canvas: (function () {
+                var canvas = document.getElementById('canvas');
+
+                // As a default initial behavior, pop up an alert when webgl context is lost. To make your
+                // application robust, you may want to override this behavior before shipping!
+                // See http://www.khronos.org/registry/webgl/specs/latest/1.0/#5.15.2
+                canvas.addEventListener("webglcontextlost", function (e) { alert('WebGL context lost. You will need to reload the page.'); e.preventDefault(); }, false);
+
+                return canvas;
+            })(),
+            setStatus: function (text) {
+                if (!Module.setStatus.last) Module.setStatus.last = { time: Date.now(), text: '' };
+                if (text === Module.setStatus.last.text) return;
+                var m = text.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/);
+                var now = Date.now();
+                if (m && now - Module.setStatus.last.time < 30) return; // if this is a progress update, skip it if too soon
+                Module.setStatus.last.time = now;
+                Module.setStatus.last.text = text;
+                if (m) {
+                    text = m[1];
+                    progressElement.value = parseInt(m[2]) * 100;
+                    progressElement.max = parseInt(m[4]) * 100;
+                    progressElement.hidden = false;
+                    spinnerElement.hidden = false;
+                } else {
+                    progressElement.value = null;
+                    progressElement.max = null;
+                    progressElement.hidden = true;
+                    if (!text) spinnerElement.hidden = true;
+                }
+                statusElement.innerHTML = text;
+            },
+            totalDependencies: 0,
+            monitorRunDependencies: function (left) {
+                this.totalDependencies = Math.max(this.totalDependencies, left);
+                Module.setStatus(left ? 'Preparing... (' + (this.totalDependencies - left) + '/' + this.totalDependencies + ')' : 'All downloads complete.');
+            }
+        };
+        Module.setStatus('Downloading...');
+        window.onerror = function () {
+            Module.setStatus('Exception thrown, see JavaScript console');
+            spinnerElement.style.display = 'none';
+            Module.setStatus = function (text) {
+                if (text) Module.printErr('[post-exception status] ' + text);
+            };
+        };
+    </script>
+    {{{ SCRIPT }}}
+</body>
+</html>

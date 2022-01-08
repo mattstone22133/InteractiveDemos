@@ -158,7 +158,7 @@ glm::vec3 BarycentricsDemo::calcBarycentrics_AreaMethod(glm::vec3 testPoint, glm
 	//glm::vec3 normal = glm::normalize(glm::cross(pntB - pntA, pntC - pntA));
 	glm::vec3 normal = glm::cross(pntB - pntA, pntC - pntA);//it appears this will work even if normal isn't normalized, but areas apear to be scalar projections so this may be invalid in terms of correct area, but still works as it is same proportion?
 
-	// The area of a triangle is 
+	// The area of a triangle is below (note: we are using the dot product with normal to get length from cross result)
 	float areaABC = glm::dot(normal, glm::cross((pntB - pntA), (pntC - pntA)));
 	float areaPBC = glm::dot(normal, glm::cross((pntB - testPoint), (pntC - testPoint)));
 	float areaPCA = glm::dot(normal, glm::cross((pntC - testPoint), (pntA - testPoint)));
@@ -172,7 +172,7 @@ glm::vec3 BarycentricsDemo::calcBarycentrics_AreaMethod(glm::vec3 testPoint, glm
 
 glm::vec3 BarycentricsDemo::calcBarycentrics_LinearSystemMethod(glm::vec3 testPoint, glm::vec3 pntA, glm::vec3 pntB, glm::vec3 pntC)
 {
-	//real time collision method using cramers rule to solve system of equations
+	//real time collision (book) method using cramer's rule to solve system of equations for barycentric coordinates.
 
 	glm::vec3 a_to_b = pntB - pntA;
 	glm::vec3 a_to_c = pntC - pntA;
@@ -218,20 +218,19 @@ void BarycentricsDemo::init()
 	pntB->setPosition(triPoint_B);
 	pntC->setPosition(triPoint_C);
 	
-	//testPoint->setPosition(0.33f*triPoint_A + 0.33f*triPoint_B + 0.33f*triPoint_C);
 
 	//doing some tests to see if calculations match positions
+	//testPoint->setPosition(0.33f*triPoint_A + 0.33f*triPoint_B + 0.33f*triPoint_C);
 	//testPoint->setPosition(0.66f*triPoint_A + 0.0f*triPoint_B + 0.33f*triPoint_C); //matches drag position
-	//testPoint->setPosition(0.89f*triPoint_A + 1.17f*triPoint_B + 0.72f*triPoint_C); // does not match
+	//testPoint->setPosition(0.89f*triPoint_A + 1.17f*triPoint_B + 0.72f*triPoint_C); // does not match (doesn't sum to 1?
 	//testPoint->setPosition(0.19f*triPoint_A + 0.71f*triPoint_B + 0.009f*triPoint_C);
 	//testPoint->setPosition(0.21f*triPoint_A + 0.73f*triPoint_B + 0.05f*triPoint_C);
 	//testPoint->setPosition(0.674f*triPoint_A + 0.198f*triPoint_B + 0.128f*triPoint_C);  //exact match
 	//testPoint->setPosition(0.224f*triPoint_A + 0.517f*triPoint_B + 0.260f*triPoint_C); //exact match
 	//testPoint->setPosition(0.08f*triPoint_A + 0.152f*triPoint_B + 0.768f*triPoint_C); 
-
 	//testPoint->setPosition(-0.112f*triPoint_A + 0.629f*triPoint_B + 0.484f*triPoint_C);  //test using a negative weight
-	testPoint->setPosition(1.174f * triPoint_A + -0.483f * triPoint_B + 0.309f * triPoint_C);  //appears to match
 	//testPoint->setPosition(-0.369f*triPoint_A + 1.1139f*triPoint_B + 0.229f*triPoint_C);   //appears  to match fairly close
+	testPoint->setPosition(1.174f * triPoint_A + -0.483f * triPoint_B + 0.309f * triPoint_C);  //appears to match, this is a good example point
 
 	genericVector = new_sp<TutorialEngine::VisualVector>();
 	genericVector->bUseCenteredMesh = false;
