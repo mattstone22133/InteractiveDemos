@@ -613,44 +613,44 @@ void BarycentricsDemo::render_UI()
 		//if (ImGui::Checkbox("bRenderBarycentricC", &bRenderBarycentricC)) { bTestPointUpdated = true; }
 		ImGui::Separator();
 
-		ImGui::Checkbox("wireframe", &bWireframe);
+		ImGui::Checkbox("Wireframe", &bWireframe);
 
 		ImGui::Separator();
 		if (barymode == EBarycentricMode::INTUITIVE_METHOD)
 		{
-			if (ImGui::Checkbox("bRenderBToA", &bRenderBToA)) { timestamp_RenderBToA = tickedTime; }
-			if (ImGui::Checkbox("bRenderBToC", &bRenderBToC)) { timestamp_RenderBToC = tickedTime; }
-			if (ImGui::Checkbox("bRenderBCProj", &bRenderBCProj)) { timestamp_RenderBCProj = tickedTime; }
-			if (ImGui::Checkbox("bRender_PerpendicularToEdge", &bRender_PerpendicularToEdge)) { timestamp_Render_PerpendicularToEdge = tickedTime; }
-			if (ImGui::Checkbox("bRender_EdgeProjectPointToTestPoint", &bRender_EdgeProjectPointToTestPoint)) { timestamp_Render_EdgeProjectPointToTestPoint = tickedTime; }
-			if (ImGui::Checkbox("bRenderTestPointProjectionOntoPerpendicular", &bRenderTestPointProjectionOntoPerpendicular)) { timestamp_RenderTestPointProjectionOntoPerpendicular = tickedTime; }
+			if (ImGui::Checkbox("Render B To A Vector", &bRenderBToA)) { timestamp_RenderBToA = tickedTime; }
+			if (ImGui::Checkbox("Render B To C Vector", &bRenderBToC)) { timestamp_RenderBToC = tickedTime; }
+			if (ImGui::Checkbox("Render BC Projection", &bRenderBCProj)) { timestamp_RenderBCProj = tickedTime; }
+			if (ImGui::Checkbox("Render Perpendicular To Edge Vector", &bRender_PerpendicularToEdge)) { timestamp_Render_PerpendicularToEdge = tickedTime; }
+			if (ImGui::Checkbox("Render Edge-Projection-Point To TestPoint Vector", &bRender_EdgeProjectPointToTestPoint)) { timestamp_Render_EdgeProjectPointToTestPoint = tickedTime; }
+			if (ImGui::Checkbox("Render TestPoint Projection On To Perpendicular", &bRenderTestPointProjectionOntoPerpendicular)) { timestamp_RenderTestPointProjectionOntoPerpendicular = tickedTime; }
 		}
 		else if (barymode == EBarycentricMode::OPTIMIZED_PROJECTION)
 		{
-			if (ImGui::Checkbox("bRenderAB", &bRenderAB)) { timestamp_renderbRenderAB = tickedTime; }
-			if (ImGui::Checkbox("bRenderCB", &bRenderCB)) { timestamp_renderbRenderCB = tickedTime; }
-			if (ImGui::Checkbox("bRender_AtoTestPnt", &bRender_AtoTestPnt)) { timestamp_renderbRender_AtoTestPnt = tickedTime; }
-			if (ImGui::Checkbox("bRender_ProjToCB", &bRender_ProjToCB)) { timestamp_renderbRender_Perpendicular = tickedTime; }
-			if (ImGui::Checkbox("bRender_VectorFromFirstProjection (hint: move A to origin)", &bRender_VectorFromFirstProjection)) { timestamp_renderbRender_VectorFromFirstProjection = tickedTime; }
-			if (ImGui::Checkbox("bRender_projTestPointOntoPerpendicular", &bRender_projTestPointOntoPerpendicular)) { timestamp_renderbRender_projTestPointOntoPerpendicular = tickedTime; }
-			if (ImGui::Checkbox("bRender_projABontoPerpendicular", &bRender_projABontoPerpendicular)) { timestamp_renderbRender_projABontoPerpendicular = tickedTime; }
+			if (ImGui::Checkbox("Render AB Vector", &bRenderAB)) { timestamp_renderbRenderAB = tickedTime; }
+			if (ImGui::Checkbox("Render CB Vector", &bRenderCB)) { timestamp_renderbRenderCB = tickedTime; }
+			if (ImGui::Checkbox("Render AtoTestPoint Vector", &bRender_AtoTestPnt)) { timestamp_renderbRender_AtoTestPnt = tickedTime; }
+			if (ImGui::Checkbox("Render Projection To CB", &bRender_ProjToCB)) { timestamp_renderbRender_Perpendicular = tickedTime; }
+			if (ImGui::Checkbox("Render VectorFromFirstProjection (hint: move A to origin)", &bRender_VectorFromFirstProjection)) { timestamp_renderbRender_VectorFromFirstProjection = tickedTime; }
+			if (ImGui::Checkbox("Render project TestPoint On To Perpendicular", &bRender_projTestPointOntoPerpendicular)) { timestamp_renderbRender_projTestPointOntoPerpendicular = tickedTime; }
+			if (ImGui::Checkbox("Render project AB On To Perpendicular", &bRender_projABontoPerpendicular)) { timestamp_renderbRender_projABontoPerpendicular = tickedTime; }
 		}
 		else if (barymode == EBarycentricMode::AREA_METHOD)
 		{
-			ImGui::Checkbox("normalize normals", &bAreaMethod_normalizeNormals);
-			if (ImGui::Checkbox("bRenderCrossVec_first", &bRenderCrossVec_first)) { timestamp_crossvecfirst = tickedTime; }
-			if (ImGui::Checkbox("bRenderCrossVec_second ", &bRenderCrossVec_second)) { timestamp_crossvecsecond = tickedTime; }
+			ImGui::Checkbox("Normalize Normals", &bAreaMethod_normalizeNormals);
+			if (ImGui::Checkbox("Render CrossVec_first", &bRenderCrossVec_first)) { timestamp_crossvecfirst = tickedTime; }
+			if (ImGui::Checkbox("Render CrossVec_second ", &bRenderCrossVec_second)) { timestamp_crossvecsecond = tickedTime; }
 			ImGui::Separator();
 
-			if (ImGui::Checkbox("bAreaMethod_renderFullArea", &bAreaMethod_renderFullArea)) { timestamp_area_fullarea = tickedTime; }
-			if (ImGui::Checkbox("bAreaMethod_renderPBC_Area", &bAreaMethod_renderPBC_Area)) { timestamp_area_PBC_area = tickedTime; }
-			if (ImGui::Checkbox("bAreaMethod_renderPCA_Area", &bAreaMethod_renderPCA_Area)) { timestamp_area_PCA_area = tickedTime; }
-			if (ImGui::Checkbox("bAreaMethod_renderPAB_Area", &bAreaMethod_renderPAB_Area)) { timestamp_area_PAB_area = tickedTime; }
-			if (ImGui::Checkbox("bAreaMethod_RenderTriNormals", &bAreaMethod_RenderTriNormals)) { timestamp_area_normals = tickedTime; }
-			if (ImGui::Checkbox("bAreaMethod_RenderCrossProductVectors", &bRenderCrossProductVectors)) { timestamp_crossproductVecs = tickedTime; }
+			if (ImGui::Checkbox("Render Full Area (recommend wireframe mode)", &bAreaMethod_renderFullArea)) { timestamp_area_fullarea = tickedTime; }
+			if (ImGui::Checkbox("Render PBC Area", &bAreaMethod_renderPBC_Area)) { timestamp_area_PBC_area = tickedTime; }
+			if (ImGui::Checkbox("Render PCA Area", &bAreaMethod_renderPCA_Area)) { timestamp_area_PCA_area = tickedTime; }
+			if (ImGui::Checkbox("Render PAB Area", &bAreaMethod_renderPAB_Area)) { timestamp_area_PAB_area = tickedTime; }
+			if (ImGui::Checkbox("Render Triangle Normals", &bAreaMethod_RenderTriNormals)) { timestamp_area_normals = tickedTime; }
+			if (ImGui::Checkbox("Render CrossProduct Vectors", &bRenderCrossProductVectors)) { timestamp_crossproductVecs = tickedTime; }
 
 
-			ImGui::Checkbox("Render half xproduct area", &bRenderHalfAreas);
+			ImGui::Checkbox("Render Half Cross Product Area", &bRenderHalfAreas);
 
 		}
 
@@ -661,14 +661,15 @@ void BarycentricsDemo::render_UI()
 
 
 		ImGui::Separator();
-		ImGui::Checkbox("Shriley book ground truth", &bRenderShirleyVersion);
-		ImGui::Checkbox("Real time collision book ground truth", &bRenderRealTimeCollisionBook);
+		ImGui::Checkbox("Shriley Book Ground Truth", &bRenderShirleyVersion);
+		ImGui::Checkbox("Real Time Collision Book Ground Truth", &bRenderRealTimeCollisionBook);
 
 		ImGui::Separator();
 
-		if (ImGui::Checkbox("bRenderBarycentricA", &bRenderBarycentricA)) { bDraggableTestPointUpdated = true; } //update test point so we refresh projection anims
-		if (ImGui::Checkbox("bRenderBarycentricB", &bRenderBarycentricB)) { bDraggableTestPointUpdated = true; }
-		if (ImGui::Checkbox("bRenderBarycentricC", &bRenderBarycentricC)) { bDraggableTestPointUpdated = true; }
+		ImGui::Text("Recommend Only One Checking Below.");
+		if (ImGui::Checkbox("Render Barycentric A Animations", &bRenderBarycentricA)) { bDraggableTestPointUpdated = true; } //update test point so we refresh projection anims
+		if (ImGui::Checkbox("Render Barycentric B Animations", &bRenderBarycentricB)) { bDraggableTestPointUpdated = true; }
+		if (ImGui::Checkbox("Render Barycentric C Animations", &bRenderBarycentricC)) { bDraggableTestPointUpdated = true; }
 	}
 
 

@@ -157,7 +157,7 @@
             Play around with the floating point for a moment -- notice anything? <br>
             <br>
     
-            There's some... well... "rules" associated with proper barycentric coordinates. <br>
+            There's some... well... "rules" or "properties" associated with proper barycentric coordinates. <br>
             What do you notice about barycentric coordinates when the point is inside triangle? <br>
             What do you notice when the point is outside the triangle? <br>
             If all the coordinates are positive, then the point is within the triangle! <br>
@@ -165,7 +165,7 @@
     
             This can be used as a test in code, to determine if a point is within the triangle. <br>
             Which is useful when shooting rays at triangles. <br>
-            Lets us know if a ray's intersection point is within the triangle, it does. <br>
+            For example, it lets us know if a ray's intersection point is within the triangle. <br>
             <br>
     
             Did you notice anything else about the coordinates? <br>
@@ -191,16 +191,17 @@
             The intuitive methods shows you a way to think about each barycentric coordinate. <br>
             Imagine a line, going from a corner of the triangle to the side...<br>
             Actually -- nevermind -- don't imagine a thing; check all the boxes (slowly) in the section under "wireframe". <br>
+            note: each box animates a step in the method; so leave them checked when moving to the next step. <br>
             <br>
             Perhaps, only check a single box in the last section, so we only focus on a single triangle corner. <br>
             <br>
             Anyways, notice the gray line that makes a right angle with a side of the triangle. <br>
             The barycentric coordinate for that corner, is determined by the yellow vector's shadow (its projection). <br>
             When the projection is halfway across the gray line, then barycentric for that coordinate is 0.5. <br>
-            That's half of 1. <br>
+            The barycentric coordinate for that corner will be between [0,1] when it is on the triangle. <br>
+            Thus, a 0.5 barycentric coordinate is half of the within-triangle range. <br>
             So... when the shadow/projection is halfway, the barycentric coordinate is half of its maximum. <br>
             Make sense? <br>
-    
             <br>
             Well, -- to me -- this means we can just think of <b> barycentric coordinates as projections/shadows</b> of the point onto (gray) lines for each side of the triangle!<br>
             <br>
@@ -216,11 +217,11 @@
             So, while the intuitive method makes a lot of sense, it isn't the most efficient.  <br>
             It does some superfluous operations to make the big picture nice, such as adding vectors to points, etc. <br>
             But that can be skipped, at the cost of intuitiveness. <br>
-            I like the fact that this method still uses vector math to arrive at proper barycentric coordinates. <br>
+            I like the fact that this method still uses just basic vector math operations to arrive at proper barycentric coordinates. <br>
             <br>
             As for understanding this method...
-            The animations show you how the vector is calculated, before I moving the vector visualization to the origin (the origin is place all vectors really emanate from). <br>
-            If you stare at the animations for long enough, it may seem to start and make sense. <br> 
+            The animations show you how the vector is calculated, before I move the vector visualization to the origin (the origin is place all vectors really emanate from). <br>
+            If you stare at the animations for long enough, it may seem to start making sense. <br> 
             That -- or your brain is tricking you -- so you can just move on with your life. :) <br>
             <br>
             code at <em><b>BarycentricsDemo::calcBarycentrics_optimizedProjection</b></em> <br>
@@ -241,7 +242,7 @@
             The second area is the area of a triangle made with the test point! (again, actually parallelogram) <br>
             Well, it turns out, if you divide the <em>test-point-triangle-area</em> by the <em>total-triangle-area</em>, you get a Barycentric! <br>
             Barymagic. The ratio of the area is the barycentric coordinate. <br>
-            Perhaps, the proportion/ratio of areas is similar to the intuitive method, where the projection was some portion of gray vector. <br>
+            In my opinion, the intuition here is that a barycentric coordinate is related to how much of the total triangle area is covered by the area of the triangle made with the test point.<br>
             <br>
             code at <em><b>BarycentricsDemo::calcBarycentrics_AreaMethod</b></em> <br>
             <br>
@@ -254,14 +255,15 @@
         <div id="linear_method_div">
             The last method is the least intuitive to me. <br>
             To me, it doesn't seem to have geometric explanation. <br>
-            I found this from the book "Realtime Collision." <br>
+            I found this from the book "Realtime Collision Detection." <br>
+            <br>
             You can create an equation for a point, which is <br>
-            <em class="dark_bg">point = A + barycentric_v*(B-C) + barycentric_w*(C-A)</em> <br> <br>
-            You can rearrange this to be  <br>
+            <em class="dark_bg">point = A + barycentric_v*(B-A) + barycentric_w*(C-A)</em> <br> <br>
+            You can rearrange that to be  <br>
             <em class="dark_bg"> point = (1 -barycentric_v -barycentric_w)*A + barycentric_v*B + barycentric_w*C</em>. <br> <br>
             The book creates 2 equations from these, using the dot product, and then set up a system of equations to solve the barycentric coordinates. <br>
     
-            The system of equations to be solved by Cramer's rule. <br>
+            The system of equations is solved by Cramer's rule. <br>
             <br>
             Code at <em><b>BarycentricsDemo::calcBarycentrics_LinearSystemMethod</b></em> <br>
             <br>
@@ -275,7 +277,7 @@
             This has been a very informal introduction to barycentric coordinates. <br>
             Now that you have been able to play with them, I encourage you to read a little bit about them from a more formal source. <br>
             That will give you exposure to how they are talked about in literature, and what the various forms of representation look like. <br>
-            But I hope that you can fall back onto the intuition gained here, to help solidify them in your mind. <br>
+            But I hope that you can fall back on to the intuition gained here, to help solidify them in your mind. <br>
         </div>
 
     </div>
