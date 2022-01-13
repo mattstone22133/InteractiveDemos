@@ -37,6 +37,7 @@ public:
 	static glm::vec3 calcBarycentrics_optimizedProjection(glm::vec3 testPoint, glm::vec3 pntA, glm::vec3 pntB, glm::vec3 pntC);
 	static glm::vec3 calcBarycentrics_AreaMethod(glm::vec3 testPoint, glm::vec3 pntA, glm::vec3 pntB, glm::vec3 pntC);
 	static glm::vec3 calcBarycentrics_LinearSystemMethod(glm::vec3 testPoint, glm::vec3 pntA, glm::vec3 pntB, glm::vec3 pntC);
+	static glm::vec3 projectAontoB(const glm::vec3& a, const glm::vec3& b);
 protected:
 	virtual void init() override;
 	virtual void render_game(float dt_sec) override;
