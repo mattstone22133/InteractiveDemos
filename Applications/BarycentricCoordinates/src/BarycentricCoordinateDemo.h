@@ -49,6 +49,7 @@ protected:
 	virtual void tick(float dt_sec) override;
 	virtual void gatherInteractableCubeObjects(std::vector<const TriangleList_SNO*>& objectList) override;
 	void handleTestPointUpdated(const TutorialEngine::VisualPoint& pnt);
+	void updateUserTypedWeights();
 private:
 	//avoiding using anim helpers for these atm because helpers cannot be done in single line, after refactoring them will use those instead of having explicit methods below
 	//also avoiding because reworked some logic with projection updates to be non-negative language (reset anim instead of talkinga bout test opint updated)
@@ -79,6 +80,8 @@ private:
 	bool bRenderBarycentricA = true;
 	bool bRenderBarycentricB = false;
 	bool bRenderBarycentricC = false;
+
+	glm::vec3 userTypedWeightValues{ 0.f };
 	////////////////////////////////////////////////////////
 	// slow intuitive method flags
 	////////////////////////////////////////////////////////

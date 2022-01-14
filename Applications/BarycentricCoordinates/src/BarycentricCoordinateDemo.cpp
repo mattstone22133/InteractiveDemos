@@ -265,6 +265,8 @@ void BarycentricsDemo::init()
 	projAnim_ab_onto_cb->animDurSec					= ProjectionAnimationDuration;
 	projAnim_testPointOnPerpendicular->animDurSec	= ProjectionAnimationDuration;
 	projAnim_aBOnPerpendicular->animDurSec			= ProjectionAnimationDuration;
+
+	updateUserTypedWeights();
 }
 
 void BarycentricsDemo::render_game(float dt_sec)
@@ -416,6 +418,7 @@ void BarycentricsDemo::render_game(float dt_sec)
 			}
 		}
 
+		//reset on next tick, instead of end of render, so that UI can use this flag 
 		bDraggableTestPointUpdated = false; //always reset state of moving a test point, now that we have used this flag in rendering animations (used to update projections).
 	}
 }
@@ -695,6 +698,35 @@ void BarycentricsDemo::render_UI()
 		if (ImGui::Checkbox("Render Barycentric A Animations", &bRenderBarycentricA)) { bDraggableTestPointUpdated = true; } //update test point so we refresh projection anims
 		if (ImGui::Checkbox("Render Barycentric B Animations", &bRenderBarycentricB)) { bDraggableTestPointUpdated = true; }
 		if (ImGui::Checkbox("Render Barycentric C Animations", &bRenderBarycentricC)) { bDraggableTestPointUpdated = true; }
+
+		/////////////////////////////////////////////////////////////////////////
+		// Extras to help understand things related to barycentrics.
+		/////////////////////////////////////////////////////////////////////////
+		ImGui::Separator();
+		static bool bExtras = false;
+		ImGui::Checkbox("Extras", &bExtras);
+		if (bExtras)
+		{
+			ImGui::Text("Barycentrics are NOT just point weights.");
+			ImGui::Text("Try typing some arbitrary weights to test.");
+			ImGui::Text("Try typing corner barycentrics eg:(1,0,0).");
+			ImGui::Text("Try typing (0.5,0.5,0).");
+			ImGui::Text("Try typing an invalid barycentric. eg:(1,1,0) and (1,1,1).");
+			if (ImGui::Button("Apply"))
+			{
+				if (testPoint && pntA && pntB && pntC)
+				{
+					testPoint->setPosition(
+						userTypedWeightValues.x* pntA->getPosition()
+						+ userTypedWeightValues.y * pntB->getPosition()
+						+ userTypedWeightValues.z * pntC->getPosition()
+					);
+				}
+				updateUserTypedWeights();
+			}
+			ImGui::SameLine();
+			ImGui::InputFloat3("Point Weights", &userTypedWeightValues.x);
+		}
 	}
 
 
@@ -757,9 +789,19 @@ void BarycentricsDemo::gatherInteractableCubeObjects(std::vector<const TriangleL
 void BarycentricsDemo::handleTestPointUpdated(const TutorialEngine::VisualPoint& pnt)
 {
 	bDraggableTestPointUpdated = true;
+	updateUserTypedWeights();
 }
 
 
+
+void BarycentricsDemo::updateUserTypedWeights()
+{
+	if (testPoint && pntA && pntB && pntC)
+	{
+		realtimecollisiondetectionbook_Barycentric(testPoint->getPosition(), pntA->getPosition(), pntB->getPosition(), pntC->getPosition(),
+			userTypedWeightValues.x, userTypedWeightValues.y, userTypedWeightValues.z);
+	}
+}
 
 void BarycentricsDemo::helper_renderVector(bool bShouldRender, glm::vec3 start, glm::vec3 dir, glm::vec3 color)
 {
