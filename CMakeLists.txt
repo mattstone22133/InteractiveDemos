@@ -24,6 +24,7 @@ set(SHARED_CMAKE_UTILITES_DIR "${CMAKE_CURRENT_LIST_DIR}/CMake" CACHE STRING "gl
 # set up the engine library for all applications to link against
 add_subdirectory("Libraries/Engine")
 add_subdirectory("Libraries/TutorialEngine")
+add_subdirectory("Libraries/Ported/Deprecated/PortedOldOpenGL3")
 
 # --------------------------------------------------------------
 # Set up applications
@@ -33,5 +34,6 @@ add_compile_definitions(GLFW_INCLUDE_NONE) #stop GLFW and GLAD conflicts on linu
 add_subdirectory("Applications/BuildSystemTest")
 add_subdirectory("Applications/HelloTriangle")
 add_subdirectory("Applications/BarycentricCoordinates")
+add_subdirectory("Applications/SeparatingAxisTheorem")
 
 message(STATUS " ------------------------------------------------------------------------------------")
