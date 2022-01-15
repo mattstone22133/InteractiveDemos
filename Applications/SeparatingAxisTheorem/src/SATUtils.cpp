@@ -14,5 +14,5 @@ namespace SAT
 
 
 }
-#endif #WITH_SAT_DEMO_BUILD
+#endif //WITH_SAT_DEMO_BUILD
 
