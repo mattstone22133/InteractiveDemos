@@ -708,6 +708,9 @@ void BarycentricsDemo::render_UI()
 		if (bExtras)
 		{
 			ImGui::Text("Barycentrics are NOT just point weights.");
+			ImGui::Text("How to move the test point using point weights.");
+			ImGui::Text("location = pointA*weightA + pointB*weightB + pointC*weightC");
+			ImGui::Text("");
 			ImGui::Text("Try typing some arbitrary weights to test.");
 			ImGui::Text("Try typing corner barycentrics eg:(1,0,0).");
 			ImGui::Text("Try typing (0.5,0.5,0).");
@@ -722,7 +725,7 @@ void BarycentricsDemo::render_UI()
 						+ userTypedWeightValues.z * pntC->getPosition()
 					);
 				}
-				updateUserTypedWeights();
+				updateUserTypedWeights();	
 			}
 			ImGui::SameLine();
 			ImGui::InputFloat3("Point Weights", &userTypedWeightValues.x);
