@@ -21,7 +21,7 @@ target_link_libraries(${EXECUTABLE_NAME} PUBLIC OldOpenGL3Project)
 
 # if html build, instruct files to be preloaded, so that they can be loaded (eg textures)
 include(${SHARED_CMAKE_UTILITES_DIR}/UtilitiesHTML.cmake) #variable should be defined at toplevel cmakelists.txt
-HTMLPreloadDirectory(${EXECUTABLE_NAME} "${CMAKE_CURRENT_BINARY_DIR}/PreloadAssets/@PreloadAssets") #@ symbol renames path on left of @ to path on right of @; ie old/path@newpath
+#HTMLPreloadDirectory(${EXECUTABLE_NAME} "${CMAKE_CURRENT_BINARY_DIR}/PreloadAssets/@PreloadAssets") #@ symbol renames path on left of @ to path on right of @; ie old/path@newpath
 #HTMLUseTemplateHtmlFile(${EXECUTABLE_NAME} "${CMAKE_CURRENT_LIST_DIR}/html_output_template.html")
 
 set_target_properties(${EXECUTABLE_NAME} PROPERTIES
