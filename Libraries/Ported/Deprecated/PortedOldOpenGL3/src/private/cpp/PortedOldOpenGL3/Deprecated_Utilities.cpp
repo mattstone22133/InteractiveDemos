@@ -68,7 +68,8 @@ namespace Deprecated_Utils {
 		////instead of passing a callback, just do a simple lambda 
 		//glfwSetWindowSizeCallback(window, [](GLFWwindow*window, int width, int height) {glViewport(0, 0, width, height); });
 		//return window;
-		return nullptr;
+
+		//return nullptr; //DISABLE
 	}
 
 	void setWindowCloseOnEscape(GLFWwindow * window)
@@ -80,183 +81,183 @@ namespace Deprecated_Utils {
 		}
 	}
 
-	bool createSingleElementTriangle(GLuint & EAO, GLuint & VAO, GLuint & VBO)
-	{
-		glGenVertexArrays(1, &VAO);
-		glGenBuffers(1, &VBO);
-		glGenBuffers(1, &EAO);
+	//bool createSingleElementTriangle(GLuint & EAO, GLuint & VAO, GLuint & VBO)
+	//{
+	//	glGenVertexArrays(1, &VAO);
+	//	glGenBuffers(1, &VBO);
+	//	glGenBuffers(1, &EAO);
 
-		glBindVertexArray(VAO);
+	//	glBindVertexArray(VAO);
 
-		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(Deprecated_Utils::basicTriangleVertices), basicTriangleVertices, GL_STATIC_DRAW);
+	//	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	//	glBufferData(GL_ARRAY_BUFFER, sizeof(Deprecated_Utils::basicTriangleVertices), basicTriangleVertices, GL_STATIC_DRAW);
 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EAO);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Deprecated_Utils::indices), indices, GL_STATIC_DRAW);
+	//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EAO);
+	//	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Deprecated_Utils::indices), indices, GL_STATIC_DRAW);
 
-		//assuming using the basic shader that has attribute at layout location 0
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), static_cast<void*>(0));
-		glEnableVertexAttribArray(0);
-		
-		//unbind VAO so further state changes are not saved
-		glBindVertexArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		
-		//make sure non of the buffers were set to 0
-		return (VAO && VBO && EAO);
-	}
+	//	//assuming using the basic shader that has attribute at layout location 0
+	//	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), static_cast<void*>(0));
+	//	glEnableVertexAttribArray(0);
+	//	
+	//	//unbind VAO so further state changes are not saved
+	//	glBindVertexArray(0);
+	//	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	//	
+	//	//make sure non of the buffers were set to 0
+	//	return (VAO && VBO && EAO);
+	//}
 
-	bool generate4AttribRectangleElement(GLuint & EAO, GLuint & VAO, GLuint & VBO)
-	{
-		//VERTEX ATTRIBS
-		static const float vertices[] = {
-			// positions          // colors           // texture coords
-			0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
-			0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
-			-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
-			-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
-		};
+	//bool generate4AttribRectangleElement(GLuint & EAO, GLuint & VAO, GLuint & VBO)
+	//{
+	//	//VERTEX ATTRIBS
+	//	static const float vertices[] = {
+	//		// positions          // colors           // texture coords
+	//		0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
+	//		0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
+	//		-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
+	//		-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
+	//	};
 
-		//ELEMENT INDICES FOR TEXTURE TUTORIAL
-		static const GLuint rectIndices[] = {
-			0, 1, 3,	//first triangle
-			1, 2, 3		//second triangle 
-		};
+	//	//ELEMENT INDICES FOR TEXTURE TUTORIAL
+	//	static const GLuint rectIndices[] = {
+	//		0, 1, 3,	//first triangle
+	//		1, 2, 3		//second triangle 
+	//	};
 
-		glGenVertexArrays(1, &VAO);
-		glGenBuffers(1, &EAO);
-		glGenBuffers(1, &VBO);
+	//	glGenVertexArrays(1, &VAO);
+	//	glGenBuffers(1, &EAO);
+	//	glGenBuffers(1, &VBO);
 
-		if (!(EAO && VAO && VBO)) { return false; }
-		
-		//start saving state in VAO
-		glBindVertexArray(VAO);
-		
-		//buffer vertice data
-		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	//	if (!(EAO && VAO && VBO)) { return false; }
+	//	
+	//	//start saving state in VAO
+	//	glBindVertexArray(VAO);
+	//	
+	//	//buffer vertice data
+	//	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	//	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-		//buffer element indices data
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EAO);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(rectIndices), rectIndices, GL_STATIC_DRAW);
+	//	//buffer element indices data
+	//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EAO);
+	//	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(rectIndices), rectIndices, GL_STATIC_DRAW);
 
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<GLvoid*>(0));
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<GLvoid*>(3 * sizeof(float)));
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<GLvoid*>(6 * sizeof(float)));
+	//	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<GLvoid*>(0));
+	//	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<GLvoid*>(3 * sizeof(float)));
+	//	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<GLvoid*>(6 * sizeof(float)));
 
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
-		glEnableVertexAttribArray(2);
+	//	glEnableVertexAttribArray(0);
+	//	glEnableVertexAttribArray(1);
+	//	glEnableVertexAttribArray(2);
 
-		//stop saving state in this vertex array object
-		glBindVertexArray(0);
+	//	//stop saving state in this vertex array object
+	//	glBindVertexArray(0);
 
-		//if this state is reached, then all previous previous checks are assumed to have passed
-		return true;
-	}
+	//	//if this state is reached, then all previous previous checks are assumed to have passed
+	//	return true;
+	//}
 
-	bool generateRectForTextChallenge2(const float vertices[], const size_t verticesSize, GLuint & EAO, GLuint & VAO, GLuint & VBO)
-	{
-		//ELEMENT INDICES FOR TEXTURE TUTORIAL
-		static const GLuint rectIndices[] = {
-			0, 1, 3,	//first triangle
-			1, 2, 3		//second triangle 
-		};
+	//bool generateRectForTextChallenge2(const float vertices[], const size_t verticesSize, GLuint & EAO, GLuint & VAO, GLuint & VBO)
+	//{
+	//	//ELEMENT INDICES FOR TEXTURE TUTORIAL
+	//	static const GLuint rectIndices[] = {
+	//		0, 1, 3,	//first triangle
+	//		1, 2, 3		//second triangle 
+	//	};
 
-		glGenVertexArrays(1, &VAO);
-		glGenBuffers(1, &EAO);
-		glGenBuffers(1, &VBO);
+	//	glGenVertexArrays(1, &VAO);
+	//	glGenBuffers(1, &EAO);
+	//	glGenBuffers(1, &VBO);
 
-		if (!(EAO && VAO && VBO)) { return false; }
+	//	if (!(EAO && VAO && VBO)) { return false; }
 
-		//start saving state in VAO
-		glBindVertexArray(VAO);
+	//	//start saving state in VAO
+	//	glBindVertexArray(VAO);
 
-		//buffer vertice data
-		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, verticesSize, vertices, GL_STATIC_DRAW);
+	//	//buffer vertice data
+	//	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	//	glBufferData(GL_ARRAY_BUFFER, verticesSize, vertices, GL_STATIC_DRAW);
 
-		//buffer element indices data
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EAO);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(rectIndices), rectIndices, GL_STATIC_DRAW);
+	//	//buffer element indices data
+	//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EAO);
+	//	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(rectIndices), rectIndices, GL_STATIC_DRAW);
 
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<GLvoid*>(0));
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<GLvoid*>(3 * sizeof(float)));
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<GLvoid*>(6 * sizeof(float)));
+	//	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<GLvoid*>(0));
+	//	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<GLvoid*>(3 * sizeof(float)));
+	//	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<GLvoid*>(6 * sizeof(float)));
 
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
-		glEnableVertexAttribArray(2);
+	//	glEnableVertexAttribArray(0);
+	//	glEnableVertexAttribArray(1);
+	//	glEnableVertexAttribArray(2);
 
-		//stop saving state in this vertex array object
-		glBindVertexArray(0);
+	//	//stop saving state in this vertex array object
+	//	glBindVertexArray(0);
 
-		//if this state is reached, then all previous previous checks are assumed to have passed
-		return true;
-	}
+	//	//if this state is reached, then all previous previous checks are assumed to have passed
+	//	return true;
+	//}
 
-	bool createTriangleWithTwoVertexAttributes(GLuint & VAO, GLuint & VBO)
-	{
-		static const float vertices[] = {
-			// positions         // colors
-			0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   // bottom right
-			-0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   // bottom left
-			0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f    // top 
-		};
+	//bool createTriangleWithTwoVertexAttributes(GLuint & VAO, GLuint & VBO)
+	//{
+	//	static const float vertices[] = {
+	//		// positions         // colors
+	//		0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   // bottom right
+	//		-0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   // bottom left
+	//		0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f    // top 
+	//	};
 
-		glGenVertexArrays(1, &VAO);
-		glGenBuffers(1, &VBO);
+	//	glGenVertexArrays(1, &VAO);
+	//	glGenBuffers(1, &VBO);
 
-		glBindVertexArray(VAO);
-		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	//	glBindVertexArray(VAO);
+	//	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	//	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void*>(0));
-		glEnableVertexAttribArray(0);
+	//	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void*>(0));
+	//	glEnableVertexAttribArray(0);
 
-		//strange casting needed for offsets, here are some methods I've seen/came up with
-		//GLvoid* offset = static_cast<char*>(0) + sizeof(float) * 3;
-		//glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), offset); 
-		//glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<GLvoid*>(3 * sizeof(float)));
-		//glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float))); //old C style cast, should be avoided in c++
-		glEnableVertexAttribArray(1);
+	//	//strange casting needed for offsets, here are some methods I've seen/came up with
+	//	//GLvoid* offset = static_cast<char*>(0) + sizeof(float) * 3;
+	//	//glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), offset); 
+	//	//glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
+	//	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<GLvoid*>(3 * sizeof(float)));
+	//	//glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float))); //old C style cast, should be avoided in c++
+	//	glEnableVertexAttribArray(1);
 
-		//unbind VAO and VBO to prevent accidental state change
-		glBindVertexArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	//	//unbind VAO and VBO to prevent accidental state change
+	//	glBindVertexArray(0);
+	//	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-		return false;
-	}
+	//	return false;
+	//}
 
-	bool generateObject2Attrib(const float* vertices, size_t verticesSize, GLuint& VAO, GLuint& VBO)
-	{
-		glGenVertexArrays(1, &VAO);
-		glGenBuffers(1, &VBO);
+	//bool generateObject2Attrib(const float* vertices, size_t verticesSize, GLuint& VAO, GLuint& VBO)
+	//{
+	//	glGenVertexArrays(1, &VAO);
+	//	glGenBuffers(1, &VBO);
 
-		if (!(VAO && VBO)) { return false; }
+	//	if (!(VAO && VBO)) { return false; }
 
-		//start saving state in VAO
-		glBindVertexArray(VAO);
+	//	//start saving state in VAO
+	//	glBindVertexArray(VAO);
 
-		//buffer vertex data
-		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, verticesSize, vertices, GL_STATIC_DRAW);
+	//	//buffer vertex data
+	//	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	//	glBufferData(GL_ARRAY_BUFFER, verticesSize, vertices, GL_STATIC_DRAW);
 
-		//buffer element indices data
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), reinterpret_cast<GLvoid*>(0));
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), reinterpret_cast<GLvoid*>(3 * sizeof(float)));
+	//	//buffer element indices data
+	//	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), reinterpret_cast<GLvoid*>(0));
+	//	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), reinterpret_cast<GLvoid*>(3 * sizeof(float)));
 
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
+	//	glEnableVertexAttribArray(0);
+	//	glEnableVertexAttribArray(1);
 
-		//stop saving state in this vertex array object
-		glBindVertexArray(0);
+	//	//stop saving state in this vertex array object
+	//	glBindVertexArray(0);
 
-		//if this state is reached, then all previous previous checks are assumed to have passed
-		return true;
-	}
+	//	//if this state is reached, then all previous previous checks are assumed to have passed
+	//	return true;
+	//}
 
 
 	//const float cubeVertices;

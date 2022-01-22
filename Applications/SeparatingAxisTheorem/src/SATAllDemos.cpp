@@ -30,8 +30,7 @@
 #include "SATRenderDebugUtils.h"
 #include "ModelLoader/SATModel.h"
 #include "SATDemoInterface.h"
-
-#include "PortedOldOpenGL3/PortTypedefs.h"
+#include "PortedOldOpenGL3/Deprecated_InputTracker.h"
 
 #ifdef WITH_SAT_DEMO_MODEL_FILES
 std::shared_ptr<ISATDemo> factory_ModelDemo(int width, int height);
@@ -52,7 +51,9 @@ namespace
 		int width = 1200;
 		int height = 800;
 
-		GLFWwindow* window = init_window(width, height);
+		//TODO wrap this entire thing in a class that handles rendering / gameloop /etc
+		//TODO doesn't look like gameupdate/render has been separated, so probably will have to tick in the render loop.
+		GLFWwindow* window = init_window(width, height); 
 
 		glViewport(0, 0, width, height);
 		glfwSetFramebufferSizeCallback(window, [](GLFWwindow*window, int width, int height) {  glViewport(0, 0, width, height); });

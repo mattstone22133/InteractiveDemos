@@ -35,6 +35,7 @@
 #include "SATDemoInterface.h"
 
 #include "SATUtils.h"
+#include "Utils/Platform/OpenGLES2/OpenGLES2Utils.h"
 using namespace SAT;
 
 namespace
@@ -406,17 +407,16 @@ namespace
 				-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
 				-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
 			};
-			glGenVertexArrays(1, &cubeVAO);
-			glBindVertexArray(cubeVAO);
-
-			glGenBuffers(1, &cubeVBO);
-			glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
-			glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void*>(0));
-			glEnableVertexAttribArray(0);
-			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
-			glEnableVertexAttribArray(1);
-			glBindVertexArray(0);
+			ec(glGenVertexArrays(1, &cubeVAO));
+			ec(glBindVertexArray(cubeVAO));
+			ec(glGenBuffers(1, &cubeVBO));
+			ec(glBindBuffer(GL_ARRAY_BUFFER, cubeVBO));
+			ec(glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW));
+			ec(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void*>(0)));
+			ec(glEnableVertexAttribArray(0));
+			ec(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float))));
+			ec(glEnableVertexAttribArray(1));
+			ec(glBindVertexArray(0));
 
 			float capsuleVertices[] = {
 				//positions                 normals
@@ -504,17 +504,16 @@ namespace
 				0.0f, 0.5f, -1.0f,		0.57735f,0.57735f,-0.57735f//0.0f, 0.0f, -1.0f
 			};
 			capsuleVertSize = sizeof(capsuleVertices);
-			glGenVertexArrays(1, &capsuleVAO);
-			glBindVertexArray(capsuleVAO);
-
-			glGenBuffers(1, &capsuleVBO);
-			glBindBuffer(GL_ARRAY_BUFFER, capsuleVBO);
-			glBufferData(GL_ARRAY_BUFFER, sizeof(capsuleVertices), capsuleVertices, GL_STATIC_DRAW);
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void*>(0));
-			glEnableVertexAttribArray(0);
-			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
-			glEnableVertexAttribArray(1);
-			glBindVertexArray(0);
+			ec(glGenVertexArrays(1, &capsuleVAO));
+			ec(glBindVertexArray(capsuleVAO));
+			ec(glGenBuffers(1, &capsuleVBO));
+			ec(glBindBuffer(GL_ARRAY_BUFFER, capsuleVBO));
+			ec(glBufferData(GL_ARRAY_BUFFER, sizeof(capsuleVertices), capsuleVertices, GL_STATIC_DRAW));
+			ec(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void*>(0)));
+			ec(glEnableVertexAttribArray(0));
+			ec(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float))));
+			ec(glEnableVertexAttribArray(1));
+			ec(glBindVertexArray(0));
 
 			redCapsuleTransform = defaultRedCapsuleTransform;
 			blueCapsuleTransform = defaultBlueCapsuleTransform;
@@ -758,10 +757,10 @@ namespace
 
 		~DynamicModelDemo()
 		{
-			glDeleteVertexArrays(1, &cubeVAO);
-			glDeleteBuffers(1, &cubeVBO);
-			glDeleteVertexArrays(1, &capsuleVAO);
-			glDeleteBuffers(1, &capsuleVBO);
+			ec(glDeleteVertexArrays(1, &cubeVAO));
+			ec(glDeleteBuffers(1, &cubeVBO));
+			ec(glDeleteVertexArrays(1, &capsuleVAO));
+			ec(glDeleteBuffers(1, &capsuleVBO));
 		}
 
 		virtual void handleModuleFocused(GLFWwindow* window)
@@ -782,9 +781,9 @@ namespace
 
 			processInput(window);
 
-			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-			glEnable(GL_DEPTH_TEST);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			ec(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
+			ec(glEnable(GL_DEPTH_TEST));
+			ec(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
 			//collision should be adjusted and complete before we attempt to render anything
 			blueCollision->updateTransform(blueCapsuleTransform.getModelMatrix());
@@ -860,10 +859,9 @@ namespace
 				drawDebugLine(pnt1A, pnt1B, bDisjoint ? blueCapsuleColor : overlapColor, mat4(1.0f), view, projection);
 				drawDebugLine(pnt2A, pnt2B, bDisjoint ? redCapsuleColor : overlapColor, mat4(1.0f), view, projection);
 			}
-			glDepthFunc(GL_LESS); //default depth func
-
-			glEnable(GL_DEPTH_TEST);
-			glBindVertexArray(cubeVAO);
+			ec(glDepthFunc(GL_LESS)); //default depth func
+			ec(glEnable(GL_DEPTH_TEST));
+			ec(glBindVertexArray(cubeVAO));
 			{//render light
 				mat4 model = lightTransform.getModelMatrix();
 				lampShader.use();
@@ -871,7 +869,7 @@ namespace
 				lampShader.setUniformMatrix4fv("view", 1, GL_FALSE, glm::value_ptr(view));  //since we don't update for each cube, it would be more efficient to do this outside of the loop.
 				lampShader.setUniformMatrix4fv("projection", 1, GL_FALSE, glm::value_ptr(projection));
 				lampShader.setUniform3f("lightColor", lightColor);
-				glDrawArrays(GL_TRIANGLES, 0, 36);
+				ec(glDrawArrays(GL_TRIANGLES, 0, 36));
 			}
 			objShader.use();
 			objShader.setUniformMatrix4fv("view", 1, GL_FALSE, glm::value_ptr(view));
@@ -896,7 +894,7 @@ namespace
 			}
 			else
 			{
-				glBindVertexArray(capsuleVAO);
+				ec(glBindVertexArray(capsuleVAO));
 				GLuint numCapsuleVerts = capsuleVertSize / (sizeof(float) * 6);
 				{ //render red
 					//resist temptation to update collision transform here, collision should be separated from rendering (for mtv corrections)
@@ -1318,7 +1316,7 @@ namespace
 		
 		GLFWwindow* window = init_window(width, height);
 
-		glViewport(0, 0, width, height);
+		ec(glViewport(0, 0, width, height));
 		glfwSetFramebufferSizeCallback(window, [](GLFWwindow*window, int width, int height) {  glViewport(0, 0, width, height); });
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 

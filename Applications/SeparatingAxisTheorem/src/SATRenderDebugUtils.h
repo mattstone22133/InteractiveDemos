@@ -18,6 +18,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "Utils/Platform/OpenGLES2/OpenGLES2Utils.h"
+
 namespace SAT
 {
 	char const* const DebugShapeVertSrc = R"(
@@ -73,6 +75,11 @@ namespace SAT
 
 		/** Assumes a pre-configured shader */
 		void render(bool bRenderPnts = true, bool bRenderUniqueTris = true);
+		void configureAttributes_Triangles();
+		void configurateAttributes_Points();
+
+		void disableAttributes_Triangles();
+		void disableAttributes_Points();
 
 	private:
 		GLuint VAO_pnts;
@@ -94,6 +101,8 @@ namespace SAT
 
 		/** assumes a pre-configure shader and polygon mode */
 		void render();
+		void configureAttributes();
+		void disableAttributes();
 
 		//deleted special functions due to VAO/VBO copying complexity
 		CapsuleRenderer(const CapsuleRenderer& copy) = delete;
@@ -103,7 +112,7 @@ namespace SAT
 
 	private:
 		//RAII clean up
-		GLuint capsuleVAO;
+		//GLuint capsuleVAO;
 		GLuint capsuleVBO; 
 	};
 
@@ -157,23 +166,24 @@ namespace SAT
 		shader.setUniform3f("color", color);
 
 		//basically immediate mode, should be very bad performance
-		GLuint tmpVAO, tmpVBO;
-		glGenVertexArrays(1, &tmpVAO);
-		glBindVertexArray(tmpVAO);
+		GLuint /*tmpVAO,*/ tmpVBO;
+		//glGenVertexArrays(1, &tmpVAO);
+		//glBindVertexArray(tmpVAO);
 		float verts[] = {
 			pntA.x,  pntA.y, pntA.z, 1.0f,
 			pntB.x, pntB.y, pntB.z, 1.0f
 		};
-		glGenBuffers(1, &tmpVBO);
-		glBindBuffer(GL_ARRAY_BUFFER, tmpVBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STATIC_DRAW);
-		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 4, reinterpret_cast<void*>(0));
-		glEnableVertexAttribArray(0);
+		ec(glGenBuffers(1, &tmpVBO));
+		ec(glBindBuffer(GL_ARRAY_BUFFER, tmpVBO));
+		ec(glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STATIC_DRAW));
+		ec(glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 4, reinterpret_cast<void*>(0)));
+		ec(glEnableVertexAttribArray(0));
 
-		glDrawArrays(GL_LINES, 0, 2);
+		ec(glDrawArrays(GL_LINES, 0, 2));
+		ec(glDisableVertexAttribArray(0));
 
-		glDeleteVertexArrays(1, &tmpVAO);
-		glDeleteBuffers(1, &tmpVBO);
+		//ec(glDeleteVertexArrays(1, &tmpVAO));
+		ec(glDeleteBuffers(1, &tmpVBO));
 	}
 
 	template<typename Deprecated_Shader>
@@ -190,23 +200,24 @@ namespace SAT
 
 		//basically immediate mode, should be very bad performance
 		GLuint tmpVAO, tmpVBO;
-		glGenVertexArrays(1, &tmpVAO);
-		glBindVertexArray(tmpVAO);
+		//ec(glGenVertexArrays(1, &tmpVAO));
+		//ec(glBindVertexArray(tmpVAO));
 		float verts[] = {
 			pntA.x,  pntA.y, pntA.z, 1.0f,
 			pntB.x, pntB.y, pntB.z, 1.0f,
 			pntC.x, pntC.y, pntC.z, 1.0f
 		};
-		glGenBuffers(1, &tmpVBO);
-		glBindBuffer(GL_ARRAY_BUFFER, tmpVBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STATIC_DRAW);
-		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 4, reinterpret_cast<void*>(0));
-		glEnableVertexAttribArray(0);
+		ec(glGenBuffers(1, &tmpVBO));
+		ec(glBindBuffer(GL_ARRAY_BUFFER, tmpVBO));
+		ec(glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STATIC_DRAW));
+		ec(glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 4, reinterpret_cast<void*>(0)));
+		ec(glEnableVertexAttribArray(0));
 
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		ec(glDrawArrays(GL_TRIANGLES, 0, 3));
 
-		glDeleteVertexArrays(1, &tmpVAO);
-		glDeleteBuffers(1, &tmpVBO);
+		ec(glDisableVertexAttribArray(0));
+		//ec(glDeleteVertexArrays(1, &tmpVAO));
+		ec(glDeleteBuffers(1, &tmpVBO));
 	}
 
 	template<typename Deprecated_Shader>
@@ -222,38 +233,50 @@ namespace SAT
 		shader.setUniformMatrix4fv("projection", 1, GL_FALSE, glm::value_ptr(projection));
 		shader.setUniform3f("color", color);
 
-		bool pointSizeEnabled = glIsEnabled(GL_POINT_SIZE);
-		float originalPointSize = 1.0f;
-		glGetFloatv(GL_POINT_SIZE, &originalPointSize);
-		if (!pointSizeEnabled)
-		{
-			glEnable(GL_POINT_SIZE);
-			glPointSize(debugPointSize);
-		}
+		//emulate point size on GLES2
+			float originalPointSize = 1.0f;
+			ec(glGetFloatv(GL_LINE_WIDTH, &originalPointSize));
+			ec(glLineWidth(5.f));
+		//emulate point size GLES2
+
+
+		//bool pointSizeEnabled = glIsEnabled(GL_POINT_SIZE);
+		//float originalPointSize = 1.0f;
+		//glGetFloatv(GL_POINT_SIZE, &originalPointSize);
+		//if (!pointSizeEnabled)
+		//{
+		//	glEnable(GL_POINT_SIZE);
+		//	glPointSize(debugPointSize);
+		//}
 
 		//basically immediate mode, should be very bad performance
-		GLuint tmpVAO, tmpVBO;
-		glGenVertexArrays(1, &tmpVAO);
-		glBindVertexArray(tmpVAO);
-		glGenBuffers(1, &tmpVBO);
-		glBindBuffer(GL_ARRAY_BUFFER, tmpVBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * transformedPoints.size(), &transformedPoints[0], GL_STATIC_DRAW);
-		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 4, reinterpret_cast<void*>(0));
-		glEnableVertexAttribArray(0);
+		GLuint /*tmpVAO,*/ tmpVBO;
+		//glGenVertexArrays(1, &tmpVAO);
+		//glBindVertexArray(tmpVAO);
+		ec(glGenBuffers(1, &tmpVBO));
+		ec(glBindBuffer(GL_ARRAY_BUFFER, tmpVBO));
+		ec(glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * transformedPoints.size(), &transformedPoints[0], GL_STATIC_DRAW));
+		ec(glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 4, reinterpret_cast<void*>(0)));
+		ec(glEnableVertexAttribArray(0));
+		ec(glDrawArrays(GL_POINTS, 0, transformedPoints.size()));
+		ec(glDisableVertexAttribArray(0));
 
-		glDrawArrays(GL_POINTS, 0, transformedPoints.size());
+		//glDeleteVertexArrays(1, &tmpVAO);
+		ec(glDeleteBuffers(1, &tmpVBO));
 
-		glDeleteVertexArrays(1, &tmpVAO);
-		glDeleteBuffers(1, &tmpVBO);
+		//emulate restore point size GLES2
+			//GLES2 work around to change point size. not sure if this works as there is a lot of compile errors to fix before can test.
+			ec(glLineWidth(originalPointSize));
+		//emulate restore point size GLES2
 
-		if (!pointSizeEnabled)
-		{
-			glDisable(GL_POINT_SIZE);
-		}
-		else
-		{
-			glPointSize(originalPointSize);
-		}
+		//if (!pointSizeEnabled)
+		//{
+		//	glDisable(GL_POINT_SIZE);
+		//}
+		//else
+		//{
+		//	glPointSize(originalPointSize);
+		//}
 
 		if (bRenderEdges)
 		{

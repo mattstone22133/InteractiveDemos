@@ -14,6 +14,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include "Utils/Platform/OpenGLES2/OpenGLES2Utils.h"
 
 
 //void SAT::drawDebugLine(Shader& shader,
@@ -182,73 +183,113 @@ namespace SAT
 		}
 		vertCount = triPnts.size();
 
-		glGenVertexArrays(1, &VAO_tris);
-		glBindVertexArray(VAO_tris);
+		//glGenVertexArrays(1, &VAO_tris);
+		//glBindVertexArray(VAO_tris);
 
-		glGenBuffers(1, &VBO_tris);
-		glBindBuffer(GL_ARRAY_BUFFER, VBO_tris);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * triPnts.size(), &triPnts[0], GL_STATIC_DRAW);
-		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 4, reinterpret_cast<void*>(0));
-		glEnableVertexAttribArray(0);
+		ec(glGenBuffers(1, &VBO_tris));
+		ec(glBindBuffer(GL_ARRAY_BUFFER, VBO_tris));
+		ec(glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * triPnts.size(), &triPnts[0], GL_STATIC_DRAW));
+		//glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 4, reinterpret_cast<void*>(0));
+		//glEnableVertexAttribArray(0);
 
-		glGenBuffers(1, &VBO_normals);
-		glBindBuffer(GL_ARRAY_BUFFER, VBO_normals);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * triNorms.size(), &triNorms[0], GL_STATIC_DRAW);
-		glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 4, reinterpret_cast<void*>(1));
-		glEnableVertexAttribArray(1);
-		glBindVertexArray(0);
+		ec(glGenBuffers(1, &VBO_normals));
+		ec(glBindBuffer(GL_ARRAY_BUFFER, VBO_normals));
+		ec(glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * triNorms.size(), &triNorms[0], GL_STATIC_DRAW));
+		//glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 4, reinterpret_cast<void*>(1));
+		//glEnableVertexAttribArray(1);
+		configureAttributes_Triangles();
+		//glBindVertexArray(0);
 
 		//POINTS
-		glGenVertexArrays(1, &VAO_pnts);
-		glBindVertexArray(VAO_pnts);
-		glGenBuffers(1, &VBO_pnts);
-		glBindBuffer(GL_ARRAY_BUFFER, VBO_pnts);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * localPoints.size(), &localPoints[0], GL_STATIC_DRAW);
-		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 4, reinterpret_cast<void*>(0));
-		glEnableVertexAttribArray(0);
+		//glGenVertexArrays(1, &VAO_pnts);
+		//glBindVertexArray(VAO_pnts);
+		ec(glGenBuffers(1, &VBO_pnts));
+		ec(glBindBuffer(GL_ARRAY_BUFFER, VBO_pnts));
+		//glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec4) * localPoints.size(), &localPoints[0], GL_STATIC_DRAW);
+		//glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 4, reinterpret_cast<void*>(0));
+		//glEnableVertexAttribArray(0);
+		configurateAttributes_Points();
 		pntCount = localPoints.size();
-		glBindVertexArray(0);
+		//glBindVertexArray(0);
+	}
+
+	void ShapeRender::configureAttributes_Triangles()
+	{
+		ec(glBindBuffer(GL_ARRAY_BUFFER, VBO_tris));
+		ec(glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 4, reinterpret_cast<void*>(0)));
+		ec(glEnableVertexAttribArray(0));
+
+		ec(glBindBuffer(GL_ARRAY_BUFFER, VBO_normals));
+		ec(glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 4, reinterpret_cast<void*>(1)));
+		ec(glEnableVertexAttribArray(1));
+	}
+
+	void ShapeRender::configurateAttributes_Points()
+	{
+		ec(glBindBuffer(GL_ARRAY_BUFFER, VBO_pnts));
+		ec(glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(float) * 4, reinterpret_cast<void*>(0)));
+		ec(glEnableVertexAttribArray(0));
+	}
+
+	void ShapeRender::disableAttributes_Triangles()
+	{
+		ec(glDisableVertexAttribArray(0));
+		ec(glDisableVertexAttribArray(1));
+	}
+
+	void ShapeRender::disableAttributes_Points()
+	{
+		ec(glDisableVertexAttribArray(0));
 	}
 
 	ShapeRender::~ShapeRender()
 	{
-		glDeleteVertexArrays(1, &VAO_tris);
-		glDeleteVertexArrays(1, &VAO_pnts);
+		//glDeleteVertexArrays(1, &VAO_tris);
+		//glDeleteVertexArrays(1, &VAO_pnts);
 
-		glDeleteBuffers(1, &VBO_tris);
-		glDeleteBuffers(1, &VBO_normals);
-		glDeleteBuffers(1, &VBO_pnts);
+		ec(glDeleteBuffers(1, &VBO_tris));
+		ec(glDeleteBuffers(1, &VBO_normals));
+		ec(glDeleteBuffers(1, &VBO_pnts));
 	}
 
 	void ShapeRender::render(bool bRenderPnts /*= true*/, bool bRenderUniqueTris /*= true*/)
 	{
 		if (bRenderUniqueTris)
 		{
-			glBindVertexArray(VAO_tris);
+			//glBindVertexArray(VAO_tris);
+			configureAttributes_Triangles();
 			glDrawArrays(GL_TRIANGLES, 0, vertCount);
-			glBindVertexArray(0);
+			//glBindVertexArray(0);
+			disableAttributes_Triangles();
 		}
 
 		if (bRenderPnts)
 		{
-			bool pointSizeEnabled = glIsEnabled(GL_POINT_SIZE);
+			//bool pointSizeEnabled = glIsEnabled(GL_POINT_SIZE);
+			//float originalPointSize = 1.0f;
+			//glGetFloatv(GL_POINT_SIZE, &originalPointSize);
+			//if (!pointSizeEnabled)
+			//{
+			//	glEnable(GL_POINT_SIZE);
+			//	glPointSize(5.f);
+			//}
+			
+			//GLES2 appears to use line width for point size, according to https://gamedev.stackexchange.com/questions/11095/opengl-es-2-0-point-sprites-size
 			float originalPointSize = 1.0f;
-			glGetFloatv(GL_POINT_SIZE, &originalPointSize);
-			if (!pointSizeEnabled)
-			{
-				glEnable(GL_POINT_SIZE);
-				glPointSize(5.f);
-			}
+			ec(glGetFloatv(GL_LINE_WIDTH, &originalPointSize)); 
+			ec(glLineWidth(5.f));
 
-			glBindVertexArray(VAO_pnts);
-			glDrawArrays(GL_POINTS, 0, pntCount);
+			//glBindVertexArray(VAO_pnts);
+			configurateAttributes_Points();
 
-			glPointSize(originalPointSize);
-			if (!pointSizeEnabled)
-			{
-				glDisable(GL_POINT_SIZE);
-			}
-			glBindVertexArray(0);
+			//GLES2 work around to change point size. not sure if this works as there is a lot of compile errors to fix before can test.
+			ec(glDrawArrays(GL_POINTS, 0, pntCount));
+			ec(glLineWidth(originalPointSize));
+			
+			//glPointSize(originalPointSize);
+			//if (!pointSizeEnabled){ glDisable(GL_POINT_SIZE);}
+			//glBindVertexArray(0);
+			disableAttributes_Points();
 		}
 	}
 
@@ -341,32 +382,51 @@ namespace SAT
 
 	CapsuleRenderer::CapsuleRenderer()
 	{
-		glGenVertexArrays(1, &capsuleVAO);
-		glBindVertexArray(capsuleVAO);
+		//glGenVertexArrays(1, &capsuleVAO);
+		//glBindVertexArray(capsuleVAO);
 
-		glGenBuffers(1, &capsuleVBO);
-		glBindBuffer(GL_ARRAY_BUFFER, capsuleVBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(capsuleVertices), capsuleVertices, GL_STATIC_DRAW);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void*>(0));
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
-		glEnableVertexAttribArray(1);
-		glBindVertexArray(0);
+		ec(glGenBuffers(1, &capsuleVBO));
+		ec(glBindBuffer(GL_ARRAY_BUFFER, capsuleVBO));
+		ec(glBufferData(GL_ARRAY_BUFFER, sizeof(capsuleVertices), capsuleVertices, GL_STATIC_DRAW));
+		configureAttributes();
+		//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void*>(0));
+		//glEnableVertexAttribArray(0);
+		//glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
+		//glEnableVertexAttribArray(1);
+		//glBindVertexArray(0);
 	}
 
 	CapsuleRenderer::~CapsuleRenderer()
 	{
-		glDeleteVertexArrays(1, &capsuleVAO);
-		glDeleteBuffers(1, &capsuleVBO);
+		//glDeleteVertexArrays(1, &capsuleVAO);
+		ec(glDeleteBuffers(1, &capsuleVBO));
+	}
+
+	void CapsuleRenderer::configureAttributes()
+	{
+		ec(glBindBuffer(GL_ARRAY_BUFFER, capsuleVBO));
+		ec(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void*>(0)));
+		ec(glEnableVertexAttribArray(0));
+		ec(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float))));
+		ec(glEnableVertexAttribArray(1));
+	}
+
+	void CapsuleRenderer::disableAttributes()
+	{
+		ec(glDisableVertexAttribArray(0));
+		ec(glDisableVertexAttribArray(1));
 	}
 
 	void CapsuleRenderer::render()
 	{
-		glBindVertexArray(capsuleVAO);
+		configureAttributes();//gles2 vao simulation
+		//glBindVertexArray(capsuleVAO);
 		constexpr GLuint numCapsuleVerts = sizeof(capsuleVertices) / (sizeof(float) * 6);
-		glDrawArrays(GL_TRIANGLES, 0, numCapsuleVerts);
-		glBindVertexArray(0);
+		ec(glDrawArrays(GL_TRIANGLES, 0, numCapsuleVerts));
+		//glBindVertexArray(0);
+		disableAttributes();
 	}
+
 
 }
 

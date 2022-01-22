@@ -54,18 +54,18 @@ namespace Deprecated_Utils {
 	/*
 	* Creates a single triangle, but uses element array objects instead of just using array
 	*/
-	bool createSingleElementTriangle(GLuint& EAO, GLuint& VAO, GLuint& VBO);
+	//bool createSingleElementTriangle(GLuint& EAO, GLuint& VAO, GLuint& VBO);
 
 
-	bool generate4AttribRectangleElement(GLuint& EAO, GLuint& VAO, GLuint& VBO);
-	bool generateRectForTextChallenge2(const float vertices[], const size_t verticesSize, GLuint & EAO, GLuint & VAO, GLuint & VBO);
+	//bool generate4AttribRectangleElement(GLuint& EAO, GLuint& VAO, GLuint& VBO);
+	//bool generateRectForTextChallenge2(const float vertices[], const size_t verticesSize, GLuint & EAO, GLuint & VAO, GLuint & VBO);
 
 	/*
 	* Create a single triangle that that uses two vertex attributes, 0 for position, 1 for color. 
 	*/
-	bool createTriangleWithTwoVertexAttributes(GLuint& VAO, GLuint& VBO);
+	//bool createTriangleWithTwoVertexAttributes(GLuint& VAO, GLuint& VBO);
 
-	bool generateObject2Attrib(const float* vertices, size_t verticesSize, GLuint& VAO, GLuint& VBO);
+	//bool generateObject2Attrib(const float* vertices, size_t verticesSize, GLuint& VAO, GLuint& VBO);
 
 	extern const float cubeVertices[36*5];
 	extern const float cubeVerticesWithNormals[36*6];

@@ -32,6 +32,8 @@ using namespace SAT;
 #include "PortedOldOpenGL3/Deprecated_InputTracker.h"
 #include "PortedOldOpenGL3/Deprecated_CameraFPS.h"
 
+#include "Utils/Platform/OpenGLES2/OpenGLES2Utils.h"
+
 using namespace SAT;
 
 namespace
@@ -130,8 +132,8 @@ namespace
 	{
 		int width, height;
 
-		GLuint tri2dVAO, tri2dVBO;
-		GLuint box2dVAO, box2dVBO, box2dEAO;
+		GLuint /*tri2dVAO, */tri2dVBO;
+		GLuint /*box2dVAO, */box2dVBO, box2dEAO;
 
 		ColumnBasedTransform boxTransform;
 		ColumnBasedTransform triTransform;
@@ -151,6 +153,31 @@ namespace
 
 		std::shared_ptr<SAT::TestSuite> UnitTests;
 
+		void enableAttributes_box2dVBO() 
+		{
+			ec(glBindBuffer(GL_ARRAY_BUFFER, box2dVBO));
+			ec(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, reinterpret_cast<void*>(0)));
+			ec(glEnableVertexAttribArray(0));
+		}
+		void disableAttributes_box2dVBO()
+		{
+			ec(glDisableVertexAttribArray(0));
+		}
+		void bindEAO_box2d()
+		{
+			ec(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, box2dEAO));
+		}
+
+		void enableAttributes_tri2dVBO()
+		{
+			ec(glBindBuffer(GL_ARRAY_BUFFER, tri2dVBO));
+			ec(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, reinterpret_cast<void*>(0)));
+			ec(glEnableVertexAttribArray(0));
+		}
+		void disableAttributes_tri2dVBO()
+		{
+			ec(glDisableVertexAttribArray(0));
+		}
 	public:
 		SATDemo2D(int width, int height)
 			: ISATDemo(width, height)
@@ -168,45 +195,49 @@ namespace
 			//rectangle
 			std::vector<vec2> boxPnts = { vec2(0.5f, 0.5f), vec2(-0.5f, 0.5f), vec2(-0.5f, -0.5f), vec2(0.5f, -0.5f) };
 
-			glGenVertexArrays(1, &box2dVAO);
-			glBindVertexArray(box2dVAO);
+			//ec(glGenVertexArrays(1, &box2dVAO));
+			//ec(glBindVertexArray(box2dVAO));
 			float box2d_verts[] = {
 				boxPnts[0].x, boxPnts[0].y, //0.5f, 0.5f,
 				boxPnts[1].x, boxPnts[1].y, //-0.5f, 0.5f,
 				boxPnts[2].x, boxPnts[2].y, //-0.5f, -0.5f,
 				boxPnts[3].x, boxPnts[3].y, //0.5f, -0.5f
 			};
-			glGenBuffers(1, &box2dVBO);
-			glBindBuffer(GL_ARRAY_BUFFER, box2dVBO);
-			glBufferData(GL_ARRAY_BUFFER, sizeof(box2d_verts), box2d_verts, GL_STATIC_DRAW);
-			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, reinterpret_cast<void*>(0));
-			glEnableVertexAttribArray(0);
+			ec(glGenBuffers(1, &box2dVBO));
+			ec(glBindBuffer(GL_ARRAY_BUFFER, box2dVBO));
+			ec(glBufferData(GL_ARRAY_BUFFER, sizeof(box2d_verts), box2d_verts, GL_STATIC_DRAW));
+			enableAttributes_box2dVBO();
+			//ec(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, reinterpret_cast<void*>(0)));
+			//ec(glEnableVertexAttribArray(0));
 			GLuint box2d_idxs[] = {
 				0,1,2,
 				2,3,0
 			};
-			glGenBuffers(1, &box2dEAO);
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, box2dEAO);
-			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(box2d_idxs), box2d_idxs, GL_STATIC_DRAW);
-			glBindVertexArray(0); //unbind VAO so no further state is saved
+			ec(glGenBuffers(1, &box2dEAO));
+			ec(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, box2dEAO));
+			ec(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(box2d_idxs), box2d_idxs, GL_STATIC_DRAW));
+			//ec(glBindVertexArray(0)); //unbind VAO so no further state is saved
+			disableAttributes_box2dVBO();
 			boxTransform = { vec3(0, 0, 0), vec3(0,0,0), vec3(100, 100, 100) };
 			boxCollision = std::make_shared<SAT::Shape2D>( SAT::Shape2D::ConstructHelper(boxPnts) );
 
 			//triangle
 			std::vector<vec2> triPnts = { vec2(0.0f, 0.5f), vec2(-0.5f, -0.5f), vec2(0.5f, -0.5f) };
-			glGenVertexArrays(1, &tri2dVAO);
-			glBindVertexArray(tri2dVAO);
+			//ec(glGenVertexArrays(1, &tri2dVAO));
+			//ec(glBindVertexArray(tri2dVAO));
 			float tri2d_verts[] = {
 				triPnts[0].x, triPnts[0].y,
 				triPnts[1].x, triPnts[1].y,
 				triPnts[2].x, triPnts[2].y
 			};
-			glGenBuffers(1, &tri2dVBO);
-			glBindBuffer(GL_ARRAY_BUFFER, tri2dVBO);
-			glBufferData(GL_ARRAY_BUFFER, sizeof(tri2d_verts), tri2d_verts, GL_STATIC_DRAW);
-			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, reinterpret_cast<void*>(0));
-			glEnableVertexAttribArray(0);
-			glBindVertexArray(0); //unbind VAO so no further state is saved
+			ec(glGenBuffers(1, &tri2dVBO));
+			ec(glBindBuffer(GL_ARRAY_BUFFER, tri2dVBO));
+			ec(glBufferData(GL_ARRAY_BUFFER, sizeof(tri2d_verts), tri2d_verts, GL_STATIC_DRAW));
+			//ec(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, reinterpret_cast<void*>(0)));
+			//ec(glEnableVertexAttribArray(0));
+			enableAttributes_tri2dVBO();
+			//ec(glBindVertexArray(0)); //unbind VAO so no further state is saved
+			disableAttributes_tri2dVBO();
 			triTransform = { vec3(-width / 4, -height / 4, 0), vec3(0,0,0), vec3(100, 100, 100) };
 			triCollision = std::make_shared<SAT::Shape2D>(SAT::Shape2D::ConstructHelper(triPnts));
 
@@ -350,10 +381,10 @@ namespace
 
 		~SATDemo2D()
 		{
-			glDeleteVertexArrays(1, &box2dVAO);
-			glDeleteBuffers(1, &box2dVBO);
-			glDeleteVertexArrays(1, &tri2dVAO);
-			glDeleteBuffers(1, &tri2dVBO);
+			//ec(glDeleteVertexArrays(1, &box2dVAO));
+			ec(glDeleteBuffers(1, &box2dVBO));
+			//ec(glDeleteVertexArrays(1, &tri2dVAO));
+			ec(glDeleteBuffers(1, &tri2dVBO));
 		}
 
 	private:
@@ -482,8 +513,8 @@ namespace
 
 			processInput(window);
 
-			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			ec(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
+			ec(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
 			const vec3 boxColor(0, 0, 1);
 			const vec3 triColor(1, 0, 0);
@@ -524,17 +555,22 @@ namespace
 				mat4 model = boxTransform.getModelMatrix();
 				shader2d.setUniformMatrix4fv("model", 1, GL_FALSE, glm::value_ptr(model));
 				shader2d.setUniform3f("color", boxColor);
-				glBindVertexArray(box2dVAO);
-				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, box2dEAO);
-				glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+				//ec(glBindVertexArray(box2dVAO));
+				//ec(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, box2dEAO));
+				enableAttributes_box2dVBO();
+				bindEAO_box2d();
+				ec(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0));
+				disableAttributes_box2dVBO();
 			}
 			{// draw triangle
 				//resist temptation to update collision transform here, collision should be separated from rendering (for mtv corrections)
 				mat4 model = triTransform.getModelMatrix();
 				shader2d.setUniformMatrix4fv("model", 1, GL_FALSE, glm::value_ptr(model));
 				shader2d.setUniform3f("color", triColor);
-				glBindVertexArray(tri2dVAO);
-				glDrawArrays(GL_TRIANGLES, 0, 3);
+				//ec(glBindVertexArray(tri2dVAO));
+				enableAttributes_tri2dVBO();
+				ec(glDrawArrays(GL_TRIANGLES, 0, 3));
+				disableAttributes_tri2dVBO();
 			}
 
 			//draw collision axes

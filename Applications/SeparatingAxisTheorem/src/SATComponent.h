@@ -88,8 +88,8 @@ namespace SAT
 	public: //ctor arguments; these correspond to the faces and edge structs
 		struct EdgePointIndices 
 		{ 
-			uint32_t indexA;
-			uint32_t indexB;
+			size_t indexA;
+			size_t indexB;
 		};
 		struct FacePointIndices
 		{

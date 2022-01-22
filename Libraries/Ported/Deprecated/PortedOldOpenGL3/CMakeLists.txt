@@ -22,6 +22,7 @@ target_include_directories(${LIB_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src/p
 
 # add engine library as a dependency
 target_link_libraries(${LIB_NAME} PUBLIC Engine)
+target_link_libraries(${LIB_NAME} PUBLIC TutorialEngine)
 
 set_target_properties(${LIB_NAME} PROPERTIES
     CXX_STANDARD 17

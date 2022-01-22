@@ -48,6 +48,8 @@ namespace SAT
 
 		GLuint VAO, VBO, EAO;
 		GLuint modelVBO = 0;
+		void enableAttributes();
+		void disableAttributes();
 		void setupMesh();
 
 	public:
@@ -62,7 +64,7 @@ namespace SAT
 		template <typename Deprecated_Shader>
 		void drawInstanced(Deprecated_Shader& shader, unsigned int instanceCount) const;
 
-		GLuint getVAO();
+		//GLuint getVAO();
 		void setInstancedModelMatrixVBO(GLuint modelVBO);
 		void setInstancedModelMatricesData(glm::mat4* modelMatrices, unsigned int count);
 
