@@ -41,6 +41,7 @@
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
+#include "SATUtils.h"
 #endif //WITH_IMGUI
 
 #ifdef WITH_SAT_DEMO_MODEL_FILES
@@ -218,7 +219,7 @@ namespace SAT
 		{
 			bFirstDraw = false;
 			ImGui::SetNextWindowPos({ 800, 0 });
-			ImGui::SetNextItemWidth(500);
+			ImGui::SetNextItemWidth(800);
 		}
 
 		ImGuiWindowFlags flags = 0;
@@ -235,6 +236,30 @@ namespace SAT
 			if (ImGui::Button("Next"))
 			{
 				ChangeDemoRelativeIndex(1);
+			}
+
+			if (activeDemo && activeDemo->bShowCameraMoveButton())
+			{
+				if (ImGui::Checkbox("Move Camera", &SAT::bEnableCameraMove))
+				{
+					SAT::bEnableCameraMove = true;
+					SAT::bEnableTargetMove = false;
+					SAT::bEnableRotateTarget = false;
+				}
+				ImGui::SameLine();
+			}
+			if (ImGui::Checkbox("Move Target", &SAT::bEnableTargetMove))
+			{
+				SAT::bEnableCameraMove = false;
+				SAT::bEnableTargetMove = true;
+				SAT::bEnableRotateTarget = false;
+			}
+			ImGui::SameLine();
+			if (ImGui::Checkbox("Rotate Target", &SAT::bEnableRotateTarget))
+			{
+				SAT::bEnableCameraMove = false;
+				SAT::bEnableTargetMove = false;
+				SAT::bEnableRotateTarget = true;
 			}
 
 			//instructions

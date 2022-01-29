@@ -131,5 +131,8 @@ namespace SAT
 		const glm::mat4& /*model*/, const glm::mat4& view, const glm::mat4 projection
 	);
 
+	extern bool bEnableRotateTarget;
+	extern bool bEnableTargetMove;
+	extern bool bEnableCameraMove;
 }
 #endif //#WITH_SAT_DEMO_BUILD

@@ -207,6 +207,8 @@ namespace
 			ImGui::Text("Press U to start unit tests; press left/right to skip through unit tests");
 #endif //WITH_IMGUI
 		}
+
+		virtual bool bShowCameraMoveButton() const override { return false; }
 	public:
 		SATDemo2D(int width, int height)
 			: ISATDemo(width, height)
@@ -455,6 +457,13 @@ namespace
 				}
 			}
 
+			if (SAT::bEnableCameraMove)
+			{
+				std::cout << "cannot move camera in 2d demo" << std::endl;
+				SAT::bEnableCameraMove = false;
+				SAT::bEnableTargetMove = true;
+			}
+
 			// -------- MOVEMENT -----------------
 			bool bUpdateMovement = false;
 			vec3 movementInput = vec3(0.0f);
@@ -469,7 +478,7 @@ namespace
 			}
 			if (input.isKeyDown(window, GLFW_KEY_A))
 			{
-				if (input.isKeyDown(window, GLFW_KEY_LEFT_CONTROL) || input.isKeyDown(window, GLFW_KEY_RIGHT_CONTROL))
+				if (input.isKeyDown(window, GLFW_KEY_LEFT_CONTROL) || input.isKeyDown(window, GLFW_KEY_RIGHT_CONTROL) || SAT::bEnableRotateTarget)
 				{
 					glm::quat newRotation = glm::angleAxis(glm::radians(rotationSpeed * deltaTime), glm::vec3(0, 0, 1)) * transformTarget->rotQuat;
 					transformTarget->rotQuat = newRotation;
@@ -481,7 +490,7 @@ namespace
 			}
 			if (input.isKeyDown(window, GLFW_KEY_D))
 			{
-				if (input.isKeyDown(window, GLFW_KEY_LEFT_CONTROL) || input.isKeyDown(window, GLFW_KEY_RIGHT_CONTROL))
+				if (input.isKeyDown(window, GLFW_KEY_LEFT_CONTROL) || input.isKeyDown(window, GLFW_KEY_RIGHT_CONTROL) || SAT::bEnableRotateTarget)
 				{
 					glm::quat newRotation = glm::angleAxis(glm::radians(-rotationSpeed * deltaTime), glm::vec3(0, 0, 1)) * transformTarget->rotQuat;
 					transformTarget->rotQuat = newRotation;

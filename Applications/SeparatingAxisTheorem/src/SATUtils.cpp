@@ -9,6 +9,10 @@
 #include "SATUtils.h"
 namespace SAT
 {
+	bool bEnableRotateTarget = false;
+	bool bEnableTargetMove = true;
+	bool bEnableCameraMove = false;
+
 	void printVec3(glm::vec3 v)
 	{
 		std::cout << "[" << v.x << ", " << v.y << ", " << v.z << "]";

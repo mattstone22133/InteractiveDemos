@@ -946,7 +946,7 @@ namespace
 				}
 			}
 			// -------- MOVEMENT -----------------
-			if (!(input.isKeyDown(window, GLFW_KEY_LEFT_ALT) || input.isKeyDown(window, GLFW_KEY_LEFT_SHIFT)))
+			if (SAT::bEnableCameraMove && !(input.isKeyDown(window, GLFW_KEY_LEFT_ALT) || input.isKeyDown(window, GLFW_KEY_LEFT_SHIFT)))
 			{
 				camera.handleInput(window, deltaTime);
 			}
@@ -959,7 +959,7 @@ namespace
 				/////////////// W /////////////// 
 				if (input.isKeyDown(window, GLFW_KEY_W))
 				{
-					if (input.isKeyDown(window, GLFW_KEY_LEFT_CONTROL) || input.isKeyDown(window, GLFW_KEY_RIGHT_CONTROL))
+					if (SAT::bEnableRotateTarget || input.isKeyDown(window, GLFW_KEY_LEFT_CONTROL) || input.isKeyDown(window, GLFW_KEY_RIGHT_CONTROL))
 					{
 						if (bUseCameraAxesForObjectMovement)
 						{
@@ -987,7 +987,7 @@ namespace
 				/////////////// S /////////////// 
 				if (input.isKeyDown(window, GLFW_KEY_S))
 				{
-					if (input.isKeyDown(window, GLFW_KEY_LEFT_CONTROL) || input.isKeyDown(window, GLFW_KEY_RIGHT_CONTROL))
+					if (SAT::bEnableRotateTarget || input.isKeyDown(window, GLFW_KEY_LEFT_CONTROL) || input.isKeyDown(window, GLFW_KEY_RIGHT_CONTROL))
 					{
 						if (bUseCameraAxesForObjectMovement)
 						{
@@ -1015,7 +1015,7 @@ namespace
 				/////////////// Q /////////////// 
 				if (input.isKeyDown(window, GLFW_KEY_Q))
 				{
-					if (input.isKeyDown(window, GLFW_KEY_LEFT_CONTROL) || input.isKeyDown(window, GLFW_KEY_RIGHT_CONTROL))
+					if (SAT::bEnableRotateTarget || input.isKeyDown(window, GLFW_KEY_LEFT_CONTROL) || input.isKeyDown(window, GLFW_KEY_RIGHT_CONTROL))
 					{
 						if (bUseCameraAxesForObjectMovement)
 						{
@@ -1043,7 +1043,7 @@ namespace
 				/////////////// E /////////////// 
 				if (input.isKeyDown(window, GLFW_KEY_E))
 				{
-					if (input.isKeyDown(window, GLFW_KEY_LEFT_CONTROL) || input.isKeyDown(window, GLFW_KEY_RIGHT_CONTROL))
+					if (SAT::bEnableRotateTarget || input.isKeyDown(window, GLFW_KEY_LEFT_CONTROL) || input.isKeyDown(window, GLFW_KEY_RIGHT_CONTROL))
 					{
 						if (bUseCameraAxesForObjectMovement)
 						{
@@ -1071,7 +1071,7 @@ namespace
 				/////////////// A /////////////// 
 				if (input.isKeyDown(window, GLFW_KEY_A))
 				{
-					if (input.isKeyDown(window, GLFW_KEY_LEFT_CONTROL) || input.isKeyDown(window, GLFW_KEY_RIGHT_CONTROL))
+					if (SAT::bEnableRotateTarget || input.isKeyDown(window, GLFW_KEY_LEFT_CONTROL) || input.isKeyDown(window, GLFW_KEY_RIGHT_CONTROL))
 					{
 						if (bUseCameraAxesForObjectMovement)
 						{
@@ -1102,7 +1102,7 @@ namespace
 				/////////////// D /////////////// 
 				if (input.isKeyDown(window, GLFW_KEY_D))
 				{
-					if (input.isKeyDown(window, GLFW_KEY_LEFT_CONTROL) || input.isKeyDown(window, GLFW_KEY_RIGHT_CONTROL))
+					if (SAT::bEnableRotateTarget || input.isKeyDown(window, GLFW_KEY_LEFT_CONTROL) || input.isKeyDown(window, GLFW_KEY_RIGHT_CONTROL))
 					{
 						if (bUseCameraAxesForObjectMovement)
 						{

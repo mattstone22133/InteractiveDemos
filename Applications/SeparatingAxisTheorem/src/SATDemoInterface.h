@@ -22,5 +22,7 @@ public:
 
 	//added to make demo more intuitive.
 	virtual void populateUI() = 0;
+
+	virtual bool bShowCameraMoveButton() const { return true; }
 };
 #endif //WITH_SAT_DEMO_BUILD
