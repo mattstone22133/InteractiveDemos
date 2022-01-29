@@ -99,7 +99,7 @@ glm::mat4 Deprecated_CameraFPS::getView() const
 	glm::vec3 cameraAxisU = glm::normalize(glm::cross(worldUp_n, cameraAxisW)); //this is the right axis (ie x-axis)
 	glm::vec3 cameraAxisV = glm::normalize(glm::cross(cameraAxisW, cameraAxisU));
 	//make each row in the matrix a camera's basis vector; glm is column-major
-	glm::mat4 cameraBasisProjection;
+	glm::mat4 cameraBasisProjection(1.f);
 	cameraBasisProjection[0][0] = cameraAxisU.x;
 	cameraBasisProjection[1][0] = cameraAxisU.y;
 	cameraBasisProjection[2][0] = cameraAxisU.z;
@@ -111,7 +111,7 @@ glm::mat4 Deprecated_CameraFPS::getView() const
 	cameraBasisProjection[0][2] = cameraAxisW.x;
 	cameraBasisProjection[1][2] = cameraAxisW.y;
 	cameraBasisProjection[2][2] = cameraAxisW.z;
-	glm::mat4 cameraTranslate = glm::translate(glm::mat4(), -1.f * cameraPosition);
+	glm::mat4 cameraTranslate = glm::translate(glm::mat4(1.f), -1.f * cameraPosition);
 
 	glm::mat4 view = cameraBasisProjection * cameraTranslate;
 	//glm::mat4 view = glm::lookAt(cameraPosition, cameraPosition + cameraFront, worldUp);
