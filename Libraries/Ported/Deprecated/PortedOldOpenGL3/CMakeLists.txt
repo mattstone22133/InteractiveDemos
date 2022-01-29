@@ -33,4 +33,4 @@ set_target_properties(${LIB_NAME} PROPERTIES
 include(${SHARED_CMAKE_UTILITES_DIR}/WarningsAsErrors.cmake)
 WarningsAsErrors(${LIB_NAME})
 
-#target_compile_definitions(${LIB_NAME} PUBLIC WITH_OLD_OPENGL3_PROJECT_BUILD) #flag to enable/disable files
+target_compile_definitions(${LIB_NAME} PUBLIC WITH_OLD_OPENGL3_PROJECT_BUILD) #flag to enable/disable files

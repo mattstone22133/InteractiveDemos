@@ -230,6 +230,8 @@ namespace
 
 		void enableAttributes_cubeVBO()
 		{
+			ec(glBindBuffer(GL_ARRAY_BUFFER, cubeVBO));
+
 			ec(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void*>(0)));
 			ec(glEnableVertexAttribArray(0));
 			ec(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float))));
@@ -675,7 +677,9 @@ namespace
 			{ //render red cube
 				//resist temptation to update collision transform here, collision should be separated from rendering (for mtv corrections)
 				mat4 model = redCubeTransform.getModelMatrix();
+				mat4 transposeInverseModel = transpose(inverse(model));
 				objShader.setUniformMatrix4fv("model", 1, GL_FALSE, glm::value_ptr(model));
+				objShader.setUniformMatrix4fv("transposeInverseModel", 1, GL_FALSE, glm::value_ptr(transposeInverseModel));
 				objShader.setUniform3f("objectColor", redCubeColor);
 				ec(glDrawArrays(GL_TRIANGLES, 0, 36));
 			}
@@ -683,6 +687,8 @@ namespace
 				//resist temptation to update collision transform here, collision should be separated from rendering (for mtv corrections)
 				mat4 model = blueCubeTransform.getModelMatrix();
 				objShader.setUniformMatrix4fv("model", 1, GL_FALSE, glm::value_ptr(model));
+				mat4 transposeInverseModel = transpose(inverse(model));
+				objShader.setUniformMatrix4fv("transposeInverseModel", 1, GL_FALSE, glm::value_ptr(transposeInverseModel));
 				objShader.setUniform3f("objectColor", blueCubeColor);
 				ec(glDrawArrays(GL_TRIANGLES, 0, 36));
 			}

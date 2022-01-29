@@ -50,7 +50,7 @@ namespace Engine
 
 	//window instances
 	public:
-		Window(uint32_t width, uint32_t height);
+		Window(const uint32_t width, const uint32_t height);
 		virtual void postConstruct() override;
 		~Window();
 
@@ -62,6 +62,7 @@ namespace Engine
 		bool isActiveContext() const;
 
 		void setViewportToWindowSize();
+		void setWindowSize(const uint32_t width, const uint32_t height, const bool bUpdateViewport);
 
 	private:
 		void handleFramebufferSizeChanged(int width, int height);

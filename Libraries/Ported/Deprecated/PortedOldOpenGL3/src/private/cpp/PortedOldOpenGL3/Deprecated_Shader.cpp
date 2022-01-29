@@ -129,12 +129,12 @@ void Deprecated_Shader::initShaderHelper(const std::string& vertexShaderFilePath
 
 	if (failed = !shaderCompileSuccess(vertexShader))
 	{
-		std::cerr << "failed to compile the vertex shader" << std::endl;
+		std::cerr << "VERTEX SHADER failed to compile the vertex shader" << std::endl; 
 		return;
 	}
 	if (failed = !shaderCompileSuccess(fragmentShader))
 	{
-		std::cerr << "failed to compile the fragment shader" << std::endl;
+		std::cerr << "FRAGMENT SHADER: failed to compile the fragment shader" << std::endl;
 		return;
 	}
 #if ENABLE_MODERN_OPENGL_SHADERS
@@ -142,7 +142,7 @@ void Deprecated_Shader::initShaderHelper(const std::string& vertexShaderFilePath
 	{
 		if (failed = !shaderCompileSuccess(geometryShader))
 		{
-			std::cerr << "failed to compile the geom shader" << std::endl;
+			std::cerr << "GEOMETRY SHADER: failed to compile the geom shader" << std::endl;
 			return;
 		}
 	}

@@ -198,7 +198,7 @@ namespace Engine
 	// Window Instances
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	Window::Window(uint32_t width, uint32_t height)
+	Window::Window(const uint32_t width, const uint32_t height)
 	{
 		startUp();
 
@@ -304,6 +304,18 @@ namespace Engine
 		int width, height;
 		glfwGetFramebufferSize(window, &width, &height);
 		ec(glViewport(0, 0, width, height));
+	}
+
+	void Window::setWindowSize(const uint32_t width, const uint32_t height, const bool bUpdateViewport)
+	{
+		if (window)
+		{
+			glfwSetWindowSize(window, int(width), int(height));
+		}
+		if (bUpdateViewport)
+		{
+			setViewportToWindowSize();
+		}
 	}
 
 	void Window::handleFramebufferSizeChanged(int width, int height)

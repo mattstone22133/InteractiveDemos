@@ -35,4 +35,4 @@ if(HTML_BUILD)
     set(CMAKE_EXECUTABLE_SUFFIX ".html")
 endif()
 
-#target_compile_definitions(${EXECUTABLE_NAME} PUBLIC WITH_SAT_DEMO_BUILD) #flag to enable/disable files
+target_compile_definitions(${EXECUTABLE_NAME} PUBLIC WITH_SAT_DEMO_BUILD) #flag to enable/disable files

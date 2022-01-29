@@ -236,6 +236,8 @@ namespace
 
 		void enableAttributes_cubeVBO()
 		{
+			ec(glBindBuffer(GL_ARRAY_BUFFER, cubeVBO));
+
 			ec(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void*>(0)));
 			ec(glEnableVertexAttribArray(0));
 			ec(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float))));
@@ -250,6 +252,8 @@ namespace
 
 		void enableAttributes_capsuleVBO()
 		{
+			ec(glBindBuffer(GL_ARRAY_BUFFER, capsuleVBO));
+
 			ec(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void*>(0)));
 			ec(glEnableVertexAttribArray(0));
 			ec(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float))));
@@ -776,6 +780,8 @@ namespace
 					//resist temptation to update collision transform here, collision should be separated from rendering (for mtv corrections)
 					mat4 model = redCapsuleTransform.getModelMatrix();
 					objShader.setUniformMatrix4fv("model", 1, GL_FALSE, glm::value_ptr(model));
+					mat4 transposeInverseModel = transpose(inverse(model));
+					objShader.setUniformMatrix4fv("transposeInverseModel", 1, GL_FALSE, glm::value_ptr(transposeInverseModel));
 					objShader.setUniform3f("objectColor", redCapsuleColor);
 					ec(glDrawArrays(GL_TRIANGLES, 0, numCapsuleVerts));
 				}
@@ -783,6 +789,8 @@ namespace
 					//resist temptation to update collision transform here, collision should be separated from rendering (for mtv corrections)
 					mat4 model = blueCapsuleTransform.getModelMatrix();
 					objShader.setUniformMatrix4fv("model", 1, GL_FALSE, glm::value_ptr(model));
+					mat4 transposeInverseModel = transpose(inverse(model));
+					objShader.setUniformMatrix4fv("transposeInverseModel", 1, GL_FALSE, glm::value_ptr(transposeInverseModel));
 					objShader.setUniform3f("objectColor", blueCapsuleColor);
 					ec(glDrawArrays(GL_TRIANGLES, 0, numCapsuleVerts));
 				}

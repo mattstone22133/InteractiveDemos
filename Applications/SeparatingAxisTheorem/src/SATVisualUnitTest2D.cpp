@@ -46,12 +46,13 @@ namespace
 	float deltaTime = 0.0f;
 
 	const char* Dim2VertShaderSrc = R"(
-				#version 330 core
-				layout (location = 0) in vec2 position;				
+					//#version 330 core
+					//layout (location = 0) in vec2 position;				
+				attribute vec2 position;
 				
-				uniform mat4 model;
-				uniform mat4 view;
-				uniform mat4 projection;
+				uniform highp mat4 model;
+				uniform highp mat4 view;
+				uniform highp mat4 projection;
 
 				void main(){
 					vec4 pos = vec4(position, 0, 1);
@@ -60,11 +61,12 @@ namespace
 				}
 			)";
 	const char* Dim2FragShaderSrc = R"(
-				#version 330 core
-				out vec4 fragmentColor;
-				uniform vec3 color = vec3(1.f,1.f,1.f);
+					//#version 330 core
+					//out vec4 fragmentColor;
+				uniform highp vec3 color; // = vec3(1.0,1.0,1.0);
 				void main(){
-					fragmentColor = vec4(color, 1.f);
+						//fragmentColor = vec4(color, 1.0);
+					gl_FragColor = vec4(color, 1.0);
 				}
 			)";
 
@@ -156,6 +158,7 @@ namespace
 		void enableAttributes_box2dVBO() 
 		{
 			ec(glBindBuffer(GL_ARRAY_BUFFER, box2dVBO));
+
 			ec(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, reinterpret_cast<void*>(0)));
 			ec(glEnableVertexAttribArray(0));
 		}
@@ -171,6 +174,7 @@ namespace
 		void enableAttributes_tri2dVBO()
 		{
 			ec(glBindBuffer(GL_ARRAY_BUFFER, tri2dVBO));
+
 			ec(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, reinterpret_cast<void*>(0)));
 			ec(glEnableVertexAttribArray(0));
 		}
