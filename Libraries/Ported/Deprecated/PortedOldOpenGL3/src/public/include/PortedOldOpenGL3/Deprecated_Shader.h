@@ -61,7 +61,6 @@ private:
 	bool failed;
 	bool active;
 	uint32_t /*GLuint*/ linkedProgram;
-
 	std::vector<std::shared_ptr<Deprecated_Texture2D>> textures;
 
 private:

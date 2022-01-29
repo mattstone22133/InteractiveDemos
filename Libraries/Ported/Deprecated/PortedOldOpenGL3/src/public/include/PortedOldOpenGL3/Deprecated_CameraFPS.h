@@ -64,9 +64,9 @@ private:
 	glm::vec3 cameraFront_n;
 	glm::vec3 worldUp_n;
 
-	float pitch = 0.f;
-	float yaw = -90.f;
 	float FOV = 45.0f;
+	float yaw = -90.f;
+	float pitch = 0.f;
 
 	float mouseSensitivity = 0.05f;
 	float cameraSpeed = 2.5f;

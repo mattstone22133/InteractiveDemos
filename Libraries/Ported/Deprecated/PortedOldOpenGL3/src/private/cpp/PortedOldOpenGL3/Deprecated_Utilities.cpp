@@ -31,7 +31,7 @@ namespace Deprecated_Utils {
 			strStream.str(std::string()); //clear string stream
 			strStream.clear(); //clear error states
 		}
-		catch (std::ifstream::failure e) {
+		catch (std::ifstream::failure& e) {
 			std::cerr << "failed to open file\n" << e.what() << std::endl;
 			return false;
 		}

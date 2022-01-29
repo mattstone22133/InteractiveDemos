@@ -49,7 +49,7 @@ Deprecated_Texture2D::Deprecated_Texture2D(
 
 Deprecated_Texture2D::~Deprecated_Texture2D()
 {
-	if (textureId >= 0)
+	if (textureId > 0)
 	{
 		glDeleteTextures(1, &textureId);
 	}

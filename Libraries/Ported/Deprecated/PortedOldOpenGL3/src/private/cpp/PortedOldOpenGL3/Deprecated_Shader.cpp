@@ -72,12 +72,14 @@ void Deprecated_Shader::initShaderHelper(const std::string& vertexShaderFilePath
 	std::string vertShaderSrc, fragShaderSrc, geoShaderSrc;
 	if (stringsAreFilePaths)
 	{
-		if (failed = !Deprecated_Utils::convertFileToString(vertexShaderFilePath, vertShaderSrc))
+		failed = !Deprecated_Utils::convertFileToString(vertexShaderFilePath, vertShaderSrc);
+		if (failed)
 		{
 			std::cerr << "failed to load vertex shader from file" << std::endl;
 			return;
 		}
-		if (failed = !Deprecated_Utils::convertFileToString(fragmentShaderFilePath, fragShaderSrc))
+		failed = !Deprecated_Utils::convertFileToString(fragmentShaderFilePath, fragShaderSrc);
+		if (failed)
 		{
 			std::cerr << "failed to load fragment shader from file" << std::endl;
 			return;
@@ -85,7 +87,8 @@ void Deprecated_Shader::initShaderHelper(const std::string& vertexShaderFilePath
 #if ENABLE_MODERN_OPENGL_SHADERS
 		if (hasGeometryShader)
 		{
-			if (failed = !Deprecated_Utils::convertFileToString(geoShaderSrc, geoShaderSrc))
+			failed = !Deprecated_Utils::convertFileToString(geoShaderSrc, geoShaderSrc);
+			if (failed)
 			{
 				std::cerr << "failed to load fragment shader from file" << std::endl;
 				return;
@@ -127,12 +130,14 @@ void Deprecated_Shader::initShaderHelper(const std::string& vertexShaderFilePath
 	}
 #endif //ENABLE_MODERN_OPENGL_SHADERS
 
-	if (failed = !shaderCompileSuccess(vertexShader))
+	failed = !shaderCompileSuccess(vertexShader);
+	if (failed)
 	{
 		std::cerr << "VERTEX SHADER failed to compile the vertex shader" << std::endl; 
 		return;
 	}
-	if (failed = !shaderCompileSuccess(fragmentShader))
+	failed = !shaderCompileSuccess(fragmentShader);
+	if (failed)
 	{
 		std::cerr << "FRAGMENT SHADER: failed to compile the fragment shader" << std::endl;
 		return;
@@ -140,7 +145,8 @@ void Deprecated_Shader::initShaderHelper(const std::string& vertexShaderFilePath
 #if ENABLE_MODERN_OPENGL_SHADERS
 	if (hasGeometryShader)
 	{
-		if (failed = !shaderCompileSuccess(geometryShader))
+		failed = !shaderCompileSuccess(geometryShader);
+		if (failed)
 		{
 			std::cerr << "GEOMETRY SHADER: failed to compile the geom shader" << std::endl;
 			return;
@@ -159,7 +165,8 @@ void Deprecated_Shader::initShaderHelper(const std::string& vertexShaderFilePath
 	}
 #endif //ENABLE_MODERN_OPENGL_SHADERS
 	glLinkProgram(linkedProgram);
-	if (failed = !programLinkSuccess(linkedProgram))
+	failed = !programLinkSuccess(linkedProgram);
+	if (failed)
 	{
 		std::cerr << "failed to link shader program" << std::endl;
 		return;
@@ -176,8 +183,8 @@ void Deprecated_Shader::initShaderHelper(const std::string& vertexShaderFilePath
 Deprecated_Shader::Deprecated_Shader(const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath, bool stringsAreFilePaths /*= true*/)
 	:
 	failed(false),
-	linkedProgram(0),
 	active(false),
+	linkedProgram(0),
 	textures()
 {
 	std::string blankGeometryShader = "";
@@ -186,8 +193,8 @@ Deprecated_Shader::Deprecated_Shader(const std::string& vertexShaderFilePath, co
 
 Deprecated_Shader::Deprecated_Shader(const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath, const std::string& geometryShaderFilePath, bool stringsAreFilePaths) :
 	failed(false),
-	linkedProgram(0),
 	active(false),
+	linkedProgram(0),
 	textures()
 {
 	initShaderHelper(vertexShaderFilePath, fragmentShaderFilePath, geometryShaderFilePath, stringsAreFilePaths);
