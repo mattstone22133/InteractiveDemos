@@ -34,7 +34,14 @@
 #include "ModelLoader/SATModel.h"
 #include "SATDemoInterface.h"
 #include "PortedOldOpenGL3/Deprecated_InputTracker.h"
+#include "PortedOldOpenGL3/Deprecated_CameraFPS.h"
 #include "SATAllDemos.h"
+
+#if WITH_IMGUI
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+#endif //WITH_IMGUI
 
 #ifdef WITH_SAT_DEMO_MODEL_FILES
 std::shared_ptr<ISATDemo> factory_ModelDemo(int width, int height);
@@ -132,8 +139,8 @@ namespace SAT
 		const sp<Engine::Window>& primaryWindow = Engine::WindowSystem::get().getPrimaryWindow();
 		if (GLFWwindow* window = primaryWindow ? primaryWindow->get() : nullptr)
 		{
-			//TODO: enable this for flying mouse camera!
 			//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); //this should probably be handled in the engine
+			glfwSetFramebufferSizeCallback(window, [](GLFWwindow* window, int width, int height) {  glViewport(0, 0, width, height); });
 
 			std::shared_ptr<ISATDemo> sat2DDemo = factory_Demo2D(width, height);
 			std::shared_ptr<ISATDemo> cubeShapeDemo = factory_CubeShape(width, height);
@@ -149,6 +156,9 @@ namespace SAT
 			activeDemo = sat2DDemo;
 			//activeDemo = cubeShapeDemo;
 			activeDemo->handleModuleFocused(window);
+
+			//hack to get HTML working decently without doing a lot with emscripten click callbacks.
+			DecrepcatedCameraFPSGlobals::bTurnWhileRightClickedMode = true;
 
 			std::cout << "To switch between Demos, hold left control and press the number keys (not numpad) \n\n\n" << std::endl;
 		}
@@ -192,6 +202,9 @@ namespace SAT
 				}
 			}
 
+			//forces FPS cameras to update turning.
+			DecrepcatedCameraFPSGlobals::bRightClickHeld = input.isMouseButtonDown(window, GLFW_MOUSE_BUTTON_RIGHT);
+
 			activeDemo->tickGameLoop(window);
 		}
 	}
@@ -199,6 +212,40 @@ namespace SAT
 	void SATDemoApplication::render_UI()
 	{
 		Super::render_UI();
+#if WITH_IMGUI
+		static bool bFirstDraw = true;
+		if (bFirstDraw)
+		{
+			bFirstDraw = false;
+			ImGui::SetNextWindowPos({ 800, 0 });
+			ImGui::SetNextItemWidth(500);
+		}
+
+		ImGuiWindowFlags flags = 0;
+		ImGui::Begin("Separating Axis Theorem", nullptr, flags);
+		{
+			// Change Demo Buttons
+			if (ImGui::Button("Previous"))
+			{
+				ChangeDemoRelativeIndex(-1);
+			}
+			ImGui::SameLine();
+			ImGui::Text(" < DEMO > ");
+			ImGui::SameLine();
+			if (ImGui::Button("Next"))
+			{
+				ChangeDemoRelativeIndex(1);
+			}
+
+			//instructions
+			if (activeDemo)
+			{
+				activeDemo->populateUI();
+			}
+
+		}
+		ImGui::End();
+#endif //WITH_IMGUI
 
 	}
 
@@ -219,6 +266,32 @@ namespace SAT
 		//clear out the demos so all the opengl resources get deleted before we lose opengl context.
 		demos.clear();
 		activeDemo = nullptr;
+	}
+
+	void SATDemoApplication::ChangeDemoRelativeIndex(int32_t Offset)
+	{
+		if (activeDemo)
+		{
+			int32_t currentIndex = -1;
+			for (size_t idx = 0; idx < demos.size(); ++idx)
+			{
+				if (demos[idx] == activeDemo)
+				{
+					currentIndex = int32_t(idx);
+				}
+			}
+
+			int32_t newIndex = currentIndex + Offset;
+			newIndex = newIndex < 0 ? 0 : newIndex;
+			newIndex = size_t(newIndex) >= demos.size() ? int32_t(demos.size() - 1) : newIndex;
+
+			if (const sp<Engine::Window>& primaryWindow = Engine::WindowSystem::get().getPrimaryWindow())
+			{
+				activeDemo = demos[size_t(newIndex)];
+				activeDemo->handleModuleFocused(primaryWindow->get());
+			}
+
+		}
 	}
 
 }

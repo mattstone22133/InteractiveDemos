@@ -259,8 +259,8 @@ namespace
 		//Shape Data
 		ColumnBasedTransform redCapsuleTransform;
 		ColumnBasedTransform blueCapsuleTransform;
-		const ColumnBasedTransform defaultBlueCapsuleTransform = { { 0,0,0 }, {}, { 1,1,1 } };
-		const ColumnBasedTransform defaultRedCapsuleTransform = { { 5,0,5 }, {}, { 1,1,1 } };
+		const ColumnBasedTransform defaultBlueCapsuleTransform = { { 0,0,0 }, {1,0,0,0},  { 1,1,1 } };
+		const ColumnBasedTransform defaultRedCapsuleTransform = { { 5,0,5 }, {1,0,0,0}, { 1,1,1 } };
 		const glm::vec3 blueCapsuleColor{ 0, 0, 1 };
 		const glm::vec3 redCapsuleColor{ 1, 0, 0 };
 
@@ -943,11 +943,12 @@ namespace
 			using glm::vec3; using glm::vec4;
 			static Deprecated_InputTracker input; //using static vars in polling function may be a bad idea since cpp11 guarantees access is atomic -- I should bench this
 			input.updateState(window);
-
+#ifndef HTML_BUILD
 			if (input.isKeyJustPressed(window, GLFW_KEY_ESCAPE))
 			{
 				glfwSetWindowShouldClose(window, true);
 			}
+#endif //!HTML_BUILD
 			if (input.isKeyJustPressed(window, GLFW_KEY_T))
 			{
 				bRedActiveMovement = !bRedActiveMovement;

@@ -58,7 +58,7 @@ namespace SAT
 
 				/* uniforms can have initial value in GLSL 1.20 and up */
 				//uniform highp float ambientStrength = 0.1; 
-				const highp float ambientStrength = 0.1; 
+				const highp float ambientStrength = 0.5; 
 				uniform highp vec3 objColor;// = vec3(1,1,1);
 
 				void main(){

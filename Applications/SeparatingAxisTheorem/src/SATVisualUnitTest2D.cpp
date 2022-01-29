@@ -34,6 +34,11 @@ using namespace SAT;
 
 #include "Utils/Platform/OpenGLES2/OpenGLES2Utils.h"
 
+#if WITH_IMGUI
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+#endif //WITH_IMGUI
 using namespace SAT;
 
 namespace
@@ -182,6 +187,26 @@ namespace
 		{
 			ec(glDisableVertexAttribArray(0));
 		}
+
+		virtual void populateUI() override
+		{
+#if WITH_IMGUI
+			ImGui::Text("Hold RIGHT CLICK on canvas - to turn camera");
+			ImGui::Text("W/A/S/D to move camera position");
+			ImGui::Text("");
+			ImGui::Text("Hold ALT to move objects with WASD-EQ");
+			ImGui::Text("Hold ALT + CONTROL to rotate objects with WASD-EQ");
+			ImGui::Text("");
+			ImGui::Text("Press T to toggle which the object is moved ");
+			ImGui::Text("Press V to toggle locking translations(and rotations) to camera (easier movements) ");
+			ImGui::Text("Press M to toggle slightly displacing axes so that parallel axes are visible simultaneously ");
+			ImGui::Text("Press P to print debug information");
+			ImGui::Text("Press R to reset object positions to default.");
+			ImGui::Text("Press C to toggle collision detection");
+			ImGui::Text("Press 9/0 to decrease/increase scale");
+			ImGui::Text("Press U to start unit tests; press left/right to skip through unit tests");
+#endif //WITH_IMGUI
+		}
 	public:
 		SATDemo2D(int width, int height)
 			: ISATDemo(width, height)
@@ -278,7 +303,7 @@ namespace
 
 			//make copies and just change out appropriate fields
 			auto triAgent_CardinalUp = std::make_shared< SAT::ApplyVelocityFrameAgent >(*triAgent_CardinalDown);
-			triAgent_CardinalUp->setStartTransform(SAT::ColumnBasedTransform{ {0, -120, 0 },{},{triTransform.scale} });
+			triAgent_CardinalUp->setStartTransform(SAT::ColumnBasedTransform{ {0, -120, 0 },{1,0,0,0}, {triTransform.scale} });
 			triAgent_CardinalUp->setNewVelocity(vec3(0, moveSpeed, 0));
 			triAgent_CardinalUp->setCustomCompleteTestFunc([](SAT::ApplyVelocityFrameAgent& thisAgent) {
 				glm::vec4 origin = thisAgent.getShape().getTransformedOrigin();
@@ -287,7 +312,7 @@ namespace
 
 			//make copies and just change out appropriate fields
 			auto triAgent_CardinalLeft = std::make_shared< SAT::ApplyVelocityFrameAgent >(*triAgent_CardinalDown);
-			triAgent_CardinalLeft->setStartTransform(SAT::ColumnBasedTransform{ {120, 0, 0 },{},{triTransform.scale} });
+			triAgent_CardinalLeft->setStartTransform(SAT::ColumnBasedTransform{ {120, 0, 0 },{1,0,0,0}, {triTransform.scale} });
 			triAgent_CardinalLeft->setNewVelocity(vec3(-moveSpeed, 0, 0));
 			triAgent_CardinalLeft->setCustomCompleteTestFunc([](SAT::ApplyVelocityFrameAgent& thisAgent) {
 				glm::vec4 origin = thisAgent.getShape().getTransformedOrigin();
@@ -296,7 +321,7 @@ namespace
 
 			//make copies and just change out appropriate fields
 			auto triAgent_CardinalRight = std::make_shared< SAT::ApplyVelocityFrameAgent >(*triAgent_CardinalDown);
-			triAgent_CardinalRight->setStartTransform(SAT::ColumnBasedTransform{ {-120, 0, 0 },{},{triTransform.scale} });
+			triAgent_CardinalRight->setStartTransform(SAT::ColumnBasedTransform{ {-120, 0, 0 },{1,0,0,0}, {triTransform.scale} });
 			triAgent_CardinalRight->setNewVelocity(vec3(moveSpeed, 0, 0));
 			triAgent_CardinalRight->setCustomCompleteTestFunc([](SAT::ApplyVelocityFrameAgent& thisAgent) {
 				glm::vec4 origin = thisAgent.getShape().getTransformedOrigin();
@@ -340,7 +365,7 @@ namespace
 					*triCollision,
 					vec3(20 * -2.364, 20 * -2.364, 0),
 					triTransform,
-					SAT::ColumnBasedTransform{ {49.1155, 97.8502, 0 },{},{triTransform.scale} },
+					SAT::ColumnBasedTransform{ {49.1155, 97.8502, 0 },{1,0,0,0}, {triTransform.scale} },
 					[](SAT::ApplyVelocityFrameAgent& thisAgent) {
 				//test that origin is above the x axis
 				glm::vec4 origin = thisAgent.getShape().getTransformedOrigin();
@@ -398,10 +423,13 @@ namespace
 			static Deprecated_InputTracker input; //using static vars in polling function may be a bad idea since cpp11 guarantees access is atomic -- I should bench this
 			input.updateState(window);
 
+#ifndef HTML_BUILD
 			if (input.isKeyJustPressed(window, GLFW_KEY_ESCAPE))
 			{
+				std::cout << "user pressed escape to close" << std::endl;
 				glfwSetWindowShouldClose(window, true);
 			}
+#endif //!HTML_BUILD
 			if (input.isKeyJustPressed(window, GLFW_KEY_T))
 			{
 				transformTarget = transformTarget == &triTransform ? &boxTransform : &triTransform;
@@ -583,17 +611,7 @@ namespace
 			triCollision->appendFaceAxes(triAxes);
 			constexpr float axisSizeScale = 1000.0f;
 
-			//intentionally draw axes before projections on axes
-			for (const glm::vec3& axis : boxAxes)
-			{
-				drawDebugLine(vec3(0.0f), axis * axisSizeScale, vec3(boxColor / 2.0f), mat4(1.0f), view, projection);
-				drawDebugLine(vec3(0.0f), -axis * axisSizeScale, vec3(boxColor / 2.0f), mat4(1.0f), view, projection);
-			}
-			for (const glm::vec3& axis : triAxes)
-			{
-				drawDebugLine(vec3(0.0f), axis * axisSizeScale, vec3(triColor / 2.0f), mat4(1.0f), view, projection);
-				drawDebugLine(vec3(0.0f), -axis * axisSizeScale, vec3(triColor / 2.0f), mat4(1.0f), view, projection);
-			}
+			// --RENDER PROJECTIONS--
 			std::vector<glm::vec3> allAxes = boxAxes;
 			allAxes.insert(allAxes.end(), triAxes.begin(), triAxes.end());
 			for (const glm::vec3& axis : allAxes)
@@ -608,9 +626,25 @@ namespace
 
 				bool bDisjoint = projection1.max < projection2.min || projection2.max < projection1.min;
 				vec3 overlapColor = boxColor + triColor;
-				drawDebugLine(pnt1A, pnt1B, bDisjoint ? boxColor * 0.75f : overlapColor, mat4(1.0f), view, projection);
-				drawDebugLine(pnt2A, pnt2B, bDisjoint ? triColor * 0.75f : overlapColor, mat4(1.0f), view, projection);
+				const float ProjectionColorScalar = 1.f;
+				drawDebugLine(pnt1A, pnt1B, bDisjoint ? boxColor * ProjectionColorScalar : overlapColor, mat4(1.0f), view, projection);
+				drawDebugLine(pnt2A, pnt2B, bDisjoint ? triColor * ProjectionColorScalar : overlapColor, mat4(1.0f), view, projection);
 			}
+
+			// --RENDER AXES--
+			//intentionally draw axes AFTER projections on axes. so depth buffer doesn't eat the projection visualizations.
+			const float AxisColorScalar = 0.5f;
+			for (const glm::vec3& axis : boxAxes)
+			{
+				drawDebugLine(vec3(0.0f), axis * axisSizeScale, vec3(boxColor * AxisColorScalar), mat4(1.0f), view, projection);
+				drawDebugLine(vec3(0.0f), -axis * axisSizeScale, vec3(boxColor * AxisColorScalar), mat4(1.0f), view, projection);
+			}
+			for (const glm::vec3& axis : triAxes)
+			{
+				drawDebugLine(vec3(0.0f), axis * axisSizeScale, vec3(triColor * AxisColorScalar), mat4(1.0f), view, projection);
+				drawDebugLine(vec3(0.0f), -axis * axisSizeScale, vec3(triColor * AxisColorScalar), mat4(1.0f), view, projection);
+			}
+
 		}
 	};
 

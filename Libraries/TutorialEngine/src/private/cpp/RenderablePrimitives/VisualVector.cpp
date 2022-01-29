@@ -136,7 +136,7 @@ namespace TutorialEngine
 	}
 
 
-	VisualVector::VisualVector(VisualVector&& move)
+	VisualVector::VisualVector(VisualVector&& move) noexcept
 	{
 		if (&move != this)
 		{
@@ -148,7 +148,7 @@ namespace TutorialEngine
 		}
 	}
 
-	TutorialEngine::VisualVector& VisualVector::operator=(VisualVector&& move)
+	TutorialEngine::VisualVector& VisualVector::operator=(VisualVector&& move) noexcept
 	{
 		if (&move != this)
 		{

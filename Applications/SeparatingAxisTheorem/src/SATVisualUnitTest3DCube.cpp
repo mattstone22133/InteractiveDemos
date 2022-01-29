@@ -36,6 +36,12 @@
 
 #include "Utils/Platform/OpenGLES2/OpenGLES2Utils.h"
 
+#if WITH_IMGUI
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+#endif //WITH_IMGUI
+
 using namespace SAT;
 namespace
 {
@@ -199,8 +205,8 @@ namespace
 		//Shape Data
 		ColumnBasedTransform redCubeTransform;
 		ColumnBasedTransform blueCubeTransform;
-		const ColumnBasedTransform defaultBlueCubeTransform = { { 0,0,0 }, {}, { 1,1,1 } };
-		const ColumnBasedTransform defaultRedCubeTransform = { { 5,0,5 }, {}, { 1,1,1 } };
+		const ColumnBasedTransform defaultBlueCubeTransform = { { 0,0,0 }, {1,0,0,0}, { 1,1,1 } };
+		const ColumnBasedTransform defaultRedCubeTransform = { { 5,0,5 }, {1,0,0,0}, { 1,1,1 } };
 		const glm::vec3 blueCubeColor{ 0, 0, 1 };
 		const glm::vec3 redCubeColor{ 1, 0, 0 };
 		SAT::CubeShape blueCubeCollision;
@@ -242,6 +248,25 @@ namespace
 		{
 			ec(glDisableVertexAttribArray(0));
 			ec(glDisableVertexAttribArray(1));
+		}
+		virtual void populateUI() override
+		{
+		#if WITH_IMGUI
+			ImGui::Text("Hold RIGHT CLICK on canvas - to turn camera");
+			ImGui::Text("W/A/S/D to move camera position");
+			ImGui::Text("");
+			ImGui::Text("Hold ALT to move objects with WASD-EQ");
+			ImGui::Text("Hold ALT + CONTROL to rotate objects with WASD-EQ");
+			ImGui::Text("");
+			ImGui::Text("Press T to toggle which the object is moved ");
+			ImGui::Text("Press V to toggle locking translations(and rotations) to camera (easier movements) ");
+			ImGui::Text("Press M to toggle slightly displacing axes so that parallel axes are visible simultaneously ");
+			ImGui::Text("Press P to print debug information");
+			ImGui::Text("Press R to reset object positions to default.");
+			ImGui::Text("Press C to toggle collision detection");
+			ImGui::Text("Press 9/0 to decrease/increase scale");
+			ImGui::Text("Press U to start unit tests; press left/right to skip through unit tests");
+		#endif //WITH_IMGUI
 		}
 	public:
 		CubeDemo(int width, int height)
@@ -348,7 +373,7 @@ namespace
 						redCubeCollision,
 						vec3(0, -moveSpeed, 0),
 						redCubeTransform,
-						SAT::ColumnBasedTransform{ {0, 3.0f, 0 }, {}, {1,1,1} },
+						SAT::ColumnBasedTransform{ {0, 3.0f, 0 }, {1,0,0,0}, {1,1,1} },
 						[](SAT::ApplyVelocityFrameAgent& thisAgent) {
 					glm::vec4 origin = thisAgent.getShape().getTransformedOrigin();
 						//correct position [-0.0203712, 1.00515, -0.0666917
@@ -558,12 +583,12 @@ namespace
 			ec(glDeleteBuffers(1, &cubeVBO));
 		}
 
-		virtual void handleModuleFocused(GLFWwindow* window)
+		virtual void handleModuleFocused(GLFWwindow* window) override
 		{
 			camera.exclusiveGLFWCallbackRegister(window);
 		}
 
-		virtual void tickGameLoop(GLFWwindow* window)
+		virtual void tickGameLoop(GLFWwindow* window) override
 		{
 			using glm::vec2;
 			using glm::vec3;
@@ -726,11 +751,12 @@ namespace
 			using glm::vec3; using glm::vec4;
 			static Deprecated_InputTracker input; //using static vars in polling function may be a bad idea since cpp11 guarantees access is atomic -- I should bench this
 			input.updateState(window);
-
+#ifndef HTML_BUILD
 			if (input.isKeyJustPressed(window, GLFW_KEY_ESCAPE))
 			{
 				glfwSetWindowShouldClose(window, true);
 			}
+#endif //!HTML_BUILD
 			if (input.isKeyJustPressed(window, GLFW_KEY_T))
 			{
 				transformTarget = transformTarget == &blueCubeTransform ? &redCubeTransform : &blueCubeTransform;

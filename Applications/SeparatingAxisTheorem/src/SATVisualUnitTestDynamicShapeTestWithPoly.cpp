@@ -39,6 +39,12 @@
 #include "PortedOldOpenGL3/Deprecated_CameraFPS.h"
 #include "PortedOldOpenGL3/Deprecated_Shader.h"
 
+#if WITH_IMGUI
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+#endif //WITH_IMGUI
+
 using namespace SAT;
 namespace
 {
@@ -203,8 +209,8 @@ namespace
 		//Shape Data
 		ColumnBasedTransform redCapsuleTransform;
 		ColumnBasedTransform blueCapsuleTransform;
-		const ColumnBasedTransform defaultBlueCapsuleTransform = { { 0,0,0 }, {}, { 1,1,1 } };
-		const ColumnBasedTransform defaultRedCapsuleTransform = { { 5,0,5 }, {}, { 1,1,1 } };
+		const ColumnBasedTransform defaultBlueCapsuleTransform = { { 0,0,0 }, {1,0,0,0}, { 1,1,1 } };
+		const ColumnBasedTransform defaultRedCapsuleTransform = { { 5,0,5 }, {1,0,0,0}, { 1,1,1 } };
 		const glm::vec3 blueCapsuleColor{ 0, 0, 1 };
 		const glm::vec3 redCapsuleColor{ 1, 0, 0 };
 		std::shared_ptr<SAT::DynamicTriangleMeshShape> blueCollision;
@@ -263,6 +269,27 @@ namespace
 		{
 			ec(glDisableVertexAttribArray(0));
 			ec(glDisableVertexAttribArray(1));
+		}
+
+		virtual void populateUI() override
+		{
+#if WITH_IMGUI
+			ImGui::Text("Hold RIGHT CLICK on canvas - to turn camera");
+			ImGui::Text("W/A/S/D to move camera position");
+			ImGui::Text("");
+			ImGui::Text("Hold ALT to move objects with WASD-EQ");
+			ImGui::Text("Hold ALT + CONTROL to rotate objects with WASD-EQ");
+			ImGui::Text("");
+			ImGui::Text("Press T to toggle which the object is moved ");
+			ImGui::Text("Press V to toggle locking translations(and rotations) to camera (easier movements) ");
+			ImGui::Text("Press M to toggle slightly displacing axes so that parallel axes are visible simultaneously ");
+			ImGui::Text("Press P to print debug information");
+			ImGui::Text("Press R to reset object positions to default.");
+			ImGui::Text("Press C to toggle collision detection");
+			ImGui::Text("Press 9/0 to decrease/increase scale");
+			ImGui::Text("Press U to start unit tests; press left/right to skip through unit tests");
+
+#endif //WITH_IMGUI
 		}
 	public:
 		DynamicCapsuleDemo(int width, int height)
@@ -661,12 +688,12 @@ namespace
 			ec(glDeleteBuffers(1, &capsuleVBO));
 		}
 
-		virtual void handleModuleFocused(GLFWwindow* window)
+		virtual void handleModuleFocused(GLFWwindow* window) override
 		{
 			camera.exclusiveGLFWCallbackRegister(window);
 		}
 
-		virtual void tickGameLoop(GLFWwindow* window)
+		virtual void tickGameLoop(GLFWwindow* window) override
 		{
 			using glm::vec2;
 			using glm::vec3;
@@ -844,11 +871,12 @@ namespace
 			using glm::vec3; using glm::vec4;
 			static Deprecated_InputTracker input; //using static vars in polling function may be a bad idea since cpp11 guarantees access is atomic -- I should bench this
 			input.updateState(window);
-
+#ifndef HTML_BUILD
 			if (input.isKeyJustPressed(window, GLFW_KEY_ESCAPE))
 			{
 				glfwSetWindowShouldClose(window, true);
 			}
+#endif //!HTML_BUILD
 			if (input.isKeyJustPressed(window, GLFW_KEY_T))
 			{
 				transformTarget = transformTarget == &blueCapsuleTransform ? &redCapsuleTransform : &blueCapsuleTransform;

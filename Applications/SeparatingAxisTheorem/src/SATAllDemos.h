@@ -31,6 +31,8 @@ namespace SAT
 
 		void handleEngineShuttingDown();
 
+		void ChangeDemoRelativeIndex(int32_t Offset);
+
 	private:
 		Deprecated_InputTracker input;
 		sp<ISATDemo> activeDemo = nullptr;

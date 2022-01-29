@@ -119,6 +119,13 @@ glm::mat4 Deprecated_CameraFPS::getView() const
 	return view;
 }
 
+namespace DecrepcatedCameraFPSGlobals
+{
+	//some hacks I made for porting old code for SAT
+	bool bTurnWhileRightClickedMode = false;
+	bool bRightClickHeld = false;
+}
+
 void Deprecated_CameraFPS::mouseMoved(double xpos, double ypos)
 {
 	if (refocused)
@@ -126,6 +133,15 @@ void Deprecated_CameraFPS::mouseMoved(double xpos, double ypos)
 		lastX = xpos;
 		lastY = ypos;
 		refocused = false;
+	}
+
+	if (DecrepcatedCameraFPSGlobals::bTurnWhileRightClickedMode)
+	{
+		if (!DecrepcatedCameraFPSGlobals::bRightClickHeld)
+		{
+			refocused = true;
+			return;
+		}
 	}
 
 	double xOff = xpos - lastX;

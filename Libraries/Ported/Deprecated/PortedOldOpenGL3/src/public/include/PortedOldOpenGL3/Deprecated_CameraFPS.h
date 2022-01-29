@@ -73,4 +73,11 @@ private:
 	bool cursorMode = false;
 };
 
+namespace DecrepcatedCameraFPSGlobals
+{
+	//some hacks I made for porting old code for SAT
+	extern bool bTurnWhileRightClickedMode;
+	extern bool bRightClickHeld;
+}
+
 #endif //WITH_OLD_OPENGL3_PROJECT_BUILD

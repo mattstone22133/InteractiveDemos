@@ -19,5 +19,8 @@ public:
 	virtual ~ISATDemo() {}
 	virtual void tickGameLoop(GLFWwindow* window) = 0;
 	virtual void handleModuleFocused(GLFWwindow* window) = 0;
+
+	//added to make demo more intuitive.
+	virtual void populateUI() = 0;
 };
 #endif //WITH_SAT_DEMO_BUILD

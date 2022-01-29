@@ -22,8 +22,8 @@ namespace TutorialEngine
 		/** Converting to entity so move/copy semantics can probably be disregarded*/
 		VisualVector(const VisualVector& copy);
 		VisualVector& operator=(const VisualVector& copy);
-		VisualVector(VisualVector&& move);
-		VisualVector& operator=(VisualVector&& move);
+		VisualVector(VisualVector&& move) noexcept;
+		VisualVector& operator=(VisualVector&& move) noexcept;
 	public:
 		void render(const glm::mat4& projection_view, std::optional<glm::vec3> cameraPos) const;
 		void setVector(glm::vec3 newVec);

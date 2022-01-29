@@ -30,7 +30,7 @@ namespace SAT
 	struct ColumnBasedTransform
 	{
 		glm::vec3 position = { 0, 0, 0 };
-		glm::quat rotQuat; //identity quaternion; see conversion function if you're unfamiliar with quaternions
+		glm::quat rotQuat = glm::quat{ 1.f, 0.f, 0.f, 0.f}; //identity quaternion; see conversion function if you're unfamiliar with quaternions
 		glm::vec3 scale = { 1, 1, 1 };
 
 		glm::mat4 getModelMatrix()
@@ -142,7 +142,7 @@ namespace SAT
 		bool isRunning();
 
 	private:
-		uint32_t currentTestIdx;
+		uint32_t currentTestIdx = 0;
 		std::vector<std::shared_ptr<TickUnitTest>> UnitTests;
 		bool runTests = false;
 	};
