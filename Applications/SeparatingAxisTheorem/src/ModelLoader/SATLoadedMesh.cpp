@@ -7,6 +7,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////
 
 #ifdef WITH_SAT_DEMO_BUILD
+#ifdef WITH_SAT_DEMO_MODEL_FILES
 
 #include <iostream>
 #include "SATLoadedMesh.h"
@@ -111,4 +112,5 @@ namespace SAT
 	}
 
 }
+#endif //WITH_SAT_DEMO_MODEL_FILES
 #endif //WITH_SAT_DEMO_BUILD

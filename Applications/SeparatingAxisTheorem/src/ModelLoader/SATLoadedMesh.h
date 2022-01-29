@@ -8,6 +8,7 @@
 //
 ///////////////////////////////////////////////////////////////////////////////////////
 #ifdef WITH_SAT_DEMO_BUILD
+#ifdef WITH_SAT_DEMO_MODEL_FILES
 
 #include <Utils/Platform/OpenGLES2/PlatformOpenGLESInclude.h>
 //#include<glad/glad.h> //include opengl headers, so should be before anything that uses those headers (such as GLFW)
@@ -173,4 +174,5 @@ namespace SAT
 
 }
 
-#endif WITH_SAT_DEMO_BUILD
+#endif //WITH_SAT_DEMO_MODEL_FILES
+#endif //WITH_SAT_DEMO_BUILD

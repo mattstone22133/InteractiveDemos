@@ -34,7 +34,7 @@
 #include "ModelLoader/SATModel.h"
 #include "SATDemoInterface.h"
 #include "PortedOldOpenGL3/Deprecated_InputTracker.h"
-#include "SATALLDemos.h"
+#include "SATAllDemos.h"
 
 #ifdef WITH_SAT_DEMO_MODEL_FILES
 std::shared_ptr<ISATDemo> factory_ModelDemo(int width, int height);
