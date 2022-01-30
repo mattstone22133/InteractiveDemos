@@ -218,7 +218,7 @@ namespace SAT
 		if (bFirstDraw)
 		{
 			bFirstDraw = false;
-			ImGui::SetNextWindowPos({ 800, 0 });
+			ImGui::SetNextWindowPos({ 775, 0 });
 			ImGui::SetNextItemWidth(800);
 		}
 
@@ -238,9 +238,10 @@ namespace SAT
 				ChangeDemoRelativeIndex(1);
 			}
 
+			ImGui::Text("press 1,2,3 to quickly swap between WASD mode.");
 			if (activeDemo && activeDemo->bShowCameraMoveButton())
 			{
-				if (ImGui::Checkbox("Move Camera", &SAT::bEnableCameraMove))
+				if (ImGui::Checkbox("Move Camera [1]", &SAT::bEnableCameraMove))
 				{
 					SAT::bEnableCameraMove = true;
 					SAT::bEnableTargetMove = false;
@@ -248,14 +249,14 @@ namespace SAT
 				}
 				ImGui::SameLine();
 			}
-			if (ImGui::Checkbox("Move Target", &SAT::bEnableTargetMove))
+			if (ImGui::Checkbox("Move Target [2]", &SAT::bEnableTargetMove))
 			{
 				SAT::bEnableCameraMove = false;
 				SAT::bEnableTargetMove = true;
 				SAT::bEnableRotateTarget = false;
 			}
 			ImGui::SameLine();
-			if (ImGui::Checkbox("Rotate Target", &SAT::bEnableRotateTarget))
+			if (ImGui::Checkbox("Rotate Target[3]", &SAT::bEnableRotateTarget))
 			{
 				SAT::bEnableCameraMove = false;
 				SAT::bEnableTargetMove = false;
@@ -277,6 +278,47 @@ namespace SAT
 	void SATDemoApplication::inputPoll(float dt_sec)
 	{
 		Super::inputPoll(dt_sec);
+
+		using namespace Engine;
+
+		if (const sp<Window>& primaryWindow = WindowSystem::get().getPrimaryWindow())
+		{
+			if (GLFWwindow* window = primaryWindow->get())
+			{
+				const bool bControlPressedLeft = glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS;
+				const bool bControlPressedRight = glfwGetKey(window, GLFW_KEY_RIGHT_CONTROL) == GLFW_PRESS;
+				const bool bAltPressedRight = glfwGetKey(window, GLFW_KEY_RIGHT_ALT) == GLFW_PRESS;
+				const bool bAltPressedLeft = glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_PRESS;
+
+				if (!bControlPressedLeft
+					&& !bControlPressedRight
+					&& !bAltPressedRight
+					&& !bAltPressedLeft
+				)
+				{
+					if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS
+						&& activeDemo && activeDemo->bShowCameraMoveButton()
+						)
+					{
+						SAT::bEnableCameraMove = true;
+						SAT::bEnableTargetMove = false;
+						SAT::bEnableRotateTarget = false;
+					}
+					else if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
+					{
+						SAT::bEnableCameraMove = false;
+						SAT::bEnableTargetMove = true;
+						SAT::bEnableRotateTarget = false;
+					}
+					else if(glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS)
+					{
+						SAT::bEnableCameraMove = false;
+						SAT::bEnableTargetMove = false;
+						SAT::bEnableRotateTarget = true;
+					}
+				}
+			}
+		}
 
 	}
 
