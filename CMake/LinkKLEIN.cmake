@@ -22,8 +22,13 @@ macro(LinkKLEIN TARGET ACCESS)
         message(STATUS "HTML: KLEIN appending SIMD compile flag")
         #HTML_AppendLinkFlag(${EXECUTABLE_NAME} "-msimd128") #enable SIMD proposal so that we can compile klein (ERROR THIS ISN"T LINK FLAG")
         #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msimd128") #enable SIMD proposal so that we can compile klein (limited browser support, so just do it for this project)
-        #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse -msse2 -msse3")
+        #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse -msse2 -msse3 -mssse3")
         target_compile_options( ${TARGET} ${ACCESS} -msimd128) 
+        target_compile_options( ${TARGET} ${ACCESS} -msse -msse2 -msse3 -mssse3)
+    elseif(MSVC)
+        #windows doesn't need special SSE compile flags
+    else()
+        #set up SSE on linux
         target_compile_options( ${TARGET} ${ACCESS} -msse -msse2 -msse3 -mssse3)
     endif()
 
