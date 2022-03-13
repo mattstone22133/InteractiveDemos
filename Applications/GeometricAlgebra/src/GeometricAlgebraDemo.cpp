@@ -11,8 +11,10 @@
 
 #include "GeometricAlgebraDemo.h"
 
+#if WITH_KLEIN
 #include "klein/point.hpp"
 #include "klein/plane.hpp"
+#endif //WITH_KLEIN
 
 using namespace Engine;
 using namespace TutorialEngine;
@@ -25,8 +27,10 @@ using namespace MathUtils;
 int main()
 {
 	//DELETE ME TEST
+#if WITH_KLEIN
 	kln::point test(1.f, 2.f, 3.f);
 	kln::plane planeTest;
+#endif //WITH_KLEIN
 	//DELETE ME TEST OVER
 
 	std::cout << "Geometric Algebra Demo Started" << std::endl;

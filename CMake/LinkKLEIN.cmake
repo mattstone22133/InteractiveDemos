@@ -15,5 +15,6 @@ macro(LinkKLEIN TARGET ACCESS)
 
     # only include the public headers, don't need full project. See README.md for the git repository
     target_include_directories(${TARGET} ${ACCESS} ${klein_SOURCE_DIR}/public)
+    target_compile_options( ${TARGET} ${ACCESS} -DWITH_KLEIN=1) #switch to enable/disable code around klein
 
 endmacro()

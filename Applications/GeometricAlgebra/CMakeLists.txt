@@ -19,6 +19,12 @@ include(${SHARED_CMAKE_UTILITES_DIR}/UtilitiesHTML.cmake) #variable should be de
 #HTMLPreloadDirectory(${EXECUTABLE_NAME} "${CMAKE_CURRENT_BINARY_DIR}/PreloadAssets/@PreloadAssets") #@ symbol renames path on left of @ to path on right of @; ie old/path@newpath
 #HTMLUseTemplateHtmlFile(${EXECUTABLE_NAME} "${CMAKE_CURRENT_LIST_DIR}/html_output_template.html")
 
+# emscripten doesn't have SIMD support by default, it must be enabled. https://emscripten.org/docs/porting/simd.html
+# this support looks like it is a proposal, rather than being fully supported.
+# so I am disabling klein until I can investigate whether or not can safely use it in emscripten environment
+include(${SHARED_CMAKE_UTILITES_DIR}/LinkKLEIN.cmake)
+#LinkKLEIN(${EXECUTABLE_NAME} PUBLIC)
+
 set_target_properties(${EXECUTABLE_NAME} PROPERTIES
     CXX_STANDARD 17
     CXX_STANDARD_REQUIRED YES
