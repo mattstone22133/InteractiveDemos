@@ -60,6 +60,9 @@ endif()
 include(${CMAKE_DIR}/LinkGLM.cmake)
 LinkGLM(${LIB_NAME} PUBLIC)
 
+include(${CMAKE_DIR}/LinkKLEIN.cmake)
+LinkKLEIN(${LIB_NAME} PUBLIC)
+
 include(${CMAKE_DIR}/LinkSTB.cmake)
 LinkSTB(${LIB_NAME} PUBLIC)
 

@@ -35,5 +35,6 @@ add_subdirectory("Applications/BuildSystemTest")
 add_subdirectory("Applications/HelloTriangle")
 add_subdirectory("Applications/BarycentricCoordinates")
 add_subdirectory("Applications/SeparatingAxisTheorem")
+add_subdirectory("Applications/GeometricAlgebra")
 
 message(STATUS " ------------------------------------------------------------------------------------")
