@@ -1,19 +1,16 @@
-#include <iostream>
+#include <iostream> //todo -- remove this if it isn't used!
+
 #include <TutorialEngine.h>
 #include <GameObjectBase.h>
-
-
-#if WITH_IMGUI
-#include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
-#endif //WITH_IMGUI
-
 #include "GeometricAlgebraDemo.h"
 
+#if WITH_IMGUI
+	#include "imgui.h"
+	#include "imgui_impl_glfw.h"
+	#include "imgui_impl_opengl3.h"
+#endif //WITH_IMGUI
 #if WITH_KLEIN
-#include "klein/point.hpp"
-#include "klein/plane.hpp"
+	#include "klein/klein.hpp"
 #endif //WITH_KLEIN
 
 using namespace Engine;
@@ -32,8 +29,21 @@ int main()
 {
 	//DELETE ME TEST
 #if WITH_KLEIN
-	kln::point test(1.f, 2.f, 3.f);
-	kln::plane planeTest; 
+	kln::point pointA(1.f, 3.f, 3.f);
+	kln::point pointB(3.f, 3.f, 3.f);
+	kln::point pointC(3.f, 1.f, 3.f);
+	//kln::point pointA(3.f, 3.f, 3.f);
+	//kln::point pointB(3.f, 3.f, 1.f);
+	//kln::point pointC(3.f, 1.f, 1.f);
+	kln::plane plane = pointA & pointB & pointC;
+
+	plane.normalize();
+	glm::vec3 planeNormal(plane.x(), plane.y(), plane.z());
+	std::cout << "plane normal:" << planeNormal.x << " " << planeNormal.y << " " << planeNormal.z << std::endl;
+
+	//How can we get points on a plane efficiently with this implementation of a plane?
+
+	kln::dual dualResult = pointA & plane;
 #endif //WITH_KLEIN
 	//DELETE ME TEST OVER
 
