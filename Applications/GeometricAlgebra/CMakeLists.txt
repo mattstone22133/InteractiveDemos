@@ -23,7 +23,7 @@ include(${SHARED_CMAKE_UTILITES_DIR}/UtilitiesHTML.cmake) #variable should be de
 # this support looks like it is a proposal, rather than being fully supported.
 # so I am disabling klein until I can investigate whether or not can safely use it in emscripten environment
 include(${SHARED_CMAKE_UTILITES_DIR}/LinkKLEIN.cmake)
-#LinkKLEIN(${EXECUTABLE_NAME} PUBLIC)
+LinkKLEIN(${EXECUTABLE_NAME} PUBLIC)
 
 set_target_properties(${EXECUTABLE_NAME} PROPERTIES
     CXX_STANDARD 17
@@ -35,7 +35,9 @@ if(HTML_BUILD)
     #message(STATUS "Building HTML Geometric Algebra")
     set(CMAKE_EXECUTABLE_SUFFIX ".html")
 
-    #"html_output_template.html"
+    #message(STATUS "HTML: appending SIMD flag")
+    #HTML_AppendLinkFlag(${EXECUTABLE_NAME} "-msimd128") #enable SIMD proposal so that we can compile klein (ERROR THIS ISN"T LINK FLAG")
+    #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msimd128") #enable SIMD proposal so that we can compile klein (limited browser support, so just do it for this project)
 endif()
 
  

@@ -36,3 +36,13 @@ macro(HTMLUseTemplateHtmlFile TARGET HTML_TEMPLATE_PATH)
 		set_target_properties(${TARGET} PROPERTIES LINK_FLAGS "${PreviousLinkFlags} --shell-file \"${HTML_TEMPLATE_PATH}\"") # must use quotes for spaces in file paths to work
 	endif()
 endmacro()
+
+macro(HTML_AppendLinkFlag TARGET HTML_LINK_FLAG)
+	if(${CMAKE_SYSTEM_NAME} MATCHES "Emscripten")
+		get_target_property(PreviousLinkFlags ${TARGET} LINK_FLAGS)
+		if(${PreviousLinkFlags} MATCHES "PreviousLinkFlags-NOTFOUND")			
+			set(PreviousLinkFlags "") 
+		endif()
+		set_target_properties(${TARGET} PROPERTIES LINK_FLAGS "${PreviousLinkFlags} ${HTML_LINK_FLAG}") # must use quotes for spaces in file paths to work
+	endif()
+endmacro()

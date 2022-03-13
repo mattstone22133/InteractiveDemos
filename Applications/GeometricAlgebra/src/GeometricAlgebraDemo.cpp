@@ -20,6 +20,10 @@ using namespace Engine;
 using namespace TutorialEngine;
 using namespace MathUtils;
 
+#if HTML_BUILD
+#include <wasm_simd128.h>
+#endif //HTML_BUILD
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Main
@@ -29,7 +33,7 @@ int main()
 	//DELETE ME TEST
 #if WITH_KLEIN
 	kln::point test(1.f, 2.f, 3.f);
-	kln::plane planeTest;
+	kln::plane planeTest; 
 #endif //WITH_KLEIN
 	//DELETE ME TEST OVER
 
