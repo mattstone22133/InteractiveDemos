@@ -4,7 +4,7 @@ macro(EngineLinkIMGUI TARGET ACCESS)
     FetchContent_Declare(
         imgui
         GIT_REPOSITORY https://github.com/DependencyMaster/imgui.git
-        GIT_TAG v1.80
+        GIT_TAG v1.80 #WARNING: updating will require refiguring out how to get gles2 working on windows. They changed the way custom loaders work.
     )
 
     # test later version of imgui, but later versions changed things which break loaders for me with GLES2, so leaving this disabled for now.
